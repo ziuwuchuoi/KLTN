@@ -1,14 +1,14 @@
-import { useState } from 'react'
-import PageHome from './pages/PageHome'
+import { Header } from './pages/Header'
+import AppRoutes from './routes'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <PageHome></PageHome>
+      <Header />
+      <AppRoutes />
     </>
   )
 }
 
 export default App
+

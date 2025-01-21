@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import { cn } from "@/components/lib/general.utils"
 import {
     NavigationMenu,
@@ -8,12 +9,13 @@ import {
 } from "@/components/ui/navigation-menu"
 
 const navItems = [
-    { title: "Accommodations", href: "#" },
-    { title: "Transports", href: "#" },
-    { title: "Tours & Activities", href: "#" },
+    { title: "Accommodations", href: "/accommodations" },
+    { title: "Transports", href: "/transports" },
+    { title: "Tours & Activities", href: "/tours" },
 ]
 
 export function Header() {
+    const navigate = useNavigate()
     const [isScrolled, setIsScrolled] = useState(false)
 
     useEffect(() => {
@@ -50,25 +52,35 @@ export function Header() {
         <header className={headerStyles}>
             <div className="container mx-auto px-6">
                 <div className="flex h-20 items-center justify-between">
-                    <div className="font-bold text-2xl tracking-tight">
+                    <Link to="/" className="font-bold text-2xl tracking-tight">
                         Wanderlust
-                    </div>
+                    </Link>
 
                     <NavigationMenu>
                         <NavigationMenuList className="gap-8">
                             {navItems.map((item) => (
                                 <NavigationMenuItem key={item.title}>
-                                    <NavigationMenuLink className={linkStyles}>
+                                    <Link to={item.href} className={linkStyles}>
                                         {item.title}
-                                    </NavigationMenuLink>
+                                    </Link>
                                 </NavigationMenuItem>
                             ))}
                         </NavigationMenuList>
                     </NavigationMenu>
 
                     <div className="flex items-center gap-4">
-                        <button className={signInStyles}>Sign In</button>
-                        <button className={signUpStyles}>Sign Up</button>
+                        <button
+                            onClick={() => navigate('/signin')}
+                            className={signInStyles}
+                        >
+                            Sign In
+                        </button>
+                        <button
+                            onClick={() => navigate('/signup')}
+                            className={signUpStyles}
+                        >
+                            Sign Up
+                        </button>
                     </div>
                 </div>
             </div>
