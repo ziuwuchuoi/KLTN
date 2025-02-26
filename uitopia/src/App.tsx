@@ -1,15 +1,30 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { BrowserRouter } from "react-router-dom";
+import AppRoutes from "./routes";
+import { ThemeProvider } from "@/components/ui/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "./components/ui/tooltip";
+// import { AuthProvider } from "./AuthProvider";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-function App() {
-  const [count, setCount] = useState(0)
+import "non.geist";
+import "non.geist/mono";
 
-  return (
-    <>
-      Hi
-    </>
-  )
+export function App() {
+    const queryClient = new QueryClient();
+    return (
+            <QueryClientProvider client={queryClient}>
+                <BrowserRouter>
+                    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+                        {/* <AuthProvider> */}
+                            <TooltipProvider>
+                                <AppRoutes />
+                                <Toaster />
+                            </TooltipProvider>
+                        {/* </AuthProvider> */}
+                    </ThemeProvider>
+                </BrowserRouter>
+            </QueryClientProvider>
+    );
 }
 
-export default App
+export default App;
