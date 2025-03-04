@@ -11,7 +11,7 @@ import {
 const navItems = [
     { title: "Accommodations", href: "/accommodations" },
     { title: "Transports", href: "/transports" },
-    { title: "Tours & Activities", href: "/tours" },
+    { title: "Actitivies & Tours", href: "/tours" },
 ]
 
 export function Header() {

@@ -2,7 +2,7 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "../general.utils";
+import { cn } from "@/components/general.utils";
 import { TbLoader } from "react-icons/tb";
 
 const buttonVariants = cva(
