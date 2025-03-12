@@ -36,68 +36,93 @@ export interface UserPreferences {
 }
 
 // Transportation-related types
-export type Transportation = "flight" | "train" | "taxi" | "boat" | "rentCar" | "bus" | "ferry" | "bicycle" | "walking" | "helicopter";
+export type Transportation =
+    | "flight"
+    | "train"
+    | "taxi"
+    | "boat"
+    | "rentCar"
+    | "bus"
+    | "ferry"
+    | "bicycle"
+    | "walking"
+    | "helicopter";
 
+// TransportationDetails nghĩa là ví dụ như có nhiều chuyến bay với chuyến xe khác nhau (trừ những phương tiện linh động như xe hơi)
 export interface TransportationDetails {
-    type: Transportation;
-    provider?: string;
-    vehicleDetails?: string;
-    departureTime?: Date;
-    arrivalTime?: Date;
-    departureLocation?: Location;
-    arrivalLocation?: Location;
-    seatType?: "economy" | "business" | "firstClass";
-    seatNumber?: string;
-    price?: number;
-    bookingReference?: string;
-    duration?: number; // in minutes
-    includesTransfer?: boolean;
+    _id: string; //id của phương tiện đó
+    type: Transportation; //loại phương tiện
+    price: number; //? mình không biết có cần price không, hoặc price để vào booking
+    provider: string; //nhà cung cấp, ví dụ như máy bay thì có hãng máy bay, xe thuê thì sẽ có chú thích của người đó idk
+    vehicleDetails?: string; //xe có mấy chỗ something something
+    departureTime?: Date; //nếu là máy bay thì có thời gian đi
+    arrivalTime?: Date; //same
+    departureLocation?: Location; //nếu là đặt xe đặt máy bay sẽ có địa điểm đến
+    arrivalLocation?: Location; //same
+    seatType?: "economy" | "business" | "firstClass"; //dành cho máy bay
+    seatNumber?: string; //dành cho máy bay, tàu, thuyền,..
+    baggageInfo?: string; //gửi hành lý
+    duration?: number; //chuyến đi trong bao lâu
+    bookingReference?: string; //chưa biết
+    includesTransfer?: boolean; //chưa biết
 }
 
 // Accommodation-related types
-export type Accommodation = "hotel" | "homestay" | "apartment" | "resort" | "villa" | "hostel" | "guesthouse" | "campsite" | "cruiseShip";
+export type Accommodation =
+    | "hotel"
+    | "homestay"
+    | "apartment"
+    | "resort"
+    | "villa"
+    | "hostel"
+    | "guesthouse"
+    | "campsite"
+    | "cruiseShip";
 
 export type RoomType = "single" | "double" | "twin" | "triple" | "family" | "suite" | "deluxe" | "penthouse";
 
+// này là accomodationdetails,
 export interface AccommodationDetails {
-    type: Accommodation;
-    name: string;
-    address: string;
-    location: Location;
-    checkIn: Date;
-    checkOut: Date;
-    roomType: RoomType;
-    guestCount: number;
-    amenities: string[];
-    rating?: number;
-    price: number;
+    _id: string; //id
+    type: Accommodation; //loại chỗ ở
+    name: string; //tên chỗ ở
+    location: Location; //địa điểm
+    checkIn?: Date; //thời điểm checkin thì cái này là sẽ chọn sau -> optional phải kh ha
+    checkOut?: Date; //thời điểm checkout cũng tương tự, vì này chỉ lưu thông tin của địa điểm đó -> nên đẩy cái này qua booking
+    roomType?: RoomType; //loại phòng
+    guestCount: number; //số người ở
+    amenities: string[]; //vật dụng
+    rating?: number; //đánh giá
+    price: number; //số tiền
     bookingReference?: string;
     includesBreakfast?: boolean;
     includesAirport?: boolean;
-    cancellationPolicy?: string;
+    cancellationPolicy?: string; //mấy cái policy của ngta
 }
 
 // Entertainment-related types
-export type Entertainment = 
-    "sightseeing" | 
-    "museum" | 
-    "themePark" | 
-    "concert" | 
-    "sports" | 
-    "beach" | 
-    "hiking" | 
-    "shopping" | 
-    "foodTour" | 
-    "nightlife" | 
-    "safari" | 
-    "diving" | 
-    "cruise" | 
-    "culturalShow" | 
-    "workshop";
+export type Entertainment =
+    | "sightseeing"
+    | "museum"
+    | "themePark"
+    | "concert"
+    | "sports"
+    | "beach"
+    | "hiking"
+    | "shopping"
+    | "foodTour"
+    | "nightlife"
+    | "safari"
+    | "diving"
+    | "cruise"
+    | "culturalShow"
+    | "workshop";
 
+//dành cho hoạt động
 export interface EntertainmentDetails {
-    type: Entertainment;
-    name: string;
+    _id: string; //id
+    type: Entertainment; //thể loại giải trí
+    name: string; //tên
     description: string;
     location: Location;
     startTime?: Date;
@@ -109,7 +134,7 @@ export interface EntertainmentDetails {
     ageRestrictions?: string;
     accessibilityOptions?: string[];
     guidedTour?: boolean;
-    duration?: number; // in minutes
+    duration?: number;
 }
 
 // Location and geography types
@@ -127,19 +152,20 @@ export interface Location {
 
 // Schedule-related types
 export interface Schedule {
-    day: number;
+    _id: string;
     date?: Date;
     title: string;
     description?: string;
     startTime?: string;
     endTime?: string;
     activities: Activity[];
-    meals?: MealPlan;
+    meals?: MealPlan[];
     freeTime?: boolean;
     notes?: string;
 }
 
 export interface Activity {
+    _id: string;
     type: "transportation" | "accommodation" | "entertainment" | "meal" | "freeTime";
     title: string;
     description?: string;
@@ -149,8 +175,8 @@ export interface Activity {
     location?: Location;
     included: boolean;
     price?: number; // if not included
-    transportationDetails?: TransportationDetails;
     accommodationDetails?: AccommodationDetails;
+    transportationDetails?: TransportationDetails;
     entertainmentDetails?: EntertainmentDetails;
     mealDetails?: MealDetails;
 }
@@ -172,7 +198,7 @@ export interface MealDetails {
 }
 
 // Tour-related types
-export interface Tour {
+export interface TourDetails {
     _id: string;
     name: string;
     description: string;
@@ -180,8 +206,11 @@ export interface Tour {
     imageUrl?: string[];
     createdAt?: Date;
     updatedAt?: Date;
+    //tour thì đã có schedule rùi, vậy mình có cần phần accommodation với transportation ở ngoài kh?
+    //hay bỏ ở schedule?
     accommodation: Accommodation[];
     transportation: Transportation[];
+    destination: Location[];
     schedule: Schedule[];
     duration: number; // in days
     startDates: Date[];
@@ -193,7 +222,6 @@ export interface Tour {
         singleSupplement?: number; // extra cost for single occupancy
         currency: string;
     };
-    destination: Location[];
     maxGroupSize: number;
     minGroupSize?: number;
     currentBookings?: number;
@@ -214,7 +242,7 @@ export interface Tour {
 
 export interface TourReview {
     _id: string;
-    user: string; 
+    user: string;
     tourId: string;
     rating: number;
     title?: string;
@@ -238,14 +266,17 @@ export interface FAQ {
 // Booking-related types
 export interface Booking {
     _id: string;
-    tour: string; // reference to tour
-    user: string; // reference to user
+    tour?: string; // reference to tour
+    type: "accommodations" | "transportations" | "entertainments" | "tours";
+    userId: string; // reference to user
     bookingDate: Date;
-    tourDates: {
-        startDate: Date;
-        endDate: Date;
-    };
-    travelers: Traveler[];
+
+    //tuỳ vào loại booking mà sử dụng cho phù hợp :D
+    accommodationBookingDetails?: AccommodationDetails;
+    transportationBookingDetails?: TransportationDetails;
+    entertainmentBookingDetails?: EntertainmentDetails;
+    tourBookingDetails?: TourDetails;
+
     totalPrice: number;
     currency: string;
     status: "pending" | "confirmed" | "paid" | "completed" | "cancelled" | "refunded";
@@ -278,17 +309,6 @@ export interface Booking {
     refundAmount?: number;
 }
 
-export interface Traveler {
-    firstName: string;
-    lastName: string;
-    dateOfBirth: Date;
-    passportNumber?: string;
-    passportExpiry?: Date;
-    nationality: string;
-    specialRequirements?: string;
-    type: "adult" | "child" | "infant";
-}
-
 // Payment-related types
 export interface Payment {
     _id: string;
@@ -304,7 +324,7 @@ export interface Payment {
     notes?: string;
 }
 
-// Notification-related types
+// Notification-related types -> chuaw bietes nuawx
 export interface Notification {
     _id: string;
     user: string; // reference to user
