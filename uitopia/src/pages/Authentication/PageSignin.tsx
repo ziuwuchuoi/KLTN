@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, LoadingButton } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 
 const PageSignin = () => {
@@ -10,43 +10,23 @@ const PageSignin = () => {
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const location = useLocation();
 
     const handleGoogleLogin = () => {
         window.location.href = "http://localhost:3000/users/auth-google/login"; // Adjust the backend URL
     };
 
-    useEffect(() => {
-        const checkAuthStatus = async () => {
-            try {
-                const response = await fetch("http://localhost:3000/users/status", { credentials: "include" });
-                const data = await response.json();
-                if (data.authenticated) {
-                    console.log("User authenticated", data.user);
-                    navigate("/"); 
-                }
-            } catch (error) {
-                console.error("Error checking auth status", error);
-            }
-        };
-        checkAuthStatus();
-    }, [navigate]);
-
     return (
         <div className="flex flex-col w-full h-full items-center justify-center p-6">
             <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
-                <h2 className="text-2xl font-bold text-center">Log in</h2>
-                <p className="text-muted-foreground text-center mt-2">
-                    Enter your email and password to access your account.
-                </p>
+                <div className="text-xl font-bold text-center">Access Your Account</div>
 
-                <div className="mt-6">
+                <div className="mt-4">
                     <Label>Email</Label>
                     <Input
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Enter your email"
-                        className="mt-2"
+                        className="mt-1"
                     />
                 </div>
 
@@ -57,7 +37,7 @@ const PageSignin = () => {
                         type="password"
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Enter your password"
-                        className="mt-2"
+                        className="mt-1"
                     />
                 </div>
 
@@ -68,7 +48,7 @@ const PageSignin = () => {
                     isLoading={isLoading}
                     onClick={() => {}}
                 >
-                    Log in
+                    Sign in
                 </LoadingButton>
 
                 <div className="relative my-6">
@@ -87,6 +67,13 @@ const PageSignin = () => {
                 >
                     <FcGoogle className="text-lg" /> Sign in with Google
                 </Button>
+
+                <div className="text-center text-sm text-muted-foreground pt-6">
+                    Don't have an account?
+                    <Button variant="link" className="px-1" onClick={() => navigate("/signup")}>
+                        Create a new account
+                    </Button>
+                </div>
             </div>
         </div>
     );

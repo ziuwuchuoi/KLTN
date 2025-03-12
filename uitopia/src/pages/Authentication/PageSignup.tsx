@@ -19,18 +19,15 @@ const PageSignup = () => {
     return (
         <div className="flex flex-col w-full h-full items-center justify-center p-6">
             <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
-                <h2 className="text-2xl font-bold text-center">Create an account</h2>
-                <p className="text-muted-foreground text-center mt-2">
-                    Enter your details below to sign up.
-                </p>
-                
-                <div className="mt-6">
+                <div className="text-xl font-bold text-center">Create an account</div>
+
+                <div className="mt-4">
                     <Label>Name</Label>
                     <Input
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Enter your name"
-                        className="mt-2"
+                        className="mt-1"
                     />
                 </div>
 
@@ -40,10 +37,10 @@ const PageSignup = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Enter your email"
-                        className="mt-2"
+                        className="mt-1"
                     />
                 </div>
-                
+
                 <div className="mt-4">
                     <Label>Password</Label>
                     <Input
@@ -51,10 +48,10 @@ const PageSignup = () => {
                         type="password"
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Enter your password"
-                        className="mt-2"
+                        className="mt-1"
                     />
                 </div>
-                
+
                 <LoadingButton
                     variant="default"
                     className="w-full mt-6"
@@ -64,7 +61,7 @@ const PageSignup = () => {
                 >
                     Create account
                 </LoadingButton>
-                
+
                 <div className="relative my-6">
                     <div className="absolute inset-0 flex items-center">
                         <span className="w-full border-t"></span>
@@ -73,7 +70,7 @@ const PageSignup = () => {
                         <span className="bg-white px-3 text-muted-foreground">Or continue with</span>
                     </div>
                 </div>
-                
+
                 <Button
                     variant="outline"
                     className="w-full flex items-center justify-center gap-2"
@@ -83,8 +80,10 @@ const PageSignup = () => {
                 </Button>
 
                 <div className="text-center text-sm text-muted-foreground pt-6">
-                    Already have an account? 
-                    <Button variant="link" className="px-1" onClick={() => navigate("/signin")}>Sign in</Button>
+                    Already have an account?
+                    <Button variant="link" className="px-1" onClick={() => navigate("/signin")}>
+                        Sign in
+                    </Button>
                 </div>
             </div>
         </div>
