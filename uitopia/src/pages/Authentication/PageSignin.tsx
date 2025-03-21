@@ -15,6 +15,8 @@ const PageSignin = () => {
         window.location.href = "http://localhost:3000/users/auth-google/login"; // Adjust the backend URL
     };
 
+    
+
     return (
         <div className="flex flex-col w-full h-full items-center justify-center p-6">
             <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">

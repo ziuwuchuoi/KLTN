@@ -24,11 +24,11 @@ function PageAccommodation() {
 
     return (
         <div>
-            <HotelCard
+            {/* <HotelCard
                 accommodation={accommodationData}
                 onViewAvailability={() => console.log("View Availability")}
                 onFavoriteToggle={() => console.log("Toggle Favorite")}
-            />
+            /> */}
         </div>
     );
 }

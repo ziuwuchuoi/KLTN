@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 "use client";
 
 import React, { type FC, useState, useEffect, useRef } from "react";
@@ -6,7 +5,6 @@ import { Button } from "./button";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { Calendar } from "./calendar";
 import { DateInput } from "./date-input";
-import { ChevronUpIcon, ChevronDownIcon, CheckIcon } from "@radix-ui/react-icons";
 import { cn } from "@/components/general.utils";
 import { FormatDate } from "@/components/general.utils";
 

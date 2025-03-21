@@ -17,7 +17,6 @@ const accomodationOptions: SortOption[] = [
 ];
 
 
-
 function FormAccommodationOption() {
     const [selectedOption, setSelectedOption] = useState<SortOption>(accomodationOptions[0]);
     const [showFlights, setShowFlights] = useState(false);
@@ -72,7 +71,6 @@ function FormAccommodationOption() {
             </div>
 
             {/* Third row: Date range picker and Guest counter */}
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3 relative">
                 
             </div>

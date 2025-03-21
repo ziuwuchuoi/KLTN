@@ -6,7 +6,7 @@ export default function PageHome() {
         <main>
             <Header />
             {/* Add this to test scroll effect */}
-            <div className="flex flex-col h-screen bg-gradient-to-b from-blue-500 to-yellow-500 items-center">
+            <div className="flex flex-col h-screen bg-gradient-to-b from-teal-400 via-blue-200 to-indigo-400 items-center">
                 <div className="flex m-auto">
                     <SearchTabs />
                 </div>
