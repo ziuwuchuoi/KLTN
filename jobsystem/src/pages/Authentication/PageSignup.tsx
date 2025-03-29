@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, LoadingButton } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +9,7 @@ const PageSignup = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleGoogleSignup = () => {
@@ -17,7 +17,7 @@ const PageSignup = () => {
     };
 
     return (
-        <div className="flex flex-col w-full h-full items-center justify-center p-6">
+        <div className="flex min-h-screen items-center justify-center p-6">
             <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
                 <div className="text-xl font-bold text-center">Create an account</div>
 
