@@ -36,14 +36,14 @@ const features = [
         href: "/ai-interview",
     },
     {
-        title: "Technical Quiz",
-        description: "Test your technical knowledge with AI-generated quizzes.",
+        title: "Quizz",
+        description: "Test your knowledge with AI-generated quizzes.",
         icon: (
             <svg className="h-12 w-12 text-yellow-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <rect x="3" y="3" width="18" height="18" rx="2" />
             </svg>
         ),
-        href: "/technical-quiz",
+        href: "/quiz",
     },
     {
         title: "Live Coding Test",

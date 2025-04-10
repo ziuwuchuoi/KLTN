@@ -1,6 +1,6 @@
 import React from "react";
 
-function PageAIInterview() {
+const PageAIInterview = () => {
   return <div>PageAIInterview</div>;
 }
 

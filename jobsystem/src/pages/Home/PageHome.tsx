@@ -1,4 +1,6 @@
-export default function PageHome() {
+
+
+const PageHome = () => {
     return (
         <main>
             {/* Add this to test scroll effect */}
@@ -7,3 +9,5 @@ export default function PageHome() {
         </main>
     );
 }
+
+export default PageHome

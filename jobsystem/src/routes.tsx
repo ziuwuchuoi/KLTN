@@ -9,7 +9,7 @@ import PageSignup from "./pages/Authentication/PageSignup";
 // features
 import PageAIInterview from "./pages/AIInterview/PageAIInterview";
 import PageCVEvaluation from "./pages/CVEvaluation/PageCVEvaluation";
-import PageTechnicalQuiz from "./pages/TechnicalQuiz/PageTechnicalQuiz";
+import PageQuiz from "./pages/Quizz/PageQuiz";
 import PageLiveCoding from "./pages/LiveCoding/PageLiveCoding";
 
 const AppRoutes = () => (
@@ -19,7 +19,7 @@ const AppRoutes = () => (
         <Route path="/signup" element={<PageSignup />} />
         <Route path="/ai-interview" element={<PageAIInterview />} />
         <Route path="/cv-evaluation" element={<PageCVEvaluation />} />
-        <Route path="/technical-quiz" element={<PageTechnicalQuiz />} />
+        <Route path="/quiz" element={<PageQuiz />} />
         <Route path="/live-coding" element={<PageLiveCoding />} />
     </Routes>
 );
