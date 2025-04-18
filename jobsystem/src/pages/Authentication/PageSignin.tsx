@@ -12,11 +12,10 @@ const PageSignin = () => {
     const navigate = useNavigate();
 
     const handleGoogleLogin = () => {
-        window.location.href = "http://localhost:3000/users/auth-google/login"; // Adjust the backend URL
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center p-6">
+        <div className="flex min-h-screen items-center justify-center p-6 bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900">
             <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
                 <div className="text-xl font-bold text-center">Access Your Account</div>
 

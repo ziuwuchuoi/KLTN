@@ -64,7 +64,7 @@ export function CustomNavigationMenu() {
                 {/* Features Dropdown */}
                 <NavigationMenuItem>
                     <NavigationMenuTrigger>Features</NavigationMenuTrigger>
-                    <NavigationMenuContent>
+                    <NavigationMenuContent className="bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 text-white">
                         <ul className="grid w-[200px] gap-3 p-4 md:w-[300px] md:grid-cols-1 lg:w-[400px] ">
                             {features.map((feature) => (
                                 <ListItem key={feature.title} title={feature.title} href={feature.href}>

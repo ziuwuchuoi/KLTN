@@ -13,7 +13,7 @@ const PageQuiz = () => {
             <div className="h-screen flex flex-col bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 items-center justify-center px-6 text-white">
                 <CustomHeroSection />
 
-                <div className="flex px-6 pb-12 mt-10">
+                <div className="flex px-6 pb-12">
                     <QuizCategoriesList onSelectCategory={() => {}} />
                 </div>
             </div>
