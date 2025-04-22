@@ -10,7 +10,7 @@ export default function CustomHeader() {
             </div>
 
             {/* Middle - Website Name (Absolute Center) */}
-            <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-white">IT Evaluation</h1>
+            <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-white">Quantum Leap</h1>
 
             {/* Right - Navigation Menu */}
             <div className="ml-auto mr-5 hidden md:flex space-x-6 text-white">

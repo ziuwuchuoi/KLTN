@@ -9,7 +9,7 @@ const FeaturedQuiz = ({ onStart }: FeaturedQuizSectionProps) => {
   return (
     <div className="mb-16">
       <h2 className="text-2xl font-bold mb-8 flex items-center">
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-sky-400">
           Featured Assessment
         </span>
         <span className="ml-3 px-3 py-1 bg-indigo-900/30 text-indigo-400 text-xs rounded-full">NEW</span>

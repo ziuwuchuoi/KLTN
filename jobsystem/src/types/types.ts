@@ -1,4 +1,63 @@
 export type UserRole = "admin" | "candidate" | "recruiter";
+export type QuizCategory = "technical" | "case" | "personality";
+
+export type TechnicalSubCategory =
+    | "javascript"
+    | "typescript"
+    | "html"
+    | "css"
+    | "sass"
+    | "react"
+    | "vue"
+    | "angular"
+    | "nextjs"
+    | "nodejs"
+    | "express"
+    | "nestjs"
+    | "frontend"
+    | "backend"
+    | "fullstack"
+    | "database"
+    | "sql"
+    | "nosql"
+    | "mongodb"
+    | "postgresql"
+    | "networking"
+    | "cloud"
+    | "aws"
+    | "azure"
+    | "gcp"
+    | "devops"
+    | "docker"
+    | "kubernetes"
+    | "ci/cd"
+    | "testing"
+    | "jest"
+    | "cypress"
+    | "security"
+    | "linux"
+    | "algorithms"
+    | "data-structures"
+    | "system-design"
+    | "machine-learning"
+    | "ai"
+    | "data-science"
+    | "web3"
+    | "blockchain"
+    | "mobile"
+    | "flutter"
+    | "react-native";
+
+export type SituationTrait =
+    | "communication"
+    | "problem-solving"
+    | "critical-thinking"
+    | "leadership"
+    | "team-collaboration"
+    | "conflict-resolution"
+    | "adaptability";
+
+export type PersonalityTrait = "openness" | "conscientiousness" | "extroversion" | "agreeableness" | "neuroticism";
 
 export interface BaseUser {
     _id: string;
@@ -96,4 +155,51 @@ export interface BaseApplication {
     evaluation?: Partial<BaseEvaluation>; // whether candidate does evaluation in this jd from recruiter, some parts
     createdAt: Date;
     status: "pending" | "shortlisted" | "rejected" | "accepted";
+}
+
+export interface BaseQuiz {
+    _id: string;
+    title: string;
+    description?: string;
+    category: QuizCategory;
+    createdAt?: Date;
+    updatedAt?: Date;
+
+    questions: BaseQuizQuestion[];
+    durationInMinutes?: number;
+    totalScore?: number;
+}
+
+interface BaseQuestion {
+    _id: string;
+}
+
+export type BaseQuizQuestion = BaseTechnicalQuestion | BaseSituationCaseQuestion | BasePersonalityQuestion;
+
+export interface BaseTechnicalQuestion extends BaseQuestion {
+    type: "technical";
+    subCategory: TechnicalSubCategory; // e.g., javascript, react,...
+    question: string;
+    options: string[];
+    correctAnswer: string;
+    explanation?: string;
+    score: number;
+}
+
+export interface BaseSituationCaseQuestion extends BaseQuestion {
+    type: "case";
+    trait: SituationTrait; // e.g., communication, problem-solving
+    scenario: string;
+    question: string;
+    answerType: "text" | "multiple-choice";
+    options?: string[];
+    expectedTraits?: string[]; // optional, multi-trait mapping
+    score?: number;
+}
+
+export interface BasePersonalityQuestion extends BaseQuestion {
+    type: "personality";
+    statement: string;
+    scale: number;
+    traitMeasured: PersonalityTrait; // e.g., openness, etc.
 }

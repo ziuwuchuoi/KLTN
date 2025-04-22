@@ -10,11 +10,12 @@ const PageQuiz = () => {
             <CustomHeader />
 
             {/* Upload + Hero Section - Fixed height screen */}
-            <div className="h-screen flex flex-col bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 items-center justify-center px-6 text-white">
-                <CustomHeroSection />
-
-                <div className="flex px-6 pb-12">
-                    <QuizCategoriesList onSelectCategory={() => {}} />
+            <div className="h-screen bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 px-6 text-white flex items-center justify-center">
+                <div className="flex flex-col items-center justify-center w-full">
+                    <CustomHeroSection />
+                    <div className="w-full px-6 pb-12">
+                        <QuizCategoriesList />
+                    </div>
                 </div>
             </div>
 

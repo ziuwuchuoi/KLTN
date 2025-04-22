@@ -74,7 +74,7 @@ const RecentQuizActivities = ({ onReview }: RecentActivitiesSectionProps) => {
     return (
         <div className="w-[80%]">
             <h2 className="text-2xl font-bold mb-8">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-sky-400">
                     Your Recent Activities
                 </span>
             </h2>
