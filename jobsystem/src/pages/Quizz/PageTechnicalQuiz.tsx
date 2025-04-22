@@ -50,10 +50,11 @@ const PageTechnicalQuiz = () => {
     }, [activeDialog, searchDialogQuery, groupedQuizItems]);
 
     return (
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full min-h-screen bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 text-white">
             <CustomHeader />
 
-            <div className="flex flex-col scroll-auto min-h-screen bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 px-6 text-white items-center justify-center pb-10 border border-green-400">
+            <div className="flex flex-col px-6">
+                {/* Fixed Section */}
                 <div className="flex flex-row items-end w-full mt-40 mb-5 justify-around">
                     <CustomHeroSection title="Technical" subtitle="Center" align="left" />
                     <div className="relative w-full md:w-96">
@@ -65,61 +66,59 @@ const PageTechnicalQuiz = () => {
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="pl-10 bg-zinc-800/70 border-zinc-700 text-white w-full"
                         />
-                        {searchQuery && searchResults.length > 0 && (
-                            <div className="absolute z-50 mt-2 w-full bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl max-h-96 overflow-y-auto">
-                                {searchResults.map((item) => (
-                                    <button
-                                        key={item.id}
-                                        onClick={() => (window.location.href = item.route)}
-                                        className="w-full px-4 py-3 text-left hover:bg-zinc-800/50 flex flex-col border-b border-zinc-800 last:border-none"
-                                    >
-                                        <span className="text-white font-medium">{item.title}</span>
-                                        <span className="text-xs text-gray-400">{item.group}</span>
-                                        <span className="text-sm text-gray-500 mt-1 line-clamp-2">
-                                            {item.description}
-                                        </span>
-                                    </button>
-                                ))}
-                            </div>
-                        )}
                     </div>
                 </div>
-                
-                <div className="space-y-12 mt-8 border border-red-500 w-full px-20">
-                    {Object.entries(groupedQuizItems).map(([groupName, items]) => (
-                        <div key={groupName} className="space-y-4">
-                            <div className="flex justify-between items-end">
-                                <h2 className="text-xl font-bold text-white/90">
-                                    {groupName}
-                                    <span className="ml-2 text-sm font-normal text-gray-500">({items.length})</span>
-                                </h2>
-                                <Button
-                                    variant="ghost"
-                                    className="text-indigo-400 hover:text-indigo-300 hover:bg-indigo-950/50"
-                                    onClick={() => setActiveDialog(groupName)}
-                                >
-                                    See all
-                                </Button>
-                            </div>
 
-                            <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                                {items.slice(0, 4).map((item) => (
-                                    <QuizCard key={item.id} item={item} />
-                                ))}
-                            </div>
-                        </div>
-                    ))}
+                {/* Scrollable or normal section */}
+                <div className="space-y-12 mt-8 w-full px-20">
+                    {searchQuery && searchResults.length === 0 ? (
+                        <div className="text-center text-white/50 text-lg py-10">No results found.</div>
+                    ) : (
+                        Object.entries(groupedQuizItems).map(([groupName, items]) => {
+                            const filteredItems = searchQuery
+                                ? searchResults.filter((item) => item.group === groupName)
+                                : items;
+
+                            if (filteredItems.length === 0) return null;
+
+                            return (
+                                <div key={groupName} className="space-y-4">
+                                    <div className="flex justify-between items-end">
+                                        <h2 className="text-xl font-bold text-white/90">
+                                            {groupName}
+                                            <span className="ml-2 text-sm font-normal text-gray-500">
+                                                ({filteredItems.length})
+                                            </span>
+                                        </h2>
+                                        <Button
+                                            variant="ghost"
+                                            className="text-indigo-400 hover:text-indigo-300 hover:bg-indigo-950/50"
+                                            onClick={() => setActiveDialog(groupName)}
+                                        >
+                                            See all
+                                        </Button>
+                                    </div>
+
+                                    <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                        {filteredItems.slice(0, 4).map((item) => (
+                                            <QuizCard key={item.id} item={item} />
+                                        ))}
+                                    </div>
+                                </div>
+                            );
+                        })
+                    )}
                 </div>
-                {/* The list of quiz*/}
-                <DialogQuiz
-                    open={!!activeDialog}
-                    onOpenChange={(open) => !open && setActiveDialog(null)}
-                    dialogTitle={activeDialog ?? ""}
-                    searchValue={searchDialogQuery}
-                    onSearchChange={setSearchDialogQuery}
-                    filteredItems={filteredDialogItems}
-                />
             </div>
+
+            <DialogQuiz
+                open={!!activeDialog}
+                onOpenChange={(open) => !open && setActiveDialog(null)}
+                dialogTitle={activeDialog ?? ""}
+                searchValue={searchDialogQuery}
+                onSearchChange={setSearchDialogQuery}
+                filteredItems={filteredDialogItems}
+            />
         </div>
     );
 };
