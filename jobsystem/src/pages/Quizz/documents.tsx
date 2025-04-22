@@ -1,5 +1,16 @@
 import { QuizItem } from "./QuizCategory";
-import { TbBriefcase, TbDeviceDesktop, TbEmpathize } from "react-icons/tb";
+import {
+    TbBriefcase,
+    TbDeviceDesktop,
+    TbEmpathize,
+    TbUsers,
+    TbTargetArrow,
+    TbClock,
+    TbMessages,
+    TbBolt,
+    TbMoodSmile,
+} from "react-icons/tb";
+
 import {
     TbBrandJavascript,
     TbBrandTypescript,
@@ -31,7 +42,7 @@ export const quizCategories: QuizItem[] = [
         route: "/quiz/technical",
     },
     {
-        id: "situational",
+        id: "case",
         title: "Situational Cases",
         description: "Assess how you would handle real-world workplace scenarios and challenges",
         icon: <TbBriefcase className="icon-sm text-purple-400" />,
@@ -228,5 +239,111 @@ export const technicalTopicItems: QuizItem[] = [
         borderColor: "hover:border-cyan-300",
         route: "/quiz/technical/react-native",
         group: "Mobile",
+    },
+];
+
+export const situationTopicItems: QuizItem[] = [
+    {
+        id: "teamwork",
+        title: "Teamwork Scenarios",
+        description: "Evaluate your ability to collaborate, delegate, and lead within a team setting",
+        icon: <TbUsers className="icon-sm text-blue-400" />,
+        quizCount: 6,
+        color: "from-blue-600/20 to-blue-400/20",
+        borderColor: "hover:border-blue-400",
+        route: "/quiz/case/teamwork",
+    },
+    {
+        id: "conflict",
+        title: "Conflict Resolution",
+        description: "Test how well you manage disagreements and maintain a positive work environment",
+        icon: <TbMessages className="icon-sm text-red-400" />,
+        quizCount: 5,
+        color: "from-red-600/20 to-red-400/20",
+        borderColor: "hover:border-red-400",
+        route: "/quiz/case/conflict",
+    },
+    {
+        id: "deadline",
+        title: "Deadline Pressure",
+        description: "Assess how you prioritize and perform under time constraints",
+        icon: <TbClock className="icon-sm text-yellow-400" />,
+        quizCount: 4,
+        color: "from-yellow-600/20 to-yellow-400/20",
+        borderColor: "hover:border-yellow-400",
+        route: "/quiz/case/deadline",
+    },
+    {
+        id: "adaptability",
+        title: "Adaptability",
+        description: "Evaluate how you respond to unexpected change or shifting priorities",
+        icon: <TbBolt className="icon-sm text-pink-400" />,
+        quizCount: 7,
+        color: "from-pink-600/20 to-pink-400/20",
+        borderColor: "hover:border-pink-400",
+        route: "/quiz/case/adaptability",
+    },
+    {
+        id: "customer",
+        title: "Customer Focus",
+        description: "Measure how you handle challenging client-facing situations",
+        icon: <TbMoodSmile className="icon-sm text-green-400" />,
+        quizCount: 6,
+        color: "from-green-600/20 to-green-400/20",
+        borderColor: "hover:border-green-400",
+        route: "/quiz/case/customer",
+    },
+    {
+        id: "ethics",
+        title: "Workplace Ethics",
+        description: "Analyze how you approach ethical dilemmas and tough decision-making",
+        icon: <TbTargetArrow className="icon-sm text-orange-400" />,
+        quizCount: 5,
+        color: "from-orange-600/20 to-orange-400/20",
+        borderColor: "hover:border-orange-400",
+        route: "/quiz/case/ethics",
+    },
+    {
+        id: "problem-solving",
+        title: "Problem Solving",
+        description: "Evaluate your critical thinking and strategic decision-making skills",
+        icon: <TbBrain className="icon-sm text-teal-400" />,
+        quizCount: 6,
+        color: "from-teal-600/20 to-teal-400/20",
+        borderColor: "hover:border-teal-400",
+        route: "/quiz/case/problem-solving",
+    },
+];
+
+export const personalityTopicItems = [
+    {
+        id: "mbti",
+        title: "MBTI Personality Test",
+        description: "Identify your MBTI type and understand your behavioral tendencies.",
+        icon: <TbEmpathize className="icon-sm text-amber-400" />,
+        quizCount: 1,
+        color: "from-amber-600/20 to-amber-400/20",
+        borderColor: "hover:border-amber-400",
+        route: "/quiz/personality/mbti",
+    },
+    {
+        id: "big5",
+        title: "Big Five Personality Test",
+        description: "Assess your openness, conscientiousness, extraversion, agreeableness, and neuroticism.",
+        icon: <TbEmpathize className="icon-sm text-yellow-400" />,
+        quizCount: 1,
+        color: "from-yellow-600/20 to-yellow-400/20",
+        borderColor: "hover:border-yellow-400",
+        route: "/quiz/personality/big5",
+    },
+    {
+        id: "workstyle",
+        title: "Work Style Assessment",
+        description: "Find out how you prefer to work, solve problems, and collaborate in teams.",
+        icon: <TbEmpathize className="icon-sm text-orange-400" />,
+        quizCount: 1,
+        color: "from-orange-600/20 to-orange-400/20",
+        borderColor: "hover:border-orange-400",
+        route: "/quiz/personality/workstyle",
     },
 ];

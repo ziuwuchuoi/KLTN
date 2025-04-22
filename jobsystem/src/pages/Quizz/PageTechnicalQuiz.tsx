@@ -2,7 +2,6 @@ import React, { useMemo, useState } from "react";
 import CustomHeader from "@/components/molecules/CustomHeader";
 import CustomHeroSection from "@/components/molecules/CustomHeroSection";
 import { technicalTopicItems } from "./documents";
-import CustomDialog from "@/components/molecules/CustomDialog";
 import { TbSearch } from "react-icons/tb";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,6 @@ import DialogQuiz from "./dialogs/DialogQuiz";
 const PageTechnicalQuiz = () => {
     const [searchQuery, setSearchQuery] = useState(""); // search all the items
     const [searchDialogQuery, setSearchDialogQuery] = useState(""); // search inside dialog
-    // const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [activeDialog, setActiveDialog] = useState(null);
 
     const groupedQuizItems = useMemo(() => {
@@ -26,7 +24,6 @@ const PageTechnicalQuiz = () => {
         }, {});
     }, []);
 
-    // Global search across all items
     const searchResults = useMemo(() => {
         const search = searchQuery.trim().toLowerCase();
         if (!search) return [];
@@ -39,7 +36,6 @@ const PageTechnicalQuiz = () => {
         );
     }, [searchQuery]);
 
-    // Filter items in the active dialog based on search term
     const filteredDialogItems = useMemo(() => {
         if (!activeDialog) return [];
 
@@ -57,10 +53,9 @@ const PageTechnicalQuiz = () => {
         <div className="flex flex-col w-full">
             <CustomHeader />
 
-            {/* Upload + Hero Section - Fixed height screen */}
-            <div className="flex flex-col scroll-auto min-h-screen bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 px-6 text-white items-center justify-center pb-10">
-                <div className="flex flex-row items-center justify-center w-full mt-20">
-                    <CustomHeroSection title="Technical" subtitle="Center" />
+            <div className="flex flex-col scroll-auto min-h-screen bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 px-6 text-white items-center justify-center pb-10 border border-green-400">
+                <div className="flex flex-row items-end w-full mt-40 mb-5 justify-around">
+                    <CustomHeroSection title="Technical" subtitle="Center" align="left" />
                     <div className="relative w-full md:w-96">
                         <TbSearch className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
                         <Input
@@ -89,7 +84,8 @@ const PageTechnicalQuiz = () => {
                         )}
                     </div>
                 </div>
-                <div className="space-y-12 mt-8">
+                
+                <div className="space-y-12 mt-8 border border-red-500 w-full px-20">
                     {Object.entries(groupedQuizItems).map(([groupName, items]) => (
                         <div key={groupName} className="space-y-4">
                             <div className="flex justify-between items-end">

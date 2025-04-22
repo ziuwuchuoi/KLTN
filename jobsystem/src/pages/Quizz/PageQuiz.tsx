@@ -12,7 +12,7 @@ const PageQuiz = () => {
             {/* Upload + Hero Section - Fixed height screen */}
             <div className="h-screen bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 px-6 text-white flex items-center justify-center">
                 <div className="flex flex-col items-center justify-center w-full">
-                    <CustomHeroSection />
+                    <CustomHeroSection className="mb-20"/>
                     <div className="w-full px-6 pb-12">
                         <QuizCategoriesList />
                     </div>
