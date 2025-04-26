@@ -9,13 +9,13 @@ interface CustomHeroSectionProps {
     className?: string;
 }
 
-const CustomHeroSection: React.FC<CustomHeroSectionProps> = ({
+const CustomHeroSection = ({
     title = "Quantum Leap",
     subtitle = "Assessment Center",
     description = "Evaluate your skills, personality, and professional aptitude with our comprehensive quiz collection",
     align = "center",
     className,
-}) => {
+}: CustomHeroSectionProps) => {
     const textAlignClass = {
         left: "text-left",
         center: "text-center",

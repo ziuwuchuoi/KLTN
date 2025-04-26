@@ -64,16 +64,11 @@ export interface BaseUser {
     name: string;
     email: string;
     role: UserRole;
-
-    password?: string; // Only required if using email/password login
     avatarUrl?: string;
-    avatarPath?: string;
 
-    auth: "google" | "email";
-
+    auth?: "google" | "email"; // first created? idk optional
     createdAt?: Date;
-    lastSeen?: Date;
-    lastQuotaReset?: Date;
+    updatedAt?: Date;
 }
 
 export interface BaseCandidate extends BaseUser {
@@ -113,12 +108,39 @@ export interface BaseCV {
 
 export interface BaseEvaluation {
     _id: string;
-    cvId: string; // candidate's CV's Id
-    jdId: string; // jdId whenever uploaded by candidate or recruiter.
-    score?: number;
+    cvId: string; // candidate's CV ID
+    jdId: string; // job Description ID
+
+    // Evaluation Summary
+    similarityScore?: number; // Similarity between CV and JD (%)
+    fitLevel?: "Low" | "Medium" | "High"; // Overall suitability
+
+    // Skill & Experience Matching
     matchedSkills: string[];
+    missingSkills?: string[];
     matchedExperience: string[];
-    feedback: string[];
+    experienceRelevance?: string[]; // Relevance of past experience to the job
+    achievementImpact?: string[]; // Measurable or notable outcomes from previous roles
+
+    // Qualitative Feedback
+    feedback: string[]; // General feedback or evaluator notes
+    softSkills?: string[]; // Observed or inferred soft skills (e.g. communication, teamwork)
+    additionalSkills?: string[]; // Other relevant but non-required skills (e.g. languages, tools)
+
+    // AI-Generated Analysis
+    aiReview?: {
+        strengths: string[];
+        weaknesses: string[];
+        suggestions: string[];
+    };
+
+    // ATS Compatibility Check
+    atsCheck?: {
+        formattingTips: string[];
+        issues: string[];
+        recommendations: string[];
+    };
+
     createdAt?: Date;
     updatedAt?: Date;
 }

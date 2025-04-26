@@ -6,12 +6,15 @@ import { TbSearch } from "react-icons/tb";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { QuizCard, QuizItem } from "./QuizCategory";
-import DialogQuiz from "./dialogs/DialogQuiz";
+import QuizDialog from "./dialogs/QuizDialog";
+import { useNavigate } from "react-router-dom";
 
 const PageTechnicalQuiz = () => {
     const [searchQuery, setSearchQuery] = useState(""); // search all the items
     const [searchDialogQuery, setSearchDialogQuery] = useState(""); // search inside dialog
     const [activeDialog, setActiveDialog] = useState(null);
+    const navigate = useNavigate();
+
 
     const groupedQuizItems = useMemo(() => {
         return technicalTopicItems.reduce<Record<string, QuizItem[]>>((grouped, item) => {
@@ -101,7 +104,7 @@ const PageTechnicalQuiz = () => {
 
                                     <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                                         {filteredItems.slice(0, 4).map((item) => (
-                                            <QuizCard key={item.id} item={item} />
+                                            <QuizCard key={item.id} item={item} onStartClick={() => navigate(item.route)} requiredConfirm />
                                         ))}
                                     </div>
                                 </div>
@@ -111,7 +114,7 @@ const PageTechnicalQuiz = () => {
                 </div>
             </div>
 
-            <DialogQuiz
+            <QuizDialog
                 open={!!activeDialog}
                 onOpenChange={(open) => !open && setActiveDialog(null)}
                 dialogTitle={activeDialog ?? ""}

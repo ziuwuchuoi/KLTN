@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import { cn } from "@/components/utils/general.utils";
 import {
@@ -13,6 +14,7 @@ import {
     NavigationMenuTrigger,
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const features = [
     {
@@ -57,7 +59,50 @@ const features = [
     },
 ];
 
+const userMenu = [
+    {
+        title: "Profile",
+        icon: (
+            <svg className="h-12 w-12 text-blue-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
+        ),
+        href: "/profile",
+    },
+    {
+        title: "Settings",
+        icon: (
+            <svg className="h-12 w-12 text-blue-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
+        ),
+        href: "/setting",
+    },
+    {
+        title: "Sign Out",
+        icon: (
+            <svg className="h-12 w-12 text-blue-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
+        ),
+    },
+];
+
 export function CustomNavigationMenu() {
+    const { user, logout } = useAuthStore();
+    console.log("user", user);
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        try {
+            logout();
+            localStorage.removeItem("accessToken");
+            navigate("/signin/candidate");
+        } catch (error) {
+            console.error("Failed", error);
+        }
+    };
+
     return (
         <NavigationMenu>
             <NavigationMenuList>
@@ -86,38 +131,56 @@ export function CustomNavigationMenu() {
                         Contact
                     </Link>
                 </NavigationMenuItem>
-                <NavigationMenuItem>
-                    <Link to="/signin" className={navigationMenuTriggerStyle()}>
-                        Sign In
-                    </Link>
-                </NavigationMenuItem>
+
+                {user ? (
+                    <NavigationMenuItem>
+                        <NavigationMenuTrigger>{user.name || "Account"}</NavigationMenuTrigger>
+                        <NavigationMenuContent className="...">
+                            <ul className="...">
+                                {userMenu.map((menuItem) => (
+                                    <ListItem
+                                        key={menuItem.title}
+                                        title={menuItem.title}
+                                        href={menuItem.href}
+                                        onClick={menuItem.title === "Sign Out" ? handleLogout : undefined}
+                                    >
+                                        {menuItem.title}
+                                    </ListItem>
+                                ))}
+                            </ul>
+                        </NavigationMenuContent>
+                    </NavigationMenuItem>
+                ) : (
+                    <NavigationMenuItem>
+                        <Link to="/signin" className={navigationMenuTriggerStyle()}>
+                            Sign In
+                        </Link>
+                    </NavigationMenuItem>
+                )}
             </NavigationMenuList>
         </NavigationMenu>
     );
 }
 
-const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  )
-})
-ListItem.displayName = "ListItem"
+const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWithoutRef<"a">>(
+    ({ className, title, children, ...props }, ref) => {
+        return (
+            <li>
+                <NavigationMenuLink asChild>
+                    <a
+                        ref={ref}
+                        className={cn(
+                            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                            className
+                        )}
+                        {...props}
+                    >
+                        <div className="text-sm font-medium leading-none">{title}</div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{children}</p>
+                    </a>
+                </NavigationMenuLink>
+            </li>
+        );
+    }
+);
+ListItem.displayName = "ListItem";

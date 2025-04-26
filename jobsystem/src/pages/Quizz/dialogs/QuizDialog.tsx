@@ -4,7 +4,7 @@ import { TbSearch } from "react-icons/tb";
 import { Input } from "@/components/ui/input";
 import { QuizCard, QuizItem } from "../QuizCategory";
 
-interface DialogQuizProps {
+interface QuizDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     dialogTitle?: string;
@@ -13,14 +13,14 @@ interface DialogQuizProps {
     filteredItems: QuizItem[];
 }
 
-const DialogQuiz: React.FC<DialogQuizProps> = ({
+const QuizDialog = ({
     open,
     onOpenChange,
     dialogTitle,
     searchValue,
     onSearchChange,
     filteredItems,
-}) => {
+}: QuizDialogProps) => {
     return (
         <CustomDialog
             open={open}
@@ -48,7 +48,7 @@ const DialogQuiz: React.FC<DialogQuizProps> = ({
                             No quizzes found matching your search.
                         </p>
                     ) : (
-                        filteredItems.map((item) => <QuizCard key={item.id} item={item} />)
+                        filteredItems.map((item) => <QuizCard key={item.id} item={item} onStartClick={() => {}} />)
                     )}
                 </div>
             </div>
@@ -56,4 +56,4 @@ const DialogQuiz: React.FC<DialogQuizProps> = ({
     );
 };
 
-export default DialogQuiz;
+export default QuizDialog;

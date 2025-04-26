@@ -46,7 +46,7 @@ const CustomDialog = ({
             <DialogContent
                 className={cn(
                     "flex flex-col rounded-lg shadow-xl",
-                    "w-[90vw] xl:w-[60vw] h-[90vh] xl:h-[80vh] min-w-[700px] max-h-[825px]",
+                    "min-w-[700px] max-h-[825px]",
                     "outline-none focus:outline-none",
                     className
                 )}
