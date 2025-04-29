@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, LoadingButton } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,10 +6,13 @@ import { Label } from "@/components/ui/label";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
 import { loginService } from "@/services/auth.service";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { useSearchParams } from "react-router-dom";
 
 const PageSignin = () => {
     const { role } = useParams();
     const navigate = useNavigate();
+    const { login, googleLogin, setToken } = useAuthStore();
 
     const [email, setEmail] = useState("");
     const [otp, setOtp] = useState("");
@@ -25,14 +28,14 @@ const PageSignin = () => {
     const handleSendOtp = async () => {
         setIsLoading(true);
         try {
-            await loginService({
+            await login({
                 role,
                 step: "request",
                 type: 1,
-                data: { email: email },
+                data: { email },
             });
             toast.success("OTP sent to your email.");
-            setStep(2);
+            setStep(2); // move to OTP verification UI
         } catch (err) {
             toast.error("Failed to send OTP.");
         } finally {
@@ -43,15 +46,14 @@ const PageSignin = () => {
     const handleVerifyOtp = async () => {
         setIsLoading(true);
         try {
-            const response = await loginService({
-                role: role,
+            await login({
+                role,
                 step: "verify",
                 type: 1,
-                data: { email: email, otp: otp },
+                data: { email, otp },
             });
-
             toast.success("Login successful!");
-            navigate("/");
+            navigate("/"); // or wherever you want
         } catch (err) {
             toast.error("Invalid or expired OTP. Please try again.");
         } finally {
@@ -62,21 +64,9 @@ const PageSignin = () => {
     const handleGoogleLogin = async () => {
         setIsLoading(true);
         try {
-            const response = await loginService({
-                role: role,
-                step: "request",
-                type: 0,
-            });
-
-            const authUrl = response.data?.data?.data?.authUrl;
-
-            if (authUrl) {
-                window.location.href = authUrl;
-            } else {
-                toast.error("Failed to get authentication URL.");
-            }
-        } catch (err) {
-            toast.error("An error occurred while trying to authenticate with Google.");
+            await googleLogin(role);
+        } catch {
+            toast.error("Google login failed.");
         } finally {
             setIsLoading(false);
         }

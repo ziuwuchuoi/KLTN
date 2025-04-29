@@ -2,7 +2,10 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { BaseUser } from "../types/types";
-import { loginService, logoutService, getUserService } from "@/services/auth.service";
+import { loginService, logoutService } from "@/services/auth.service";
+import { getUserService } from "@/services/user.service";
+import { useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 
 export interface LoginParams {
     role: string;
@@ -20,13 +23,16 @@ type AuthState = {
     error: string | null;
     isBlurScreenLoading: boolean;
     isAuthChecking: boolean;
+    isAuthenticated: boolean;
 
     setToken: (token: string | null) => void;
     setUser: (user: BaseUser | null) => void;
     setError: (error: string | null) => void;
     login: (params: LoginParams) => Promise<void>;
+    googleLogin: (role: string) => Promise<void>;
+    handleGoogleRedirect: () => Promise<void>;
     logout: () => Promise<void>;
-    fetchProfile: () => Promise<void>;
+    fetchProfile: () => Promise<BaseUser>; // Return type set to BaseUser
     updateUser: (user: Partial<BaseUser>) => void;
     setIsBlurScreenLoading: (isLoading: boolean) => void;
 };
@@ -39,6 +45,7 @@ export const useAuthStore = create<AuthState>()(
             error: null,
             isBlurScreenLoading: false,
             isAuthChecking: false,
+            isAuthenticated: false,
 
             setToken: (token) => {
                 set((state) => {
@@ -69,22 +76,75 @@ export const useAuthStore = create<AuthState>()(
                     set({ isBlurScreenLoading: true });
 
                     const response = await loginService({ role, step, type, data });
-                    const { accessToken } = response;
+                    console.log("Login Response:", response);
 
-                    set((state) => {
-                        state.token = accessToken;
-                        state.error = null;
-                    });
+                    if (step === "verify") {
+                        const { accessToken } = response;
+                        console.log("accessToken:", accessToken);
 
-                    // Fetch user profile immediately after login
-                    await get().fetchProfile();
+                        if (accessToken) {
+                            set({ token: accessToken, error: null });
+
+                            // Fetch user profile after getting token
+                            await get().fetchProfile();
+                        } else {
+                            throw new Error("No access token received on verify step.");
+                        }
+                    }
                 } catch (error) {
                     console.error("Login failed:", error);
-                    set((state) => {
-                        state.error = error?.response?.data?.message || "Failed to login";
-                    });
+                    set({ error: error?.response?.data?.message || "Login failed" });
                 } finally {
                     set({ isBlurScreenLoading: false });
+                }
+            },
+
+            googleLogin: async (role: string) => {
+                try {
+                    set({ isBlurScreenLoading: true });
+
+                    const response = await loginService({
+                        role,
+                        step: "request",
+                        type: 0,
+                    });
+
+                    const authUrl = response?.data?.data?.authUrl;
+
+                    if (authUrl) {
+                        window.location.href = authUrl;
+                        return;
+                    } else {
+                        throw new Error("No authUrl returned");
+                    }
+                } catch (error) {
+                    console.error("Google login failed:", error);
+                    set({ error: "Google login failed" });
+                } finally {
+                    set({ isBlurScreenLoading: false });
+                }
+            },
+
+            handleGoogleRedirect: async () => {
+                try {
+                    set({ isAuthChecking: true });
+
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const isOAuth = urlParams.get("login_oauth2") === "true";
+                    const token = urlParams.get("token");
+
+                    if (isOAuth && token) {
+                        set({ token: token, error: null });
+                        await get().fetchProfile();
+
+                    } else {
+                        toast.error("Authentication failed - no token received");
+                    }
+                } catch (error) {
+                    console.error("Failed to handle Google redirect:", error);
+                    set({ error: "Failed to finalize Google login" });
+                } finally {
+                    set({ isAuthChecking: false });
                 }
             },
 
@@ -97,6 +157,7 @@ export const useAuthStore = create<AuthState>()(
                         state.token = null;
                         state.user = null;
                         state.error = null;
+                        state.isAuthenticated = false;
                     });
                 } catch (error) {
                     console.error("Logout error:", error);
@@ -107,12 +168,20 @@ export const useAuthStore = create<AuthState>()(
 
             fetchProfile: async () => {
                 try {
-                    const user = await getUserService();
-                    set((state) => {
-                        state.user = user;
-                    });
+                    const response = await getUserService();
+                    console.log("User profile response:", response); // Log response for debugging
+                    if (response) {
+                        set((state) => {
+                            state.user = response; // Set the user object
+                        });
+                        return response; // Return the user profile
+                    } else {
+                        console.error("Failed to fetch user profile: No data returned");
+                        return null; // Return null if no user data is found
+                    }
                 } catch (error) {
-                    console.error("Fetch user profile failed:", error);
+                    console.error("Fetch user profile failed", error);
+                    return null; // Return null if an error occurs
                 }
             },
 

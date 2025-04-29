@@ -60,12 +60,12 @@ export const FormatDate = (
     }
 };
 
-export const ShowToast = (toast: any, type: "success" | "error", message: string) => {
+export const ShowToast = (toast, type: "success" | "error", message: string) => {
     const icon =
         type === "success" ? (
-            <TbCircleCheck className="flex w-5 h-5 text-green-500 mr-2" />
+            <TbCircleCheck className="flex size-5 text-green-500 mr-2" />
         ) : (
-            <TbCircleX className="flex w-5 h-5 text-red-500 mr-2" />
+            <TbCircleX className="flex size-5 text-red-500 mr-2" />
         );
 
     toast({
@@ -122,11 +122,9 @@ export const getNamePart = (name: string) => {
 };
 
 const rolePriority: Record<UserRole, number> = {
-    user: 1,
-    activeUser: 2,
-    innovator: 3,
-    coordinator: 4,
-    admin: 5,
+    candidate: 1,
+    recruiter: 2,
+    admin: 3,
 };
 
 export function canAccess(userRole: UserRole, requiredRole: UserRole): boolean {

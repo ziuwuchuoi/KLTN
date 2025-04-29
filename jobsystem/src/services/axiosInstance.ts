@@ -1,4 +1,3 @@
-
 import { useAuthStore } from "@/stores/useAuthStore";
 import axios from "axios";
 
@@ -11,10 +10,17 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     (config) => {
+        // Wait for token to be set before sending request
         const token = useAuthStore.getState().token;
+        console.log("Request token:", token); // Log the token being sent
+
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
+        } else {
+            console.warn("Token is null, Authorization header not set.");
         }
+
+        console.log("Request config:", config); // Log full request config
         return config;
     },
     (error) => {
@@ -24,6 +30,7 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
     (response) => {
+        console.log("Response:", response); // Log the response data
         return response;
     },
     async (error) => {
@@ -32,7 +39,9 @@ axiosInstance.interceptors.response.use(
         const originalRequest = error.config; // Store the original request config
 
         if (
-            originalRequest.url.includes("/signin") ||
+            originalRequest.url.includes("/signin/candidate") ||
+            originalRequest.url.includes("/signin/recruiter") ||
+            originalRequest.url.includes("/signin/admin") ||
             originalRequest.url.includes("/refresh")
             // originalRequest.url.includes("/me")
         ) {

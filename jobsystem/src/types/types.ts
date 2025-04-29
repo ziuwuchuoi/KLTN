@@ -63,12 +63,14 @@ export interface BaseUser {
     _id: string;
     name: string;
     email: string;
-    role: UserRole;
-    avatarUrl?: string;
-
-    auth?: "google" | "email"; // first created? idk optional
+    roles: UserRole[];
+    avatar?: string;
+    loginTime: number;
+    lastLoginDate: Date;
     createdAt?: Date;
     updatedAt?: Date;
+    googleAccessToken?: string;
+    googleRefreshToken?: string;
 }
 
 export interface BaseCandidate extends BaseUser {

@@ -7,14 +7,10 @@ export const loginService = async ({ role, step, type, data }: LoginParams) => {
         type,
         data,
     });
-    return response.data;
+    return response.data.data;
 };
 
 export const logoutService = async () => {
     const response = await axiosInstance.post("/auth/logout");
     return response.data;
-};
-
-export const getUserService = async () => {
-    return null;
 };
