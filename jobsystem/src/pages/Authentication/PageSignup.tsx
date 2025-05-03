@@ -1,35 +1,39 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, LoadingButton } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useNavigate } from "react-router-dom";
-import { FcGoogle } from "react-icons/fc";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { toast } from "sonner";
 
 const PageSignup = () => {
+    const { role } = useParams();
+    const { isLoading, signupRecruiter } = useAuthStore();
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [name, setName] = useState("");
-    const [isLoading] = useState(false);
+    const [position, setPosition] = useState("");
+    const [companyName, setCompanyName] = useState("");
+    const [companyWebsite, setCompanyWebsite] = useState("");
+
     const navigate = useNavigate();
 
-    const handleGoogleSignup = () => {
-        window.location.href = "http://localhost:3000/users/auth-google/login"; // Adjust the backend URL
+    const handleSignup = async () => {
+        try {
+            await signupRecruiter({
+                email,
+                position,
+                companyName,
+                companyWebsite,
+            });
+            navigate(`/signin/${role}`);
+        } catch (error) {
+            toast.error("Can not signup. Please try again.");
+        }
     };
 
     return (
         <div className="flex min-h-screen items-center justify-center p-6 bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900">
             <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
-                <div className="text-xl font-bold text-center">Create an account</div>
-
-                <div className="mt-4">
-                    <Label>Name</Label>
-                    <Input
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Enter your name"
-                        className="mt-1"
-                    />
-                </div>
+                <div className="text-xl font-bold text-center capitalize">Sign up for {role}</div>
 
                 <div className="mt-4">
                     <Label>Email</Label>
@@ -42,12 +46,31 @@ const PageSignup = () => {
                 </div>
 
                 <div className="mt-4">
-                    <Label>Password</Label>
+                    <Label>Position</Label>
                     <Input
-                        value={password}
-                        type="password"
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Enter your password"
+                        value={position}
+                        onChange={(e) => setPosition(e.target.value)}
+                        placeholder="Enter your position"
+                        className="mt-1"
+                    />
+                </div>
+
+                <div className="mt-4">
+                    <Label>Company Name</Label>
+                    <Input
+                        value={companyName}
+                        onChange={(e) => setCompanyName(e.target.value)}
+                        placeholder="Enter company's name"
+                        className="mt-1"
+                    />
+                </div>
+
+                <div className="mt-4">
+                    <Label>Company Website</Label>
+                    <Input
+                        value={companyWebsite}
+                        onChange={(e) => setCompanyWebsite(e.target.value)}
+                        placeholder="Enter company's website"
                         className="mt-1"
                     />
                 </div>
@@ -57,31 +80,14 @@ const PageSignup = () => {
                     className="w-full mt-6"
                     disabled={isLoading}
                     isLoading={isLoading}
-                    onClick={() => {}}
+                    onClick={handleSignup}
                 >
                     Create account
                 </LoadingButton>
 
-                <div className="relative my-6">
-                    <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t"></span>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                        <span className="bg-white px-3 text-muted-foreground">Or continue with</span>
-                    </div>
-                </div>
-
-                <Button
-                    variant="outline"
-                    className="w-full flex items-center justify-center gap-2"
-                    onClick={handleGoogleSignup}
-                >
-                    <FcGoogle className="text-lg" /> Sign up with Google
-                </Button>
-
                 <div className="text-center text-sm text-muted-foreground pt-6">
                     Already have an account?
-                    <Button variant="link" className="px-1" onClick={() => navigate("/signin")}>
+                    <Button variant="link" className="px-1" onClick={() => navigate("/signin/recruiter")}>
                         Sign in
                     </Button>
                 </div>

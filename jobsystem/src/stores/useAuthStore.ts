@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { BaseUser } from "../types/types";
-import { loginService, logoutService } from "@/services/auth.service";
+import { loginService, logoutService, sigupRecruiterService } from "@/services/auth.service";
 import { getUserService } from "@/services/user.service";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -17,6 +17,13 @@ export interface LoginParams {
     };
 }
 
+export interface SignupRecruiterParams {
+    email: string;
+    position?: string;
+    companyName: string;
+    companyWebsite?: string;
+}
+
 type AuthState = {
     token: string | null;
     user: BaseUser | null;
@@ -24,6 +31,7 @@ type AuthState = {
     isBlurScreenLoading: boolean;
     isAuthChecking: boolean;
     isAuthenticated: boolean;
+    isLoading: boolean; 
 
     setToken: (token: string | null) => void;
     setUser: (user: BaseUser | null) => void;
@@ -31,6 +39,7 @@ type AuthState = {
     login: (params: LoginParams) => Promise<void>;
     googleLogin: (role: string) => Promise<void>;
     handleGoogleRedirect: () => Promise<void>;
+    signupRecruiter: (params: SignupRecruiterParams) => Promise<void>;
     logout: () => Promise<void>;
     fetchProfile: () => Promise<BaseUser>; // Return type set to BaseUser
     updateUser: (user: Partial<BaseUser>) => void;
@@ -46,6 +55,7 @@ export const useAuthStore = create<AuthState>()(
             isBlurScreenLoading: false,
             isAuthChecking: false,
             isAuthenticated: false,
+            isLoading: false,
 
             setToken: (token) => {
                 set((state) => {
@@ -148,6 +158,26 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
 
+            signupRecruiter: async ({ email, position, companyName, companyWebsite }) => {
+                try {
+                    set({ isLoading: true });
+                    const response = await sigupRecruiterService({
+                        email,
+                        position,
+                        companyName,
+                        companyWebsite,
+                    });
+            
+                    toast.success("Signup successful!");
+                } catch (error) {
+                    console.error("Signup recruiter failed:", error);
+                    set({ error: error?.response?.data?.message || "Signup failed" });
+                    toast.error(error?.response?.data?.message || "Signup failed");
+                } finally {
+                    set({ isLoading: false });
+                }
+            },
+            
             logout: async () => {
                 try {
                     set({ isBlurScreenLoading: true });

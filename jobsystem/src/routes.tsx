@@ -28,7 +28,7 @@ const AppRoutes = () => (
         {/* authentication */}
         <Route path="/signin" element={<PageSignin />} />
         <Route path="/signin/:role" element={<PageSignin />} />
-        {/* <Route path="/signup" element={<PageSignup />} /> */}
+        <Route path="/signup/:role" element={<PageSignup />} />
         {/* ai interview */}
         <Route path="/ai-interview" element={<PageAIInterview />} />
         {/* cv evaluation */}

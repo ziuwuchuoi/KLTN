@@ -5,9 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
-import { loginService } from "@/services/auth.service";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { useSearchParams } from "react-router-dom";
 
 const PageSignin = () => {
     const { role } = useParams();
@@ -123,14 +121,14 @@ const PageSignin = () => {
                     <FcGoogle className="text-lg" /> Sign in with Google
                 </Button>
 
-                {/* {role === "candidate" && (
+                {role === "recruiter" && (
                     <div className="text-center text-sm text-muted-foreground pt-6">
                         Don’t have an account?
-                        <Button variant="link" className="px-1" onClick={() => navigate("/signup")}>
+                        <Button variant="link" className="px-1" onClick={() => navigate("/signup/recruiter")}>
                             Create one
                         </Button>
                     </div>
-                )} */}
+                )}
             </div>
         </div>
     );

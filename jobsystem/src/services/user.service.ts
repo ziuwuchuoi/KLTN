@@ -2,6 +2,6 @@ import axiosInstance from "./axiosInstance";
 
 export const getUserService = async () => {
     const response = await axiosInstance.get("/users/getUserProfile");
-    console.log("response", response)
-    return response.data.data.user;
+    console.log("response pro5", response)
+    return response.data.data;
 };

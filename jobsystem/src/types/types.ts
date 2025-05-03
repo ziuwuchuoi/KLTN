@@ -65,6 +65,7 @@ export interface BaseUser {
     email: string;
     roles: UserRole[];
     avatar?: string;
+    canBeRecruiter: boolean;
     loginTime: number;
     lastLoginDate: Date;
     createdAt?: Date;
