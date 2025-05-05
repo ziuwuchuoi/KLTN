@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from "react";
-import CustomHeader from "@/components/molecules/CustomHeader";
 import CustomHeroSection from "@/components/molecules/CustomHeroSection";
 import { situationTopicItems } from "./documents";
 import { TbSearch } from "react-icons/tb";
@@ -19,10 +18,9 @@ const PageCaseQuiz = () => {
     }, [searchQuery]);
 
     return (
-        <div className="flex flex-col w-full min-h-screen bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 text-white">
-            <CustomHeader />
-
-            <div className="flex flex-col px-6">
+        <>
+            <div className="flex flex-col px-6 w-full">
+                {/* Fixed Section */}
                 <div className="flex flex-row items-end w-full mt-40 mb-5 justify-around">
                     <CustomHeroSection title="Situational" subtitle="Center" align="left" />
                     <div className="relative w-full md:w-96">
@@ -49,7 +47,7 @@ const PageCaseQuiz = () => {
                     )}
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

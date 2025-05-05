@@ -88,10 +88,10 @@ const userMenu = [
     },
 ];
 
+console.log("accessToken", localStorage.getItem("accessToken"));
+
 export function CustomNavigationMenu() {
     const { user, logout } = useAuthStore();
-
-    console.log("user", user);
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -105,61 +105,74 @@ export function CustomNavigationMenu() {
     };
 
     return (
-        <NavigationMenu>
-            <NavigationMenuList>
-                {/* Features Dropdown */}
-                <NavigationMenuItem>
-                    <NavigationMenuTrigger>Features</NavigationMenuTrigger>
-                    <NavigationMenuContent className="bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 text-white">
-                        <ul className="grid w-[200px] gap-3 p-4 md:w-[300px] md:grid-cols-1 lg:w-[400px] ">
-                            {features.map((feature) => (
-                                <ListItem key={feature.title} title={feature.title} href={feature.href}>
-                                    {feature.description}
-                                </ListItem>
-                            ))}
-                        </ul>
-                    </NavigationMenuContent>
-                </NavigationMenuItem>
-
-                {/* Pricing, Contact, Sign In */}
-                <NavigationMenuItem>
-                    <Link to="/pricing" className={navigationMenuTriggerStyle()}>
-                        Pricing
-                    </Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                    <Link to="/contact" className={navigationMenuTriggerStyle()}>
-                        Contact
-                    </Link>
-                </NavigationMenuItem>
-
-                {user ? (
+        <div className="flex justify-between w-full">
+            {/* Features Menu */}
+            <NavigationMenu>
+                <NavigationMenuList>
+                    {/* Features Dropdown */}
                     <NavigationMenuItem>
-                        <NavigationMenuTrigger>{user.name || "Account"}</NavigationMenuTrigger>
-                        <NavigationMenuContent className="...">
-                            <ul className="...">
-                                {userMenu.map((menuItem) => (
+                        <NavigationMenuTrigger>Features</NavigationMenuTrigger>
+                        <NavigationMenuContent className="bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 text-white">
+                            <ul className="grid w-[200px] gap-2 p-2 md:w-[300px] md:grid-cols-1 lg:w-[400px] ">
+                                {features.map((feature) => (
                                     <ListItem
-                                        key={menuItem.title}
-                                        title={menuItem.title}
-                                        href={menuItem.href}
-                                        onClick={menuItem.title === "Sign Out" ? handleLogout : undefined}
+                                        key={feature.title}
+                                        title={feature.title}
+                                        href={feature.href}
+                                        className="h-[80px]"
                                     >
-                                        {menuItem.title}
+                                        {feature.description}
                                     </ListItem>
                                 ))}
                             </ul>
                         </NavigationMenuContent>
                     </NavigationMenuItem>
-                ) : (
+
+                    {/* Pricing, Contact, Sign In */}
                     <NavigationMenuItem>
-                        <Link to="/signin" className={navigationMenuTriggerStyle()}>
-                            Sign In
+                        <Link to="/pricing" className={navigationMenuTriggerStyle()}>
+                            Pricing
                         </Link>
                     </NavigationMenuItem>
-                )}
-            </NavigationMenuList>
-        </NavigationMenu>
+                    <NavigationMenuItem>
+                        <Link to="/contact" className={navigationMenuTriggerStyle()}>
+                            Contact
+                        </Link>
+                    </NavigationMenuItem>
+                </NavigationMenuList>
+            </NavigationMenu>
+
+            {/* User Menu - Separate Navigation Menu */}
+            <NavigationMenu>
+                <NavigationMenuList>
+                    {user ? (
+                        <NavigationMenuItem>
+                            <NavigationMenuTrigger>{user.name || "Account"}</NavigationMenuTrigger>
+                            <NavigationMenuContent className="bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 text-white">
+                                <ul className="grid w-[50px] gap-2 p-2 md:w-[50px] lg:w-[150px] ">
+                                    {userMenu.map((menuItem) => (
+                                        <ListItem
+                                            key={menuItem.title}
+                                            title={menuItem.title}
+                                            href={menuItem.href}
+                                            onClick={menuItem.title === "Sign Out" ? handleLogout : undefined}
+                                            className="h-[40px]"
+                                        >
+                                        </ListItem>
+                                    ))}
+                                </ul>
+                            </NavigationMenuContent>
+                        </NavigationMenuItem>
+                    ) : (
+                        <NavigationMenuItem>
+                            <Link to="/signin" className={navigationMenuTriggerStyle()}>
+                                Sign In
+                            </Link>
+                        </NavigationMenuItem>
+                    )}
+                </NavigationMenuList>
+            </NavigationMenu>
+        </div>
     );
 }
 

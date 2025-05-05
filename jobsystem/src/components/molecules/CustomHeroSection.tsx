@@ -26,7 +26,7 @@ const CustomHeroSection = ({
     const containerAlignClass = {
         left: "mx-0",
         center: "mx-auto",
-        right: "ml-auto",
+        right: "mx-0",
         justify: "mx-auto",
     }[align];
 

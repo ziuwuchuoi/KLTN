@@ -86,11 +86,9 @@ export const useAuthStore = create<AuthState>()(
                     set({ isBlurScreenLoading: true });
 
                     const response = await loginService({ role, step, type, data });
-                    console.log("Login Response:", response);
 
                     if (step === "verify") {
                         const { accessToken } = response;
-                        console.log("accessToken:", accessToken);
 
                         if (accessToken) {
                             set({ token: accessToken, error: null });
@@ -199,7 +197,6 @@ export const useAuthStore = create<AuthState>()(
             fetchProfile: async () => {
                 try {
                     const response = await getUserService();
-                    console.log("User profile response:", response); // Log response for debugging
                     if (response) {
                         set((state) => {
                             state.user = response; // Set the user object

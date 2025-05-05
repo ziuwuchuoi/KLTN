@@ -1,9 +1,7 @@
-import CustomHeader from "@/components/molecules/CustomHeader";
 import { Button } from "@/components/ui/button";
 import { useEvaluation } from "./hooks/useEvaluation";
 import CustomImportFile from "@/components/molecules/media/CustomImportFile";
 import { TbChartRadar, TbUpload } from "react-icons/tb";
-import { cn } from "@/components/utils/general.utils";
 import { useState, useEffect } from "react";
 import CustomUploadBox from "@/components/molecules/media/CustomUploadBox";
 import CustomHeroSection from "@/components/molecules/CustomHeroSection";
@@ -32,10 +30,8 @@ const PageCVEvaluation = () => {
 
     return (
         <div className="flex flex-col w-full">
-            <CustomHeader />
-
             {/* Upload + Hero Section - Fixed height screen */}
-            <div className="h-screen flex flex-col bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 items-center justify-center px-6 text-white">
+            <div className="h-screen flex flex-col items-center justify-center px-6">
                 <CustomHeroSection />
 
                 {/* File Upload Section */}

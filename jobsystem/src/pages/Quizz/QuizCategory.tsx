@@ -4,19 +4,28 @@ import { quizCategories } from "./documents";
 import { Card } from "@/components/ui/card";
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { IconType } from "react-icons/lib";
 import CustomDialog from "@/components/molecules/CustomDialog";
+import { TechnicalQuiz } from "./hooks/useQuizQueries";
+
 export interface QuizItem {
-    id: string;
+    id: number;
     title: string;
-    description: string;
-    icon: React.ReactNode;
+    description?: string;
+    icon?: React.ReactNode;
     additionalNote?: string;
     quizCount?: number;
-    color: string;
-    borderColor: string;
-    route: string;
+    color?: string;
+    borderColor?: string;
+    route?: string;
     group?: string;
+    categories?: string[];
+    sourceUrl?: string;
+    questions?: {
+        question: string;
+        options: string[];
+        correctAnswer: number;
+        explanation?: string;
+    }[];
 }
 
 const QuizCategoriesList = () => {
@@ -26,7 +35,12 @@ const QuizCategoriesList = () => {
         <div className="w-full max-w-8xl max-h-xl mx-auto px-4 sm:px-6">
             <div className="grid grid-cols-3 md:grid-cols-3 gap-6">
                 {quizCategories.map((item) => (
-                    <QuizCard key={item.id} item={item} onStartClick={() => navigate(item.route)} requiredConfirm={false}/>
+                    <QuizCard
+                        key={item.id}
+                        item={item}
+                        onStartClick={() => navigate(item.route)}
+                        requiredConfirm={false}
+                    />
                 ))}
             </div>
         </div>

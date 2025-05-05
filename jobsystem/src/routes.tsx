@@ -21,26 +21,30 @@ import PagePersonalityQuiz from "./pages/Quizz/PagePersonalityQuiz";
 
 // live coding
 import PageLiveCoding from "./pages/LiveCoding/PageLiveCoding";
+import CustomHeader from "./components/molecules/CustomHeader";
+import Layout from "./components/molecules/Layout";
 
 const AppRoutes = () => (
     <Routes>
-        <Route path="/" element={<PageLanding />} />
-        {/* authentication */}
         <Route path="/signin" element={<PageSignin />} />
         <Route path="/signin/:role" element={<PageSignin />} />
         <Route path="/signup/:role" element={<PageSignup />} />
-        {/* ai interview */}
-        <Route path="/ai-interview" element={<PageAIInterview />} />
-        {/* cv evaluation */}
-        <Route path="/cv-evaluation" element={<PageCVEvaluation />} />
-        {/* quiz */}
-        {/* dont know if i should nest this */}
-        <Route path="/quiz" element={<PageQuiz />} />
-        <Route path="/quiz/technical" element={<PageTechnicalQuiz />} />
-        <Route path="/quiz/case" element={<PageCaseQuiz />} />
-        <Route path="/quiz/personality" element={<PagePersonalityQuiz />} />
-        {/* live coding */}
-        <Route path="/live-coding" element={<PageLiveCoding />} />
+        <Route path="/" element={<Layout />}>
+            <Route path="/" element={<PageLanding />} />
+            {/* authentication */}
+            {/* ai interview */}
+            <Route path="/ai-interview" element={<PageAIInterview />} />
+            {/* cv evaluation */}
+            <Route path="/cv-evaluation" element={<PageCVEvaluation />} />
+            {/* quiz */}
+            {/* dont know if i should nest this */}
+            <Route path="/quiz" element={<PageQuiz />} />
+            <Route path="/quiz/technical" element={<PageTechnicalQuiz />} />
+            <Route path="/quiz/case" element={<PageCaseQuiz />} />
+            <Route path="/quiz/personality" element={<PagePersonalityQuiz />} />
+            {/* live coding */}
+            <Route path="/live-coding" element={<PageLiveCoding />} />
+        </Route>
     </Routes>
 );
 

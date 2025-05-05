@@ -1,4 +1,3 @@
-import { TbGhost } from "react-icons/tb";
 import { CustomNavigationMenu } from "./CustomNavigationMenu";
 
 export default function CustomHeader() {

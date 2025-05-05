@@ -7,10 +7,8 @@ import RecentQuizActivities from "./RecentQuizActivities";
 const PageQuiz = () => {
     return (
         <div className="flex flex-col w-full">
-            <CustomHeader />
-
             {/* Upload + Hero Section - Fixed height screen */}
-            <div className="h-screen bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 px-6 text-white flex items-center justify-center">
+            <div className="h-screen flex flex-col items-center justify-center px-6">
                 <div className="flex flex-col items-center justify-center w-full">
                     <CustomHeroSection className="mb-20"/>
                     <div className="w-full px-6 pb-12">
