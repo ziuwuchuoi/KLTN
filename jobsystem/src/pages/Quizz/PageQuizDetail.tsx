@@ -4,6 +4,7 @@ import QuizNavigation from "./QuizNavigation";
 import QuestionCard from "./QuestionCard";
 import { Button } from "@/components/ui/button";
 import { TechnicalQuiz } from "./hooks/useQuizQueries";
+import { cn } from "@/components/utils/general.utils";
 
 const PageQuizDetail = () => {
     const location = useLocation();
@@ -67,8 +68,9 @@ const PageQuizDetail = () => {
     }
 
     return (
-        <div className="min-h-screen bg-quiz-background text-white">
-            <div className="container py-8">
+        <div className="flex flex-col p-6 w-full">
+            {/* Fixed Section */}
+            <div className="flex flex-row items-end w-full mt-40 mb-5 justify-around">
                 <div className="grid md:grid-cols-3 gap-8">
                     {/* Sidebar with question navigation */}
                     <div className="md:col-span-1">
@@ -82,15 +84,15 @@ const PageQuizDetail = () => {
 
                             {/* Quiz progress */}
                             <div className="mt-6 bg-quiz-card p-4 rounded-lg">
-                                <div className="mb-2 flex justify-between">
-                                    <span>Progress:</span>
-                                    <span>
+                                <div className="mb-2 flex justify-between text-sm">
+                                    <div>Progress:</div>
+                                    <div>
                                         {answeredQuestions.length} of {quiz.questions.length}
-                                    </span>
+                                    </div>
                                 </div>
-                                <div className="w-full bg-quiz-option rounded-full h-2">
+                                <div className="w-full bg-accent rounded-full h-2">
                                     <div
-                                        className="bg-quiz-blue h-2 rounded-full transition-all duration-300"
+                                        className="bg-blue-500 h-2 rounded-full transition-all duration-300"
                                         style={{
                                             width: `${(answeredQuestions.length / quiz.questions.length) * 100}%`,
                                         }}
@@ -99,31 +101,25 @@ const PageQuizDetail = () => {
                             </div>
 
                             {!isSubmitted && (
-                                <div className="mt-6">
+                                <div className="mt-8 flex flex-col items-center gap-3">
                                     <Button
                                         onClick={handleSubmitQuiz}
                                         disabled={answeredQuestions.length < quiz.questions.length}
-                                        className="w-full bg-quiz-blue hover:bg-quiz-dark-blue"
+                                        className={cn(
+                                            "w-full max-w-xs px-6 py-3 rounded-lg font-semibold transition-colors duration-200",
+                                            answeredQuestions.length < quiz.questions.length
+                                                ? "bg-blue-400 text-white cursor-not-allowed"
+                                                : "bg-blue-500 hover:bg-blue-600 text-white"
+                                        )}
                                     >
                                         Submit Quiz
                                     </Button>
-                                    {answeredQuestions.length < quiz.questions.length && (
-                                        <p className="text-sm text-gray-400 mt-2">Answer all questions to submit</p>
-                                    )}
-                                </div>
-                            )}
 
-                            {quiz.sourceUrl && (
-                                <div className="mt-6 bg-quiz-card p-4 rounded-lg">
-                                    <h3 className="text-sm font-medium mb-2">Source</h3>
-                                    <a
-                                        href={quiz.sourceUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-quiz-blue hover:underline text-sm break-words"
-                                    >
-                                        {quiz.sourceUrl}
-                                    </a>
+                                    {answeredQuestions.length < quiz.questions.length && (
+                                        <div className="text-sm text-gray-400 text-center italic">
+                                            Answer all questions to submit
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
