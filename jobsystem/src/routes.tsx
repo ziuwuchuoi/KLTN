@@ -23,6 +23,7 @@ import PagePersonalityQuiz from "./pages/Quizz/PagePersonalityQuiz";
 import PageLiveCoding from "./pages/LiveCoding/PageLiveCoding";
 import CustomHeader from "./components/molecules/CustomHeader";
 import Layout from "./components/molecules/Layout";
+import PageQuizDetail from "./pages/Quizz/PageQuizDetail";
 
 const AppRoutes = () => (
     <Routes>
@@ -42,6 +43,10 @@ const AppRoutes = () => (
             <Route path="/quiz/technical" element={<PageTechnicalQuiz />} />
             <Route path="/quiz/case" element={<PageCaseQuiz />} />
             <Route path="/quiz/personality" element={<PagePersonalityQuiz />} />
+            <Route path="/quiz/technical/:id" element={<PageQuizDetail />} />
+            <Route path="/quiz/case/:id" element={<PageQuizDetail />} />
+            <Route path="/quiz/personality/:id" element={<PageQuizDetail />} />
+
             {/* live coding */}
             <Route path="/live-coding" element={<PageLiveCoding />} />
         </Route>

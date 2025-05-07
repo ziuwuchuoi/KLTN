@@ -1,13 +1,3 @@
-import React, { useState } from "react";
-import {
-    NavigationMenu,
-    NavigationMenuContent,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuList,
-    NavigationMenuTrigger,
-    navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -19,17 +9,16 @@ import {
     DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, ChevronDown, Folder, FolderOpen } from "lucide-react";
+import { ChevronDown, Folder } from "lucide-react";
 import { cn } from "@/components/utils/general.utils";
-import { useNavigate } from "react-router-dom";
 import { useQuizQueries, TechnicalCategoryItem } from "./hooks/useQuizQueries";
 
 interface QuizCategoryMenuProps {
     className?: string;
+    onSelectCategory: (name: string) => void;
 }
 
-export const QuizCategoryMenu = ({ className }: QuizCategoryMenuProps) => {
-    const navigate = useNavigate();
+export const QuizCategoryMenu = ({ className, onSelectCategory }: QuizCategoryMenuProps) => {
     const { technicalCategories, isLoadingCategories } = useQuizQueries();
 
     if (isLoadingCategories) {
@@ -60,7 +49,7 @@ export const QuizCategoryMenu = ({ className }: QuizCategoryMenuProps) => {
                         <CategoryDropdownItem
                             key={category.id}
                             category={category}
-                            onSelectCategory={(id) => navigate(`/quiz/technical/${id}`)}
+                            onSelectCategory={onSelectCategory}
                         />
                     ))}
             </DropdownMenuContent>
@@ -74,12 +63,12 @@ const CategoryDropdownItem = ({
     depth = 0,
 }: {
     category: TechnicalCategoryItem;
-    onSelectCategory: (id: number) => void;
+    onSelectCategory: (name: string) => void;
     depth?: number;
 }) => {
     if (!category.children || category.children.length === 0) {
         return (
-            <DropdownMenuItem onClick={() => onSelectCategory(category.id)} className="cursor-pointer text-white">
+            <DropdownMenuItem onClick={() => onSelectCategory(category.name)} className="cursor-pointer text-white">
                 <span className={cn("pl-2", depth > 0 && "pl-2")}>{category.name}</span>
             </DropdownMenuItem>
         );
@@ -87,7 +76,10 @@ const CategoryDropdownItem = ({
 
     return (
         <DropdownMenuSub>
-            <DropdownMenuSubTrigger className="cursor-pointer text-white">
+            <DropdownMenuSubTrigger
+                className="cursor-pointer text-white"
+                onClick={() => onSelectCategory(category.name)}
+            >
                 <span className={cn("flex items-center", depth > 0 && "pl-2")}>
                     <Folder className="h-4 w-4 text-blue-400 mr-2" />
                     {category.name}

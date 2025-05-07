@@ -7,17 +7,19 @@ export interface TechnicalCategoryItem {
     children?: TechnicalCategoryItem[];
 }
 
+export interface Quiz {
+    question: string;
+    options: string[];
+    correctAnswer: number;
+    explanation?: string;
+}
+
 export interface TechnicalQuiz {
     id: string;
     title: string;
     categories: string[];
     sourceUrl: string;
-    questions: {
-        question: string;
-        options: string[];
-        correctAnswer: number;
-        explanation?: string;
-    }[];
+    questions: Quiz[];
 }
 
 export const useQuizQueries = (selectedCategory: string = "", page: number = 1, limit: number = 20) => {

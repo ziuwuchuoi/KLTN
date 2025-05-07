@@ -5,10 +5,10 @@ import { Card } from "@/components/ui/card";
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CustomDialog from "@/components/molecules/CustomDialog";
-import { TechnicalQuiz } from "./hooks/useQuizQueries";
+import { TbQuote } from "react-icons/tb";
 
 export interface QuizItem {
-    id: number;
+    id: number | string;
     title: string;
     description?: string;
     icon?: React.ReactNode;
@@ -84,7 +84,9 @@ export const QuizCard = ({ item, onStartClick, requiredConfirm = true }: QuizCar
 
             <div className="relative p-6 flex flex-col h-full">
                 <div className="flex items-start gap-4 mb-4">
-                    <div className="p-3 rounded-xl bg-black/30 border border-white/10">{item.icon}</div>
+                    <div className="p-3 rounded-xl bg-black/30 border border-white/10">
+                        {item.icon ? item.icon : <TbQuote className="icon-sm text-red-400" />}
+                    </div>
                     <div>
                         <h3 className="text-xl font-semibold text-white mb-2">{item.title}</h3>
                         <p className="text-gray-400 text-sm">{item.description}</p>
