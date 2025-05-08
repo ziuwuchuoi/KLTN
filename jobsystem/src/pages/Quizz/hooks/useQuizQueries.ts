@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getListCategoriesService, getListQuizzesService } from "@/services/quiz.service";
+import { getListCategoriesService, getListQuizzesService, getQuizDetailService } from "@/services/quiz.service";
 
 export interface TechnicalCategoryItem {
     id: number;
@@ -15,7 +15,7 @@ export interface Quiz {
 }
 
 export interface TechnicalQuiz {
-    id: string;
+    _id: string;
     title: string;
     categories: string[];
     sourceUrl: string;
@@ -43,6 +43,14 @@ export const useQuizQueries = (selectedCategory: string = "", page: number = 1, 
         queryFn: () => getListQuizzesService(selectedCategory, limit, page),
     });
 
+    const useQuizDetail = (quizId: string) => {
+        return useQuery<TechnicalQuiz>({
+            queryKey: ["technical-quiz-detail", quizId],
+            queryFn: () => getQuizDetailService(quizId!),
+            enabled: !!quizId,
+        });
+    };
+
     const technicalQuizzes = data?.items ?? [];
     const paginationMeta = data?.meta ?? { page: 1, limit: 20, total: 0, totalPages: 1 };
 
@@ -56,6 +64,7 @@ export const useQuizQueries = (selectedCategory: string = "", page: number = 1, 
         isLoadingQuizzes,
         isErrorQuizzes,
 
+        useQuizDetail,
         queryClient,
     };
 };

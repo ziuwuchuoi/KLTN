@@ -43,9 +43,9 @@ const AppRoutes = () => (
             <Route path="/quiz/technical" element={<PageTechnicalQuiz />} />
             <Route path="/quiz/case" element={<PageCaseQuiz />} />
             <Route path="/quiz/personality" element={<PagePersonalityQuiz />} />
-            <Route path="/quiz/technical/:id" element={<PageQuizDetail />} />
-            <Route path="/quiz/case/:id" element={<PageQuizDetail />} />
-            <Route path="/quiz/personality/:id" element={<PageQuizDetail />} />
+            <Route path="/quiz/technical/:quizId" element={<PageQuizDetail />} />
+            <Route path="/quiz/case/:quizId" element={<PageQuizDetail />} />
+            <Route path="/quiz/personality/:quizId" element={<PageQuizDetail />} />
 
             {/* live coding */}
             <Route path="/live-coding" element={<PageLiveCoding />} />

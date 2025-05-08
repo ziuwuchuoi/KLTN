@@ -15,7 +15,7 @@ type QuestionCardProps = {
 
 const QuestionCard = ({ question, questionNumber, onSelectOption, userAnswer, showResults }: QuestionCardProps) => {
     const handleSelectOption = (optionIndex: number) => {
-        if (showResults) return; // Prevent changing answer after submission
+        if (showResults) return; 
         onSelectOption(questionNumber, optionIndex);
     };
 

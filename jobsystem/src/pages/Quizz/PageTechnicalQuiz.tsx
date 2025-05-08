@@ -4,7 +4,7 @@ import { TbSearch } from "react-icons/tb";
 import { Input } from "@/components/ui/input";
 
 import { useNavigate } from "react-router-dom";
-import { TechnicalQuiz, useQuizQueries } from "./hooks/useQuizQueries";
+import { useQuizQueries } from "./hooks/useQuizQueries";
 import { QuizCategoryMenu } from "./QuizCategoryMenu";
 import { QuizCard } from "./QuizCategory";
 
@@ -32,8 +32,7 @@ const PageTechnicalQuiz = () => {
     }, [searchQuery, selectedCategory, technicalQuizzes]);
 
     const handleQuizClick = (quiz) => {
-        console.log("quiz", quiz);
-        navigate(`/quiz/technical/${quiz._id}`, { state: { quiz } });
+        navigate(`/quiz/technical/${quiz._id}`);
     };
 
     return (

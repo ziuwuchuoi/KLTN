@@ -11,12 +11,16 @@ export const getListQuizzesService = async (
     category: string,
     limit = 20,
     page = 1
-  ): Promise<{ items: QuizItem[]; meta: { limit: number; page: number; total: number; totalPages: number } }> => {
+): Promise<{ items: QuizItem[]; meta: { limit: number; page: number; total: number; totalPages: number } }> => {
     const url = category
-      ? `/quiz/getListQuizzes?category=${category}&limit=${limit}&page=${page}`
-      : `/quiz/getListQuizzes?limit=${limit}&page=${page}`;
-  
+        ? `/quiz/getListQuizzes?category=${category}&limit=${limit}&page=${page}`
+        : `/quiz/getListQuizzes?limit=${limit}&page=${page}`;
+
     const response = await axiosInstance.get(url);
     return response.data.data;
-  };
-  
+};
+
+export const getQuizDetailService = async (quizId: string): Promise<TechnicalQuiz> => {
+    const response = await axiosInstance.get(`/quiz/getQuizDetail/${quizId}`);
+    return response.data.data;
+};

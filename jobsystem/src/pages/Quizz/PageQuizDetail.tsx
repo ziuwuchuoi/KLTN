@@ -1,14 +1,24 @@
 import { useState, useRef } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import QuizNavigation from "./QuizNavigation";
 import QuestionCard from "./QuestionCard";
 import { Button } from "@/components/ui/button";
-import { TechnicalQuiz } from "./hooks/useQuizQueries";
+import { Quiz, useQuizQueries } from "./hooks/useQuizQueries";
 import { cn } from "@/components/utils/general.utils";
 
+export interface QuizSubmit {
+    quizId: string;
+    result: {
+        quiz: Quiz;
+        userChoice: number;
+    }[];
+    score: number;
+}
+
 const PageQuizDetail = () => {
-    const location = useLocation();
-    const quiz = (location.state as { quiz: TechnicalQuiz })?.quiz;
+    const { quizId } = useParams();
+    const { useQuizDetail } = useQuizQueries();
+    const { data: quiz } = useQuizDetail(quizId);
 
     const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
     const [userAnswers, setUserAnswers] = useState<{ [key: number]: number }>({});
@@ -27,31 +37,38 @@ const PageQuizDetail = () => {
         }
     };
 
-    // Handle submitting the whole quiz
     const handleSubmitQuiz = () => {
         if (answeredQuestions.length < quiz.questions.length) {
-            // toast({
-            //     title: "Quiz Incomplete",
-            //     description: `You've answered ${answeredQuestions.length} of ${quiz.questions.length} questions. Please answer all questions before submitting.`,
-            //     variant: "destructive",
-            // });
             return;
         }
 
+        const result = quiz.questions.map((question, index) => ({
+            quiz: question,
+            userChoice: userAnswers[index + 1],
+        }));
+
+        const correctCount = result.reduce((acc, item) => {
+            if (item.userChoice === item.quiz.correctAnswer) {
+                return acc + 1;
+            }
+            return acc;
+        }, 0);
+
+        const finalResult = {
+            quizId: quiz._id,
+            result,
+            score: correctCount,
+        };
+
+        console.log("Final Result:", finalResult);
         setIsSubmitted(true);
-        // toast({
-        //     title: "Quiz Submitted",
-        //     description: "Your answers have been submitted. You can now review your results.",
-        // });
     };
 
-    // Handle clicking on a question in the navigation
     const handleQuestionClick = (questionId: number) => {
         setCurrentQuestionId(questionId);
         scrollToQuestion(questionId);
     };
 
-    // Scroll to a specific question
     const scrollToQuestion = (questionId: number) => {
         const questionElement = document.getElementById(`question-${questionId}`);
         if (questionElement) {
