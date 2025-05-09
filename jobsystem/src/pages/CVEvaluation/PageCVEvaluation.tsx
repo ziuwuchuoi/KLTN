@@ -1,31 +1,44 @@
 import { Button } from "@/components/ui/button";
-import { useEvaluation } from "./hooks/useEvaluation";
 import CustomImportFile from "@/components/molecules/media/CustomImportFile";
-import { TbChartRadar, TbUpload } from "react-icons/tb";
-import { useState, useEffect } from "react";
+import { TbChartRadar } from "react-icons/tb";
+import { useState, useEffect, useRef } from "react";
+import { useFileQueries } from "./hooks/useFileQueries";
 import CustomUploadBox from "@/components/molecules/media/CustomUploadBox";
 import CustomHeroSection from "@/components/molecules/CustomHeroSection";
 
 const PageCVEvaluation = () => {
-    const {
-        cv,
-        setCv,
-        jobDescription,
-        setJobDescription,
-        isEvaluating,
-        handleEvaluate,
-        evaluationResult,
-        resultRef,
-        scrollToResults,
-    } = useEvaluation();
+    const [cv, setCv] = useState<File | null>(null);
+    const [jobDescription, setJobDescription] = useState<File | null>(null);
+    const { uploadCV, uploadJD } = useFileQueries();
+    const [evaluationResult, setEvaluationResult] = useState<string | null>(null);
+    const [isEvaluating, setIsEvaluating] = useState(false);
 
-    const [isUploading, setIsUploading] = useState(false);
+    const resultRef = useRef<HTMLDivElement>(null);
+
+    const handleEvaluate = async () => {
+        if (!cv || !jobDescription) return;
+
+        setIsEvaluating(true);
+
+        try {
+            await uploadCV.mutateAsync(cv);
+            await uploadJD.mutateAsync(jobDescription);
+
+            setEvaluationResult("Evaluation result here");
+         
+        } catch (err) {
+            console.error("Evaluation failed:", err);
+        } finally {
+            setIsEvaluating(false);
+        }
+    };
+    const scrollToResults = () => {
+        resultRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
 
     useEffect(() => {
-        if (evaluationResult) {
-            scrollToResults();
-        }
-    }, [evaluationResult, scrollToResults]);
+        if (evaluationResult) scrollToResults();
+    }, [evaluationResult]);
 
     return (
         <div className="flex flex-col w-full">

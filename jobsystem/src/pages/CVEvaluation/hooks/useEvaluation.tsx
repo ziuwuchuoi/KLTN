@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react';
-import { Toaster } from '@/components/ui/sonner';
 
 export const useEvaluation = () => {
   const [cv, setCv] = useState<File | null>(null);
