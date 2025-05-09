@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 
 import { cn } from "@/components/utils/general.utils";
 import {
@@ -88,10 +87,9 @@ const userMenu = [
     },
 ];
 
-console.log("accessToken", localStorage.getItem("accessToken"));
-
 export function CustomNavigationMenu() {
-    const { user, logout } = useAuthStore();
+    const { user, logout, token } = useAuthStore();
+    console.log("token", token)
     const navigate = useNavigate();
 
     const handleLogout = async () => {

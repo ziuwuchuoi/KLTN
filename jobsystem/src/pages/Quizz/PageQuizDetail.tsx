@@ -17,7 +17,7 @@ export interface QuizSubmit {
 
 const PageQuizDetail = () => {
     const { quizId } = useParams();
-    const { useQuizDetail } = useQuizQueries();
+    const { useQuizDetail, submitQuiz } = useQuizQueries();
     const { data: quiz } = useQuizDetail(quizId);
 
     const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
@@ -37,31 +37,26 @@ const PageQuizDetail = () => {
         }
     };
 
-    const handleSubmitQuiz = () => {
+    const handleSubmitQuiz = async () => {
         if (answeredQuestions.length < quiz.questions.length) {
             return;
         }
 
-        const result = quiz.questions.map((question, index) => ({
-            quiz: question,
-            userChoice: userAnswers[index + 1],
+        const formattedAnswers = quiz.questions.map((_, index) => ({
+            qIndex: index,
+            chosenOption: userAnswers[index + 1],
         }));
 
-        const correctCount = result.reduce((acc, item) => {
-            if (item.userChoice === item.quiz.correctAnswer) {
-                return acc + 1;
-            }
-            return acc;
-        }, 0);
+        try {
+            await submitQuiz.mutateAsync({
+                quizId: quiz._id,
+                answers: formattedAnswers,
+            });
 
-        const finalResult = {
-            quizId: quiz._id,
-            result,
-            score: correctCount,
-        };
-
-        console.log("Final Result:", finalResult);
-        setIsSubmitted(true);
+            setIsSubmitted(true);
+        } catch (error) {
+            console.error("Submit quiz failed:", error);
+        }
     };
 
     const handleQuestionClick = (questionId: number) => {

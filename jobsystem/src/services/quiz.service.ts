@@ -24,3 +24,16 @@ export const getQuizDetailService = async (quizId: string): Promise<TechnicalQui
     const response = await axiosInstance.get(`/quiz/getQuizDetail/${quizId}`);
     return response.data.data;
 };
+
+export const submitQuizService = async (quizId: string, data) => {
+    const response = await axiosInstance.post(`/quiz/submit/${quizId}`, data);
+    console.log("response", response.data)
+    return response.data;
+};
+
+export const getListQuizSubmitsService = async (quizId: string, candidateId: string, limit = 20, page = 1) => {
+    const response = await axiosInstance.get(
+        `/quiz/submit/?quizId=${quizId}&candidateId=${candidateId}&limit=${limit}&page=${page}`
+    );
+    return response.data;
+};

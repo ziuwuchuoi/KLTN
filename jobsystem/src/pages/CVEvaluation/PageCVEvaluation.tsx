@@ -20,8 +20,7 @@ const PageCVEvaluation = () => {
     } = useEvaluation();
 
     const [isUploading, setIsUploading] = useState(false);
-    
-    // Scroll to results when they become available
+
     useEffect(() => {
         if (evaluationResult) {
             scrollToResults();
@@ -38,11 +37,15 @@ const PageCVEvaluation = () => {
                 <div className="w-full max-w-3xl glass-card rounded-xl p-8 mb-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <CustomImportFile onSingleFileChange={setCv} dropTitle="Drop your CV file here to add">
-                            <CustomUploadBox fileName={cv?.name} fileType="CV"/>
+                            <CustomUploadBox fileName={cv?.name} fileType="CV" type="PDF, DOC, DOCX" />
                         </CustomImportFile>
 
-                        <CustomImportFile onSingleFileChange={setJobDescription} dropTitle="Drop JD file here to add">
-                            <CustomUploadBox fileName={jobDescription?.name} fileType="JD"/>
+                        <CustomImportFile
+                            accept=".pdf"
+                            dropTitle="Drop JD file here to add"
+                            onSingleFileChange={setJobDescription}
+                        >
+                            <CustomUploadBox fileName={jobDescription?.name} fileType="JD" type="PDF" />
                         </CustomImportFile>
                     </div>
 
@@ -66,14 +69,25 @@ const PageCVEvaluation = () => {
                         </Button>
                     </div>
                 </div>
-                
+
                 {/* Scroll indicator when results are available */}
                 {evaluationResult && (
                     <div className="absolute bottom-8 animate-bounce">
                         <p className="text-gray-400 text-sm">Scroll down to see results</p>
                         <div className="flex justify-center mt-2">
-                            <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            <svg
+                                className="w-6 h-6 text-blue-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                                />
                             </svg>
                         </div>
                     </div>
@@ -82,7 +96,7 @@ const PageCVEvaluation = () => {
 
             {/* Evaluation Result Section - Separate section that appears when results are available */}
             {evaluationResult && (
-                <div 
+                <div
                     ref={resultRef}
                     className="min-h-screen w-full bg-gradient-to-b from-gray-900 to-zinc-950 flex flex-col items-center justify-center px-6 text-white py-16"
                 >
@@ -92,17 +106,17 @@ const PageCVEvaluation = () => {
                                 Evaluation Results
                             </span>
                         </h2>
-                        
+
                         {/* Display your evaluation results here */}
                         <div className="prose prose-invert max-w-none">
                             {/* Assuming evaluationResult is HTML or can be rendered as such */}
                             <div dangerouslySetInnerHTML={{ __html: evaluationResult }} />
                         </div>
-                        
+
                         {/* Button to scroll back to top */}
                         <div className="mt-10 flex justify-center">
                             <Button
-                                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                                 className="bg-gradient-to-r from-blue-500 to-sky-500 hover:from-blue-700 hover:to-sky-700 text-white px-6 py-3 rounded-lg font-semibold"
                             >
                                 Back to Upload

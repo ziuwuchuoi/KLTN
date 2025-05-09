@@ -1,5 +1,10 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getListCategoriesService, getListQuizzesService, getQuizDetailService } from "@/services/quiz.service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+    getListCategoriesService,
+    getListQuizzesService,
+    getQuizDetailService,
+    submitQuizService,
+} from "@/services/quiz.service";
 
 export interface TechnicalCategoryItem {
     id: number;
@@ -20,6 +25,10 @@ export interface TechnicalQuiz {
     categories: string[];
     sourceUrl: string;
     questions: Quiz[];
+}
+
+export interface SubmitQuizPayload {
+    answers: { qIndex: number; chosenOption: number }[];
 }
 
 export const useQuizQueries = (selectedCategory: string = "", page: number = 1, limit: number = 20) => {
@@ -51,6 +60,17 @@ export const useQuizQueries = (selectedCategory: string = "", page: number = 1, 
         });
     };
 
+    const submitQuiz = useMutation({
+        mutationFn: ({ quizId, answers }: { quizId: string; answers: SubmitQuizPayload["answers"] }) =>
+            submitQuizService(quizId, { answers }),
+        onSuccess: (res) => {
+            console.log("Quiz submitted successfully:", res);
+        },
+        onError: (err) => {
+            console.error("Error submitting quiz:", err);
+        },
+    });
+
     const technicalQuizzes = data?.items ?? [];
     const paginationMeta = data?.meta ?? { page: 1, limit: 20, total: 0, totalPages: 1 };
 
@@ -63,6 +83,8 @@ export const useQuizQueries = (selectedCategory: string = "", page: number = 1, 
         paginationMeta,
         isLoadingQuizzes,
         isErrorQuizzes,
+
+        submitQuiz,
 
         useQuizDetail,
         queryClient,
