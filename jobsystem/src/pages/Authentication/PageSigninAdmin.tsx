@@ -12,6 +12,7 @@ const PageSigninAdmin = () => {
     const navigate = useNavigate();
 
     const handleGoogleLogin = () => {
+        
     };
 
     return (

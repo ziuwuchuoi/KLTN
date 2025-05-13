@@ -50,6 +50,7 @@ export const useQuizQueries = (selectedCategory: string = "", page: number = 1, 
     } = useQuery({
         queryKey: ["technical-quizzes", selectedCategory, page],
         queryFn: () => getListQuizzesService(selectedCategory, limit, page),
+        placeholderData: (previousData) => previousData,
     });
 
     const useQuizDetail = (quizId: string) => {

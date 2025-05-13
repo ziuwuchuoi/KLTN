@@ -10,9 +10,11 @@ import { useAuthStore } from "@/stores/useAuthStore";
 const PageSignin = () => {
     const { role } = useParams();
     const navigate = useNavigate();
-    const { login, googleLogin, setToken } = useAuthStore();
+    const { login, googleLogin, loginAdmin } = useAuthStore();
 
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [otp, setOtp] = useState("");
     const [step, setStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +24,19 @@ const PageSignin = () => {
     if (!validRoles.includes(role)) {
         return <div className="text-center text-red-500 pt-10">Invalid role!</div>;
     }
+
+    const handleAdminLogin = async () => {
+        setIsLoading(true);
+        try {
+            await loginAdmin(name, password);
+            toast.success("Admin login successful");
+            navigate("/dashboard"); 
+        } catch (err) {
+            toast.error("Failed to login as admin.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleSendOtp = async () => {
         setIsLoading(true);
@@ -74,60 +89,95 @@ const PageSignin = () => {
         <div className="flex min-h-screen items-center justify-center p-6 bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900">
             <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
                 <div className="text-xl font-bold text-center capitalize">Sign in as {role}</div>
+                {role === "admin" ? (
+                    <>
+                        <div className="mt-6 space-y-4">
+                            <div>
+                                <Label>Name</Label>
+                                <Input
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    placeholder="Enter your name"
+                                    required
+                                    disabled={step === 2}
+                                />
+                            </div>
 
-                <div className="mt-6 space-y-4">
-                    <div>
-                        <Label>Email</Label>
-                        <Input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter your email"
-                            required
-                            disabled={step === 2}
-                        />
-                    </div>
+                            <div>
+                                <Label>Password</Label>
+                                <Input
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="Enter your password"
+                                />
+                            </div>
 
-                    {step === 2 && (
-                        <div>
-                            <Label>OTP</Label>
-                            <Input value={otp} onChange={(e) => setOtp(e.target.value)} placeholder="Enter the OTP" />
+                            <LoadingButton className="w-full mt-2" isLoading={isLoading} onClick={handleAdminLogin}>
+                                Sign In
+                            </LoadingButton>
                         </div>
-                    )}
+                    </>
+                ) : (
+                    <>
+                        <div className="mt-6 space-y-4">
+                            <div>
+                                <Label>Email</Label>
+                                <Input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="Enter your email"
+                                    required
+                                    disabled={step === 2}
+                                />
+                            </div>
 
-                    <LoadingButton
-                        className="w-full mt-2"
-                        isLoading={isLoading}
-                        onClick={step === 1 ? handleSendOtp : handleVerifyOtp}
-                    >
-                        {step === 1 ? "Send OTP" : "Verify & Sign in"}
-                    </LoadingButton>
-                </div>
+                            {step === 2 && (
+                                <div>
+                                    <Label>OTP</Label>
+                                    <Input
+                                        value={otp}
+                                        onChange={(e) => setOtp(e.target.value)}
+                                        placeholder="Enter the OTP"
+                                    />
+                                </div>
+                            )}
 
-                <div className="relative my-6">
-                    <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                        <span className="bg-white px-3 text-muted-foreground">Or continue with</span>
-                    </div>
-                </div>
+                            <LoadingButton
+                                className="w-full mt-2"
+                                isLoading={isLoading}
+                                onClick={step === 1 ? handleSendOtp : handleVerifyOtp}
+                            >
+                                {step === 1 ? "Send OTP" : "Verify & Sign in"}
+                            </LoadingButton>
+                        </div>
 
-                <Button
-                    variant="outline"
-                    className="w-full flex items-center justify-center gap-2"
-                    onClick={handleGoogleLogin}
-                >
-                    <FcGoogle className="text-lg" /> Sign in with Google
-                </Button>
+                        <div className="relative my-6">
+                            <div className="absolute inset-0 flex items-center">
+                                <span className="w-full border-t" />
+                            </div>
+                            <div className="relative flex justify-center text-sm">
+                                <span className="bg-white px-3 text-muted-foreground">Or continue with</span>
+                            </div>
+                        </div>
 
-                {role === "recruiter" && (
-                    <div className="text-center text-sm text-muted-foreground pt-6">
-                        Don’t have an account?
-                        <Button variant="link" className="px-1" onClick={() => navigate("/signup/recruiter")}>
-                            Create one
+                        <Button
+                            variant="outline"
+                            className="w-full flex items-center justify-center gap-2"
+                            onClick={handleGoogleLogin}
+                        >
+                            <FcGoogle className="text-lg" /> Sign in with Google
                         </Button>
-                    </div>
+
+                        {role === "recruiter" && (
+                            <div className="text-center text-sm text-muted-foreground pt-6">
+                                Don’t have an account?
+                                <Button variant="link" className="px-1" onClick={() => navigate("/signup/recruiter")}>
+                                    Create one
+                                </Button>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         </div>

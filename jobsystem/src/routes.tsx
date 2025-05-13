@@ -21,15 +21,23 @@ import PagePersonalityQuiz from "./pages/Quizz/PagePersonalityQuiz";
 
 // live coding
 import PageLiveCoding from "./pages/LiveCoding/PageLiveCoding";
-import CustomHeader from "./components/molecules/CustomHeader";
 import Layout from "./components/molecules/Layout";
 import PageQuizDetail from "./pages/Quizz/PageQuizDetail";
+import PageDashboard from "./pages/Dashboard/PageDashboard";
+import TabAnalysis from "./pages/Dashboard/TabAnalysis";
+import TabCandidate from "./pages/Dashboard/TabCandidate";
+import TabRecruiter from "./pages/Dashboard/TabRecruiter";
 
 const AppRoutes = () => (
     <Routes>
         <Route path="/signin" element={<PageSignin />} />
         <Route path="/signin/:role" element={<PageSignin />} />
         <Route path="/signup/:role" element={<PageSignup />} />
+        <Route path="/dashboard" element={<PageDashboard />}>
+            <Route path="analysis" element={<TabAnalysis />} />
+            <Route path="candidates" element={<TabCandidate />} />
+            <Route path="recruiters" element={<TabRecruiter />} />
+        </Route>
         <Route path="/" element={<Layout />}>
             <Route path="/" element={<PageLanding />} />
             {/* authentication */}

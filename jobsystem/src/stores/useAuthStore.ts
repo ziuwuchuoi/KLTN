@@ -2,8 +2,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { BaseUser } from "../types/types";
-import { loginService, logoutService, sigupRecruiterService } from "@/services/auth.service";
-import { getUserService } from "@/services/user.service";
+import { loginAdminService, loginService, logoutService, sigupRecruiterService } from "@/services/auth.service";
+import { getUserProfileService } from "@/services/user.service";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -31,7 +31,7 @@ type AuthState = {
     isBlurScreenLoading: boolean;
     isAuthChecking: boolean;
     isAuthenticated: boolean;
-    isLoading: boolean; 
+    isLoading: boolean;
 
     setToken: (token: string | null) => void;
     setUser: (user: BaseUser | null) => void;
@@ -39,6 +39,7 @@ type AuthState = {
     login: (params: LoginParams) => Promise<void>;
     googleLogin: (role: string) => Promise<void>;
     handleGoogleRedirect: () => Promise<void>;
+    loginAdmin: (email: string, password: string) => Promise<void>;
     signupRecruiter: (params: SignupRecruiterParams) => Promise<void>;
     logout: () => Promise<void>;
     fetchProfile: () => Promise<BaseUser>; // Return type set to BaseUser
@@ -144,7 +145,6 @@ export const useAuthStore = create<AuthState>()(
                     if (isOAuth && token) {
                         set({ token: token, error: null });
                         await get().fetchProfile();
-
                     } else {
                         toast.error("Authentication failed - no token received");
                     }
@@ -153,6 +153,24 @@ export const useAuthStore = create<AuthState>()(
                     set({ error: "Failed to finalize Google login" });
                 } finally {
                     set({ isAuthChecking: false });
+                }
+            },
+
+            loginAdmin: async (name, password) => {
+                try {
+                    set({ isBlurScreenLoading: true });
+
+                    const response = await loginAdminService(name, password);
+
+                    if (response) {
+                        set({ token: response, error: null });
+                        await get().fetchProfile();
+                    }
+                } catch (error) {
+                    console.error("Login failed:", error);
+                    set({ error: error?.response?.data?.message || "Login failed" });
+                } finally {
+                    set({ isBlurScreenLoading: false });
                 }
             },
 
@@ -165,7 +183,7 @@ export const useAuthStore = create<AuthState>()(
                         companyName,
                         companyWebsite,
                     });
-            
+
                     toast.success("Signup successful!");
                 } catch (error) {
                     console.error("Signup recruiter failed:", error);
@@ -175,7 +193,7 @@ export const useAuthStore = create<AuthState>()(
                     set({ isLoading: false });
                 }
             },
-            
+
             logout: async () => {
                 try {
                     set({ isBlurScreenLoading: true });
@@ -196,7 +214,7 @@ export const useAuthStore = create<AuthState>()(
 
             fetchProfile: async () => {
                 try {
-                    const response = await getUserService();
+                    const response = await getUserProfileService();
                     if (response) {
                         set((state) => {
                             state.user = response; // Set the user object
