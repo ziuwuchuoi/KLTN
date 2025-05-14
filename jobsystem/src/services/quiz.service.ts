@@ -27,7 +27,7 @@ export const getQuizDetailService = async (quizId: string): Promise<TechnicalQui
 
 export const submitQuizService = async (quizId: string, data) => {
     const response = await axiosInstance.post(`/quiz/submit/${quizId}`, data);
-    console.log("response", response.data)
+    console.log("submit quiz", response.data)
     return response.data;
 };
 

@@ -62,8 +62,15 @@ export const useQuizQueries = (selectedCategory: string = "", page: number = 1, 
     };
 
     const submitQuiz = useMutation({
-        mutationFn: ({ quizId, answers }: { quizId: string; answers: SubmitQuizPayload["answers"] }) =>
-            submitQuizService(quizId, { answers }),
+        mutationFn: ({
+            quizId,
+            answers,
+            startTime,
+        }: {
+            quizId: string;
+            answers: SubmitQuizPayload["answers"];
+            startTime: string;
+        }) => submitQuizService(quizId, { answers, startTime }),
         onSuccess: (res) => {
             console.log("Quiz submitted successfully:", res);
         },

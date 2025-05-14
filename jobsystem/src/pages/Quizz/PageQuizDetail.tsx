@@ -1,30 +1,34 @@
-import { useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import QuizNavigation from "./QuizNavigation";
 import QuestionCard from "./QuestionCard";
 import { Button } from "@/components/ui/button";
-import { Quiz, useQuizQueries } from "./hooks/useQuizQueries";
+import { useQuizQueries } from "./hooks/useQuizQueries";
 import { cn } from "@/components/utils/general.utils";
-
-export interface QuizSubmit {
-    quizId: string;
-    result: {
-        quiz: Quiz;
-        userChoice: number;
-    }[];
-    score: number;
-}
 
 const PageQuizDetail = () => {
     const { quizId } = useParams();
     const { useQuizDetail, submitQuiz } = useQuizQueries();
     const { data: quiz } = useQuizDetail(quizId);
 
+    const location = useLocation();
+    const [startTime] = useState(location.state.startTime);
+    const [duration, setDuration] = useState(0); 
+
     const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
     const [userAnswers, setUserAnswers] = useState<{ [key: number]: number }>({});
     const [currentQuestionId, setCurrentQuestionId] = useState<number>(1);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const questionsContainerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const diff = Math.floor((Date.now() - new Date(startTime).getTime()) / 1000);
+            setDuration(diff);
+        }, 1000);
+    
+        return () => clearInterval(interval);
+    }, [startTime]);
 
     const handleSelectOption = (questionNumber: number, selectedAnswer: number) => {
         setUserAnswers((prev) => ({
@@ -51,6 +55,7 @@ const PageQuizDetail = () => {
             await submitQuiz.mutateAsync({
                 quizId: quiz._id,
                 answers: formattedAnswers,
+                startTime: startTime,
             });
 
             setIsSubmitted(true);

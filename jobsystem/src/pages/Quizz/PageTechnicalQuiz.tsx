@@ -32,8 +32,11 @@ const PageTechnicalQuiz = () => {
     }, [searchQuery, selectedCategory, technicalQuizzes]);
 
     const handleQuizClick = (quiz) => {
-        navigate(`/quiz/technical/${quiz._id}`);
-    };
+        const startTime = new Date().toISOString(); 
+        navigate(`/quiz/technical/${quiz._id}`, {
+            state: { startTime }, 
+        });
+    }; 
 
     return (
         <>
