@@ -1,21 +1,23 @@
-// import React from "react";
-// import { Outlet, Navigate, useLocation } from "react-router-dom";
-// import { useAuthStore } from "./stores/useAuthStore";
+import React from "react";
+import { Outlet, Navigate, useLocation } from "react-router-dom";
+import { useAuthStore } from "./stores/useAuthStore";
 
-// const PermissionCheckWrapper = ({ requiredRoles = ["user"] }) => {
-//     const { user } = useAuthStore();
-//     const location = useLocation();
+const PermissionCheckWrapper = ({ requiredRoles = ["candidate"] }) => {
+    const { user } = useAuthStore();
+    const location = useLocation();
 
-//     if (!user) {
-//         // Append intended path as a "redirect" query parameter in the login URL
-//         return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
-//     }
+    if (!user) {
+        const redirectRole = "candidate";
+        const redirectPath = `/signin/${redirectRole}?redirect=${encodeURIComponent(location.pathname)}`;
+        return <Navigate to={redirectPath} replace />;
+    }
 
-//     if (!requiredRoles.includes(user.role)) {
-//         return <Navigate to="/chat" replace />;
-//     }
+    const hasRequiredRole = user.roles?.some((role) => requiredRoles.includes(role));
+    if (!hasRequiredRole) {
+        return <Navigate to="/unauthorized" replace />;
+    }
 
-//     return <Outlet />;
-// };
+    return <Outlet />;
+};
 
-// export default PermissionCheckWrapper;
+export default PermissionCheckWrapper;

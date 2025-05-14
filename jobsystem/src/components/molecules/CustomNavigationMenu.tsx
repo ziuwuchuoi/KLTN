@@ -90,6 +90,7 @@ const userMenu = [
 export function CustomNavigationMenu() {
     const { user, logout, token } = useAuthStore();
     console.log("token", token)
+    console.log("user", user)
     const navigate = useNavigate();
 
     const handleLogout = async () => {
