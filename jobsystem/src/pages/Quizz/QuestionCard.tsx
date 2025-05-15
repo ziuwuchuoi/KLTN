@@ -4,6 +4,8 @@ import QuizResult from "./QuizResult";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
+import { extractTextAndCode } from "@/components/utils/markdown.utils";
+import MarkdownRenderer from "@/components/molecules/MarkdownRenderer";
 
 type QuestionCardProps = {
     question: Quiz;
@@ -11,17 +13,30 @@ type QuestionCardProps = {
     onSelectOption: (questionNumber: number, selectedAnswer: number) => void;
     userAnswer?: number;
     showResults: boolean;
+
+    correctAnswer?: number;
+    isCorrect?: boolean;
+    explanation?: string;
 };
 
-const QuestionCard = ({ question, questionNumber, onSelectOption, userAnswer, showResults }: QuestionCardProps) => {
+const QuestionCard = ({
+    question,
+    questionNumber,
+    onSelectOption,
+    userAnswer,
+    showResults,
+    correctAnswer,
+    isCorrect,
+    explanation,
+}: QuestionCardProps) => {
     const handleSelectOption = (optionIndex: number) => {
-        if (showResults) return; 
+        if (showResults) return;
         onSelectOption(questionNumber, optionIndex);
     };
 
     const getOptionStyles = (index: number) => {
         if (showResults) {
-            const isCorrect = index === question.correctAnswer;
+            const isCorrect = index === correctAnswer;
             const isSelected = userAnswer === index;
             const isIncorrectSelection = isSelected && !isCorrect;
 
@@ -67,11 +82,16 @@ const QuestionCard = ({ question, questionNumber, onSelectOption, userAnswer, sh
                 <Badge variant="secondary" className="w-fit px-2 mb-2 text-sm font-normal">
                     Question {questionNumber}
                 </Badge>
-                <CardTitle className="text-xl font-medium leading-tight">{question.question}</CardTitle>
+                <CardTitle className="text-xl font-medium leading-tight" style={{ whiteSpace: "pre-line" }}>
+                    {/* {question.question} */}
+                    {/* {extractTextAndCode(question.question)} */}
+                    <MarkdownRenderer content={extractTextAndCode(question.question)} />
+                </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 pt-2">
                 {question.options.map((option, index) => {
                     const styles = getOptionStyles(index);
+                    const optionText = extractTextAndCode(option);
 
                     return (
                         <button
@@ -94,7 +114,9 @@ const QuestionCard = ({ question, questionNumber, onSelectOption, userAnswer, sh
                                         {String.fromCharCode(65 + index)}
                                     </div>
                                 </div>
-                                <div className="pt-1">{option}</div>
+                                <div className="pt-1">
+                                    {optionText}
+                                </div>
                             </div>
                         </button>
                     );
@@ -107,7 +129,13 @@ const QuestionCard = ({ question, questionNumber, onSelectOption, userAnswer, sh
                         transition={{ delay: 0.3 }}
                         className="mt-6"
                     >
-                        <QuizResult question={question} selectedAnswer={userAnswer} showExplanation={true} />
+                        <QuizResult
+                            question={question}
+                            selectedAnswer={userAnswer}
+                            correctAnswer={correctAnswer}
+                            explanation={explanation}
+                            showExplanation={true}
+                        />
                     </motion.div>
                 )}
             </CardContent>

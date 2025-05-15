@@ -6,6 +6,21 @@ import { Button } from "@/components/ui/button";
 import { useQuizQueries } from "./hooks/useQuizQueries";
 import { cn } from "@/components/utils/general.utils";
 
+export type QuizResult = {
+    actualDuration: number;
+    correctCount: number;
+    duration: number;
+    feedback: {
+        qIndex: number;
+        chosenOption: number;
+        isCorrect: boolean;
+        correctAnswer: number;
+        explanation: string;
+    }[];
+    score: number;
+    total: number;
+};
+
 const PageQuizDetail = () => {
     const { quizId } = useParams();
     const { useQuizDetail, submitQuiz } = useQuizQueries();
@@ -13,12 +28,14 @@ const PageQuizDetail = () => {
 
     const location = useLocation();
     const [startTime] = useState(location.state.startTime);
-    const [duration, setDuration] = useState(0); 
+    const [duration, setDuration] = useState(0);
 
     const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
     const [userAnswers, setUserAnswers] = useState<{ [key: number]: number }>({});
     const [currentQuestionId, setCurrentQuestionId] = useState<number>(1);
     const [isSubmitted, setIsSubmitted] = useState(false);
+
+    const [resultQuestion, setResultQuestion] = useState<QuizResult>(null);
     const questionsContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -26,7 +43,7 @@ const PageQuizDetail = () => {
             const diff = Math.floor((Date.now() - new Date(startTime).getTime()) / 1000);
             setDuration(diff);
         }, 1000);
-    
+
         return () => clearInterval(interval);
     }, [startTime]);
 
@@ -41,6 +58,12 @@ const PageQuizDetail = () => {
         }
     };
 
+    useEffect(() => {
+        if (resultQuestion) {
+            console.log("result updated", resultQuestion);
+        }
+    }, [resultQuestion]);
+
     const handleSubmitQuiz = async () => {
         if (answeredQuestions.length < quiz.questions.length) {
             return;
@@ -52,11 +75,17 @@ const PageQuizDetail = () => {
         }));
 
         try {
-            await submitQuiz.mutateAsync({
+            const response = await submitQuiz.mutateAsync({
                 quizId: quiz._id,
                 answers: formattedAnswers,
                 startTime: startTime,
             });
+
+            console.log("res", response);
+
+            setResultQuestion(response.data);
+
+            console.log("result", resultQuestion);
 
             setIsSubmitted(true);
         } catch (error) {
@@ -97,6 +126,8 @@ const PageQuizDetail = () => {
                                 answeredQuestions={answeredQuestions}
                                 onQuestionClick={handleQuestionClick}
                                 currentQuestionId={currentQuestionId}
+                                resultQuestion={resultQuestion}
+                                isSubmitted={isSubmitted}
                             />
 
                             {/* Quiz progress */}
@@ -144,16 +175,23 @@ const PageQuizDetail = () => {
 
                     {/* Questions content */}
                     <div className="md:col-span-2" ref={questionsContainerRef}>
-                        {quiz.questions.map((question, index) => (
-                            <QuestionCard
-                                key={index}
-                                questionNumber={index + 1}
-                                question={question}
-                                onSelectOption={handleSelectOption}
-                                userAnswer={userAnswers[index + 1]}
-                                showResults={isSubmitted}
-                            />
-                        ))}
+                        {quiz.questions.map((question, index) => {
+                            const feedbackItem = resultQuestion?.feedback?.find((f) => f.qIndex === index);
+
+                            return (
+                                <QuestionCard
+                                    key={index}
+                                    questionNumber={index + 1}
+                                    question={question}
+                                    onSelectOption={handleSelectOption}
+                                    userAnswer={userAnswers[index + 1]}
+                                    showResults={isSubmitted}
+                                    correctAnswer={feedbackItem?.correctAnswer}
+                                    isCorrect={feedbackItem?.isCorrect}
+                                    explanation={feedbackItem?.explanation}
+                                />
+                            );
+                        })}
                     </div>
                 </div>
             </div>
