@@ -27,6 +27,8 @@ import TabRecruiter from "./pages/Dashboard/TabRecruiter";
 // permission wrapper
 import PermissionCheckWrapper from "./PermissionCheckWrapper";
 import PageUnauthorized from "./pages/Landing/PageUnauthorized";
+import TabApplication from "./pages/Dashboard/TabApplication";
+import TabJobDescription from "./pages/Dashboard/TabJobDescription";
 
 const AppRoutes = () => (
     <Routes>
@@ -60,11 +62,13 @@ const AppRoutes = () => (
         </Route>
 
         {/* Admin-only Routes */}
-        <Route element={<PermissionCheckWrapper requiredRoles={["admin"]} />}>
+        <Route element={<PermissionCheckWrapper requiredRoles={["admin", "recruiter"]} />}>
             <Route path="/dashboard" element={<PageDashboard />}>
                 <Route path="analysis" element={<TabAnalysis />} />
                 <Route path="candidates" element={<TabCandidate />} />
                 <Route path="recruiters" element={<TabRecruiter />} />
+                <Route path="applications" element={<TabApplication />} />
+                <Route path="jobdescriptions" element={<TabJobDescription />} />
             </Route>
         </Route>
 

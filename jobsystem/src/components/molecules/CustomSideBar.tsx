@@ -1,4 +1,3 @@
-import { ChartBar, Users, User, Briefcase, FileText } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
     Sidebar,
@@ -10,46 +9,71 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { cn } from "../utils/general.utils";
-import { useState } from "react";
-import { TbUser, TbUsersGroup } from "react-icons/tb";
+import { TbChartArea, TbFile, TbFileCertificate, TbUser, TbUsersGroup } from "react-icons/tb";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { UserRole } from "@/types/types";
 
-const menuItems = [
+const menuItems: {
+    title: string;
+    path: string;
+    icon: React.ReactNode;
+    permissionAllowed: UserRole;
+}[] = [
     {
         title: "Analysis",
         path: "/dashboard/analysis",
-        icon: ChartBar,
+        icon: <TbChartArea className="h-5 w-5" />,
+        permissionAllowed: "admin",
     },
     {
         title: "Candidates",
         path: "/dashboard/candidates",
-        icon: User,
+        icon: <TbUser className="h-5 w-5" />,
+        permissionAllowed: "admin",
     },
     {
         title: "Recruiters",
         path: "/dashboard/recruiters",
-        icon: Briefcase,
+        icon: <TbUsersGroup className="h-5 w-5" />,
+        permissionAllowed: "admin",
+    },
+    {
+        title: "Applications",
+        path: "/dashboard/applications",
+        icon: <TbFile className="h-5 w-5" />,
+        permissionAllowed: "recruiter",
+    },
+    {
+        title: "Job Descriptions",
+        path: "/dashboard/jobdescriptions",
+        icon: <TbFileCertificate className="h-5 w-5" />,
+        permissionAllowed: "recruiter",
     },
 ];
 
 const CustomSideBar = () => {
-    const { token } = useAuthStore();
+    const { token, user } = useAuthStore();
     console.log("token", token);
+
+    const userRoles = user?.roles ?? [];
+
+    const filteredMenuItems = menuItems.filter((item) => userRoles.includes(item.permissionAllowed));
 
     return (
         <Sidebar>
             <SidebarHeader className="p-4">
                 <div className="flex items-center gap-2">
                     <TbUsersGroup className="h-6 w-6 text-white" />
-                    <h1 className="text-xl font-bold">Admin</h1>
+                    <h1 className="text-xl font-bold">Dashboard</h1>
                 </div>
                 <div className="mt-1 flex lg:hidden">
                     <SidebarTrigger />
                 </div>
             </SidebarHeader>
+
             <SidebarContent>
                 <SidebarMenu className="p-4 space-y-5">
-                    {menuItems.map((item) => (
+                    {filteredMenuItems.map((item) => (
                         <SidebarMenuItem key={item.title}>
                             <SidebarMenuButton asChild>
                                 <NavLink
@@ -61,7 +85,7 @@ const CustomSideBar = () => {
                                         )
                                     }
                                 >
-                                    <item.icon className="h-5 w-5" />
+                                    {item.icon}
                                     <div>{item.title}</div>
                                 </NavLink>
                             </SidebarMenuButton>

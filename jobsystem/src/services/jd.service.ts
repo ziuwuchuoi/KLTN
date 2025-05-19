@@ -1,3 +1,4 @@
+import { JD } from "@/pages/Dashboard/forms/FormUploadJD";
 import axiosInstance from "./axiosInstance";
 
 export const getJDByIdService = async (jdId: string) => {
@@ -5,13 +6,12 @@ export const getJDByIdService = async (jdId: string) => {
     return response.data.data;
 };
 
-export const uploadJDService = async (file: File) => {
-    console.log("fileJD", file);
-
-    const formData = new FormData();
-    formData.append("jd", file);
-
-    const response = await axiosInstance.post(`/cvs/uploadJD`, file);
-    console.log("jd", response.data);
+export const uploadJDService = async (data: JD) => {
+    console.log("uploading JD data", data);
+  
+    const response = await axiosInstance.post(`/cvs/uploadJD`, data);
+  
+    console.log("response", response.data);
     return response.data.data;
-};
+  };
+  

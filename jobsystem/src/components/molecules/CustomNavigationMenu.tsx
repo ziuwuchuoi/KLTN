@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -37,8 +35,8 @@ const features = [
         href: "/ai-interview",
     },
     {
-        title: "Quizz",
-        description: "Test your knowledge with AI-generated quizzes.",
+        title: "Quiz",
+        description: "Test and expand your knowledge with AI-generated quizzes designed to challenge your understanding.",
         icon: (
             <svg className="h-12 w-12 text-yellow-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <rect x="3" y="3" width="18" height="18" rx="2" />

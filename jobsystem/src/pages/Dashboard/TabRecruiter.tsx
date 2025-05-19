@@ -1,17 +1,64 @@
-import { useState } from "react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CustomTable from "@/components/molecules/dashboard/CustomTable";
 import { useUserQueries } from "./hooks/useUserQueries";
+import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const TabRecruiter = () => {
     const [activeTab, setActiveTab] = useState("recruiters");
     const { userRecruiter, isLoadingRecruiter } = useUserQueries();
-    console.log("userRecruiter", userRecruiter);
 
     const recruiters = userRecruiter.items || [];
+
+    const columns = [
+        {
+            header: "Profile",
+            cell: (item) => (
+                <Avatar>
+                    <AvatarImage src={item.user.avatar} alt={item.user.name} />
+                    <AvatarFallback>{item.user.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+            ),
+            className: "w-[80px]",
+        },
+        {
+            header: "Name",
+            cell: (item) => <span className="font-medium">{item.user.name}</span>,
+        },
+        {
+            header: "Email",
+            cell: (item) => item.user.email,
+        },
+        {
+            header: "Role",
+            cell: (item) => (
+                <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                    {item.user.roles?.includes("candidate") ? "Candidate" : "User"}
+                </Badge>
+            ),
+        },
+        {
+            header: "CV",
+            cell: (item) => (item.cvId ? "Available" : "None"),
+        },
+        {
+            header: "Applied Jobs",
+            cell: (item) => (item.appliedJobIds && item.appliedJobIds.length > 0 ? item.appliedJobIds.join(", ") : "-"),
+        },
+        {
+            header: "Actions",
+            cell: (item) => (
+                <div className="text-right">
+                    <Button variant="ghost" size="sm">
+                        See more
+                    </Button>
+                </div>
+            ),
+            className: "text-right",
+        },
+    ];
 
     return (
         <div className="w-full">
@@ -27,73 +74,15 @@ const TabRecruiter = () => {
                 </TabsList>
 
                 <TabsContent value="recruiters">
-                    <div className="rounded-md border">
-                        <Table>
-                            <TableHeader className="text-white">
-                                <TableRow>
-                                    <TableHead className="w-[80px]">Profile</TableHead>
-                                    <TableHead>Name</TableHead>
-                                    <TableHead>Email</TableHead>
-                                    <TableHead>Role</TableHead>
-                                    <TableHead>Position</TableHead>
-                                    <TableHead>Company</TableHead>
-                                    <TableHead>Job Descriptions</TableHead>
-                                    <TableHead className="text-right">Actions</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {isLoadingRecruiter ? (
-                                    <TableRow>
-                                        <TableCell colSpan={8} className="text-center py-4">
-                                            Loading recruiters...
-                                        </TableCell>
-                                    </TableRow>
-                                ) : (
-                                    recruiters.map((recruiter) => (
-                                        <TableRow key={recruiter._id}>
-                                            <TableCell>
-                                                <Avatar>
-                                                    <AvatarFallback>{recruiter.user?.avatar}</AvatarFallback>
-                                                </Avatar>
-                                            </TableCell>
-                                            <TableCell className="font-medium">{recruiter.user?.name}</TableCell>
-                                            <TableCell>{recruiter.user?.email}</TableCell>
-                                            <TableCell>
-                                                <Badge variant="outline" className="bg-green-50 text-green-700">
-                                                    Recruiter
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell>{recruiter.position || "-"}</TableCell>
-                                            <TableCell>
-                                                {recruiter.companyName ? (
-                                                    <a
-                                                        href={`https://${recruiter.companyWebsite}`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-blue-600 hover:underline"
-                                                    >
-                                                        {recruiter.companyName}
-                                                    </a>
-                                                ) : (
-                                                    "-"
-                                                )}
-                                            </TableCell>
-                                            <TableCell>{recruiter.jds?.length || 0}</TableCell>
-                                            <TableCell className="text-right">
-                                                <Button variant="ghost" size="sm">
-                                                    See more
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
+                    <CustomTable
+                        columns={columns}
+                        data={recruiters}
+                        isLoading={isLoadingRecruiter}
+                        loadingMessage="Loading candidates..."
+                    />
                 </TabsContent>
 
                 <TabsContent value="requests">
-                    {/* This can be a separate component or static table */}
                     <div className="text-center text-muted-foreground">Recruiter requests go here...</div>
                 </TabsContent>
             </Tabs>

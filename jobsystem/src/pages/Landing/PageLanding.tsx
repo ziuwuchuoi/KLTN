@@ -1,11 +1,7 @@
-import CustomHeader from "@/components/molecules/CustomHeader";
-import { Button } from "@/components/ui/button";
 
 export default function PageLanding() {
     return (
         <main>
-            <CustomHeader />
-
             {/* Hero Section */}
             <div className="relative flex flex-col h-screen bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 items-center justify-center px-6 text-white">
                 <div className="relative flex items-center justify-center">

@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { HandleError } from "@/components/utils/general.utils";
 import { uploadCVService, getCVByIdService } from "@/services/cv.service";
 import { getJDByIdService, uploadJDService } from "@/services/jd.service";
+import { JD } from "@/pages/Dashboard/forms/FormUploadJD";
 
 export const QUERY_KEYS = {
     files: {
@@ -24,15 +24,15 @@ export function useFileQueries() {
     });
 
     const uploadJD = useMutation({
-        mutationFn: (file: File) => uploadJDService(file),
+        mutationFn: (data: JD) => uploadJDService(data),
         onSuccess: () => {
-            console.log("JD uploaded successfully");
+          console.log("JD uploaded successfully");
         },
         onError: (error: Error) => {
-            console.log("JD uploaded failed", error);
+          console.log("JD upload failed", error);
         },
-    });
-
+      });
+      
     const useCVDetail = (id: string) =>
         useQuery({
             queryKey: QUERY_KEYS.files.cvDetail(id),
