@@ -52,10 +52,10 @@ const menuItems: {
 ];
 
 const CustomSideBar = () => {
-    const { token, user } = useAuthStore();
+    const { token, user, admin } = useAuthStore();
     console.log("token", token);
 
-    const userRoles = user?.roles ?? [];
+    const userRoles = [...(user?.roles ?? []), admin?.role];
 
     const filteredMenuItems = menuItems.filter((item) => userRoles.includes(item.permissionAllowed));
 

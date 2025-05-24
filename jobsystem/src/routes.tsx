@@ -29,6 +29,7 @@ import PermissionCheckWrapper from "./PermissionCheckWrapper";
 import PageUnauthorized from "./pages/Landing/PageUnauthorized";
 import TabApplication from "./pages/Dashboard/TabApplication";
 import TabJobDescription from "./pages/Dashboard/TabJobDescription";
+import PageProblemCodingDetail from "./pages/LiveCoding/PageProblemCodingDetail";
 
 const AppRoutes = () => (
     <Routes>
@@ -55,6 +56,7 @@ const AppRoutes = () => (
 
                 {/* Live Coding */}
                 <Route path="live-coding" element={<PageLiveCoding />} />
+                <Route path="live-coding/:codingId" element={<PageProblemCodingDetail />} />
 
                 {/* Landing (optional for user) */}
                 <Route path="home" element={<PageLanding />} />

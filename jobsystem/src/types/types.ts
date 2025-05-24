@@ -91,13 +91,16 @@ export interface BaseRecruiter extends BaseUser {
     listJdIds?: string[]; // JD created and uploaded by recruiter
 }
 
-export interface BaseAdmin extends BaseUser {
-    role: "admin";
-
-    permissions?: string[];
+export interface BaseAdmin {
+    _id: string;
+    role: string;
+    name: string;
+    email: string;
+    phoneNumber: string;
+    permissions: {subject: string; action: string;}[];
+    createdAt?: Date;
+    updatedAt?: Date;
 }
-
-export type BaseAllUser = BaseCandidate | BaseRecruiter | BaseAdmin;
 
 export interface BaseCV {
     _id: string;

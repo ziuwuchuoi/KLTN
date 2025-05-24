@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import CustomTable from "@/components/molecules/dashboard/CustomTable";
+import { CustomTable } from "@/components/molecules/dashboard/CustomTable";
 import { useUserQueries } from "./hooks/useUserQueries";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";

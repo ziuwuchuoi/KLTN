@@ -1,10 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { BaseUser } from "../types/types";
+import { BaseUser, BaseAdmin } from "../types/types";
 import { loginAdminService, loginService, logoutService, sigupRecruiterService } from "@/services/auth.service";
-import { getUserProfileService } from "@/services/user.service";
-import { useSearchParams } from "react-router-dom";
+import { getUserProfileService, getAdminProfileService } from "@/services/user.service";
 import { toast } from "sonner";
 
 export interface LoginParams {
@@ -27,6 +26,7 @@ export interface SignupRecruiterParams {
 type AuthState = {
     token: string | null;
     user: BaseUser | null;
+    admin: BaseAdmin | null;
     error: string | null;
     isBlurScreenLoading: boolean;
     isAuthChecking: boolean;
@@ -35,6 +35,7 @@ type AuthState = {
 
     setToken: (token: string | null) => void;
     setUser: (user: BaseUser | null) => void;
+    setAdmin: (admin: BaseAdmin | null) => void;
     setError: (error: string | null) => void;
     login: (params: LoginParams) => Promise<void>;
     googleLogin: (role: string) => Promise<void>;
@@ -42,7 +43,8 @@ type AuthState = {
     loginAdmin: (email: string, password: string) => Promise<void>;
     signupRecruiter: (params: SignupRecruiterParams) => Promise<void>;
     logout: () => Promise<void>;
-    fetchProfile: () => Promise<BaseUser>; // Return type set to BaseUser
+    fetchUserProfile: () => Promise<BaseUser>;
+    fetchAdminProfile: () => Promise<BaseUser>;
     updateUser: (user: Partial<BaseUser>) => void;
     setIsBlurScreenLoading: (isLoading: boolean) => void;
 };
@@ -52,6 +54,7 @@ export const useAuthStore = create<AuthState>()(
         immer<AuthState>((set, get) => ({
             token: null,
             user: null,
+            admin: null,
             error: null,
             isBlurScreenLoading: false,
             isAuthChecking: false,
@@ -67,6 +70,12 @@ export const useAuthStore = create<AuthState>()(
             setUser: (user) => {
                 set((state) => {
                     state.user = user;
+                });
+            },
+
+            setAdmin: (admin) => {
+                set((state) => {
+                    state.admin = admin;
                 });
             },
 
@@ -95,7 +104,7 @@ export const useAuthStore = create<AuthState>()(
                             set({ token: accessToken, error: null });
 
                             // Fetch user profile after getting token
-                            await get().fetchProfile();
+                            await get().fetchUserProfile();
                         } else {
                             throw new Error("No access token received on verify step.");
                         }
@@ -144,7 +153,7 @@ export const useAuthStore = create<AuthState>()(
 
                     if (isOAuth && token) {
                         set({ token: token, error: null });
-                        await get().fetchProfile();
+                        await get().fetchUserProfile();
                     } else {
                         toast.error("Authentication failed - no token received");
                     }
@@ -164,7 +173,7 @@ export const useAuthStore = create<AuthState>()(
 
                     if (response) {
                         set({ token: response, error: null });
-                        await get().fetchProfile();
+                        await get().fetchAdminProfile();
                     }
                 } catch (error) {
                     console.error("Login failed:", error);
@@ -212,7 +221,7 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
 
-            fetchProfile: async () => {
+            fetchUserProfile: async () => {
                 try {
                     const response = await getUserProfileService();
                     if (response) {
@@ -230,6 +239,27 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
 
+            fetchAdminProfile: async () => {
+                try {
+                    const response = await getAdminProfileService();
+                    if (response) {
+                        const responseWithRole = { ...response, role: "admin" };
+
+                        set((state) => {
+                            state.admin = responseWithRole;
+                        });
+
+                        return responseWithRole; 
+                    } else {
+                        console.error("Failed to fetch user profile: No data returned");
+                        return null; 
+                    }
+                } catch (error) {
+                    console.error("Fetch admin profile failed", error);
+                    return null; // Return null if an error occurs
+                }
+            },
+
             updateUser: (userUpdate) => {
                 set((state) => {
                     if (state.user) {
@@ -243,6 +273,7 @@ export const useAuthStore = create<AuthState>()(
             partialize: (state) => ({
                 token: state.token,
                 user: state.user,
+                admin: state.admin,
             }),
         }
     )
