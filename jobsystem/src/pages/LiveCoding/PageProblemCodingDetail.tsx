@@ -59,7 +59,7 @@ const PageProblemCodingDetail = () => {
                 setCode(matchingSnippet.code);
             }
         }
-    }, [problem, selectedLanguage]); 
+    }, [problem, selectedLanguage]);
 
     const handleLanguageChange = (languageId: string) => {
         const langId = Number.parseInt(languageId);
@@ -180,7 +180,6 @@ const PageProblemCodingDetail = () => {
                                                     className="prose prose-invert max-w-none"
                                                     dangerouslySetInnerHTML={{ __html: problem.content }}
                                                 />
-
                                                 <div>
                                                     <h3 className="text-sm font-medium text-slate-400 mb-2">Topics</h3>
                                                     <div className="flex flex-wrap gap-2">
@@ -195,7 +194,6 @@ const PageProblemCodingDetail = () => {
                                                         ))}
                                                     </div>
                                                 </div>
-
                                                 {/* Hints */}
                                                 {problem.hints.length > 0 && (
                                                     <div>
@@ -323,147 +321,139 @@ const PageProblemCodingDetail = () => {
                                             </Button>
                                         </div>
 
-                                        <ScrollArea className="h-[calc(50vh-120px)]">
-                                            <div className="p-4 space-y-4">
-                                                {/* Overall Stats */}
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div className="bg-slate-900/50 p-3 rounded-lg">
-                                                        <div className="flex items-center gap-2 text-sm text-slate-400 mb-1">
-                                                            <CheckCircle className="w-4 h-4" />
-                                                            Test Cases
-                                                        </div>
-                                                        <div className="text-lg font-semibold">
-                                                            {submissionResult.passedTests}/{submissionResult.totalTests}
-                                                        </div>
+                                        <div className="p-4 space-y-4 overflow-y-auto">
+                                            {/* Overall Stats */}
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="bg-slate-900/50 p-3 rounded-lg">
+                                                    <div className="flex items-center gap-2 text-sm text-slate-400 mb-1">
+                                                        <CheckCircle className="w-4 h-4" />
+                                                        Test Cases
                                                     </div>
-                                                    <div className="bg-slate-900/50 p-3 rounded-lg">
-                                                        <div className="flex items-center gap-2 text-sm text-slate-400 mb-1">
-                                                            <AlertCircle className="w-4 h-4" />
-                                                            Status
-                                                        </div>
-                                                        <div
-                                                            className={`text-lg font-semibold ${submissionResult.success ? "text-green-400" : "text-red-400"}`}
-                                                        >
-                                                            {submissionResult.success ? "Accepted" : "Failed"}
-                                                        </div>
+                                                    <div className="text-lg font-semibold">
+                                                        {submissionResult.passedTests}/{submissionResult.totalTests}
                                                     </div>
                                                 </div>
-
-                                                {/* Test Results */}
-                                                <div className="space-y-3">
-                                                    <h4 className="font-semibold text-white">Test Results</h4>
-                                                    {submissionResult.testResults.map((result, index) => (
-                                                        <Card
-                                                            key={index}
-                                                            className={`bg-slate-900/50 border-slate-700 ${result.passed ? "border-green-500/30" : "border-red-500/30"}`}
-                                                        >
-                                                            <CardHeader className="pb-2">
-                                                                <div className="flex items-center justify-between">
-                                                                    <div className="flex items-center gap-2">
-                                                                        {result.passed ? (
-                                                                            <CheckCircle className="w-4 h-4 text-green-400" />
-                                                                        ) : (
-                                                                            <XCircle className="w-4 h-4 text-red-400" />
-                                                                        )}
-                                                                        <span className="font-medium">
-                                                                            Test Case {index + 1}
-                                                                        </span>
-                                                                        <Badge
-                                                                            variant={
-                                                                                result.passed
-                                                                                    ? "default"
-                                                                                    : "destructive"
-                                                                            }
-                                                                            className="text-xs"
-                                                                        >
-                                                                            {result.status.description}
-                                                                        </Badge>
-                                                                    </div>
-                                                                    <div className="flex items-center gap-4 text-xs text-slate-400">
-                                                                        <div className="flex items-center gap-1">
-                                                                            <Clock className="w-3 h-3" />
-                                                                            {result.time}s
-                                                                        </div>
-                                                                        <div className="flex items-center gap-1">
-                                                                            <MemoryStick className="w-3 h-3" />
-                                                                            {(result.memory / 1024).toFixed(1)}KB
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </CardHeader>
-                                                            <CardContent className="pt-0">
-                                                                <div className="space-y-2 text-sm">
-                                                                    {/* Input */}
-                                                                    <div>
-                                                                        <span className="text-slate-400">Input: </span>
-                                                                        <code className="bg-slate-800 px-2 py-1 rounded text-slate-300">
-                                                                            {result.testCase.params
-                                                                                .map((p) => p.value)
-                                                                                .join(", ")}
-                                                                        </code>
-                                                                    </div>
-
-                                                                    {/* Expected */}
-                                                                    <div>
-                                                                        <span className="text-slate-400">
-                                                                            Expected:{" "}
-                                                                        </span>
-                                                                        <code className="bg-slate-800 px-2 py-1 rounded text-green-400">
-                                                                            {result.testCase.expected}
-                                                                        </code>
-                                                                    </div>
-
-                                                                    {/* Output */}
-                                                                    <div>
-                                                                        <span className="text-slate-400">Output: </span>
-                                                                        <code
-                                                                            className={`bg-slate-800 px-2 py-1 rounded ${result.passed ? "text-green-400" : "text-red-400"}`}
-                                                                        >
-                                                                            {result.stdout || "undefined"}
-                                                                        </code>
-                                                                    </div>
-
-                                                                    {/* Error messages */}
-                                                                    {result.stderr && (
-                                                                        <div>
-                                                                            <span className="text-slate-400">
-                                                                                Error:{" "}
-                                                                            </span>
-                                                                            <code className="bg-red-900/20 px-2 py-1 rounded text-red-400">
-                                                                                {result.stderr}
-                                                                            </code>
-                                                                        </div>
-                                                                    )}
-
-                                                                    {result.compile_output && (
-                                                                        <div>
-                                                                            <span className="text-slate-400">
-                                                                                Compile Output:{" "}
-                                                                            </span>
-                                                                            <code className="bg-yellow-900/20 px-2 py-1 rounded text-yellow-400">
-                                                                                {result.compile_output}
-                                                                            </code>
-                                                                        </div>
-                                                                    )}
-
-                                                                    {/* Explanation */}
-                                                                    {result.testCase.explanation && (
-                                                                        <div className="mt-2 p-2 bg-blue-900/20 rounded border border-blue-500/30">
-                                                                            <span className="text-blue-400 text-xs font-medium">
-                                                                                Explanation:{" "}
-                                                                            </span>
-                                                                            <span className="text-blue-300 text-xs">
-                                                                                {result.testCase.explanation}
-                                                                            </span>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            </CardContent>
-                                                        </Card>
-                                                    ))}
+                                                <div className="bg-slate-900/50 p-3 rounded-lg">
+                                                    <div className="flex items-center gap-2 text-sm text-slate-400 mb-1">
+                                                        <AlertCircle className="w-4 h-4" />
+                                                        Status
+                                                    </div>
+                                                    <div
+                                                        className={`text-lg font-semibold ${submissionResult.success ? "text-green-400" : "text-red-400"}`}
+                                                    >
+                                                        {submissionResult.success ? "Accepted" : "Failed"}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </ScrollArea>
+
+                                            {/* Test Results */}
+                                            <div className="space-y-3">
+                                                <h4 className="font-semibold text-white">Test Results</h4>
+                                                {submissionResult.testResults.map((result, index) => (
+                                                    <Card
+                                                        key={index}
+                                                        className={`bg-slate-900/50 border-slate-700 ${result.passed ? "border-green-500/30" : "border-red-500/30"}`}
+                                                    >
+                                                        <CardHeader className="pb-2">
+                                                            <div className="flex items-center justify-between">
+                                                                <div className="flex items-center gap-2">
+                                                                    {result.passed ? (
+                                                                        <CheckCircle className="w-4 h-4 text-green-400" />
+                                                                    ) : (
+                                                                        <XCircle className="w-4 h-4 text-red-400" />
+                                                                    )}
+                                                                    <span className="font-medium">
+                                                                        Test Case {index + 1}
+                                                                    </span>
+                                                                    <Badge
+                                                                        variant={
+                                                                            result.passed ? "default" : "destructive"
+                                                                        }
+                                                                        className="text-xs"
+                                                                    >
+                                                                        {result.status.description}
+                                                                    </Badge>
+                                                                </div>
+                                                                <div className="flex items-center gap-4 text-xs text-slate-400">
+                                                                    <div className="flex items-center gap-1">
+                                                                        <Clock className="w-3 h-3" />
+                                                                        {result.time}s
+                                                                    </div>
+                                                                    <div className="flex items-center gap-1">
+                                                                        <MemoryStick className="w-3 h-3" />
+                                                                        {(result.memory / 1024).toFixed(1)}KB
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </CardHeader>
+                                                        <CardContent className="pt-0">
+                                                            <div className="space-y-2 text-sm">
+                                                                {/* Input */}
+                                                                <div>
+                                                                    <span className="text-slate-400">Input: </span>
+                                                                    <code className="bg-slate-800 px-2 py-1 rounded text-slate-300">
+                                                                        {result.testCase.params
+                                                                            .map((p) => p.value)
+                                                                            .join(", ")}
+                                                                    </code>
+                                                                </div>
+
+                                                                {/* Expected */}
+                                                                <div>
+                                                                    <span className="text-slate-400">Expected: </span>
+                                                                    <code className="bg-slate-800 px-2 py-1 rounded text-green-400">
+                                                                        {result.testCase.expected}
+                                                                    </code>
+                                                                </div>
+
+                                                                {/* Output */}
+                                                                <div>
+                                                                    <span className="text-slate-400">Output: </span>
+                                                                    <code
+                                                                        className={`bg-slate-800 px-2 py-1 rounded ${result.passed ? "text-green-400" : "text-red-400"}`}
+                                                                    >
+                                                                        {result.stdout || "undefined"}
+                                                                    </code>
+                                                                </div>
+
+                                                                {/* Error messages */}
+                                                                {result.stderr && (
+                                                                    <div>
+                                                                        <span className="text-slate-400">Error: </span>
+                                                                        <code className="bg-red-900/20 px-2 py-1 rounded text-red-400">
+                                                                            {result.stderr}
+                                                                        </code>
+                                                                    </div>
+                                                                )}
+
+                                                                {result.compile_output && (
+                                                                    <div>
+                                                                        <span className="text-slate-400">
+                                                                            Compile Output:{" "}
+                                                                        </span>
+                                                                        <code className="bg-yellow-900/20 px-2 py-1 rounded text-yellow-400">
+                                                                            {result.compile_output}
+                                                                        </code>
+                                                                    </div>
+                                                                )}
+
+                                                                {/* Explanation */}
+                                                                {result.testCase.explanation && (
+                                                                    <div className="mt-2 p-2 bg-blue-900/20 rounded border border-blue-500/30">
+                                                                        <span className="text-blue-400 text-xs font-medium">
+                                                                            Explanation:{" "}
+                                                                        </span>
+                                                                        <span className="text-blue-300 text-xs">
+                                                                            {result.testCase.explanation}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </CardContent>
+                                                    </Card>
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
                                 )}
                             </CardContent>

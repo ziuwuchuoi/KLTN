@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import CustomVisibilityTabs, { VisibilityMode } from "@/components/molecules/CustomVisibilityTabs";
-import { useFileQueries } from "@/pages/CVEvaluation/hooks/useFileQueries";
+import { useJDQueries } from "@/pages/CVEvaluation/hooks/useFileQueries";
+import { JDDetail } from "@/services/file.service";
 
-const defaultJD = {
+const defaultJD: Partial<JDDetail> = {
     title: "",
     description: "",
     companyName: "",
@@ -26,7 +27,6 @@ const defaultJD = {
     visibility: "public",
 };
 
-export type JD = typeof defaultJD;
 
 const FormUploadJD = ({
     children,
@@ -36,16 +36,16 @@ const FormUploadJD = ({
     onUpload: (isUploading: boolean) => void;
 }) => {
     const [open, setOpen] = useState(false);
-    const [jobData, setJobData] = useState<JD>(defaultJD);
+    const [jobData, setJobData] = useState<Partial<JDDetail>>(defaultJD);
     const [activeTab, setActiveTab] = useState("manual");
 
-    const {uploadJD} = useFileQueries();
+    const {uploadJD} = useJDQueries();
 
-    const handleChange = (key: keyof JD) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (key: keyof JDDetail) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setJobData((prev) => ({ ...prev, [key]: e.target.value }));
     };
 
-    const handleRequirementsChange = (key: keyof JD["requirements"], index: number, value: string) => {
+    const handleRequirementsChange = (key: keyof JDDetail["requirements"], index: number, value: string) => {
         const current = jobData.requirements[key];
         if (Array.isArray(current)) {
             const updated = [...current];
@@ -148,7 +148,7 @@ const FormUploadJD = ({
                                     "projects",
                                     "certifications",
                                     "languages",
-                                ] as (keyof JD["requirements"])[]
+                                ] as (keyof JDDetail["requirements"])[]
                             ).map((field) => (
                                 <div key={field}>
                                     <Label className="capitalize mt-4">{field}</Label>

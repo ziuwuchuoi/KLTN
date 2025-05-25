@@ -16,14 +16,6 @@ export function useUserQueries() {
     const [candidatePage, setCandidatePage] = useState(1);
     const [recruiterPage, setRecruiterPage] = useState(1);
 
-    // const userCandidate = useQuery({
-    //     queryKey: QUERY_KEYS.user.candidate,
-    //     queryFn: () => getListCandidateService(candidatePage),
-    //     placeholderData: (previousData) => previousData,
-    //     refetchOnWindowFocus: false,
-    //     refetchOnReconnect: false,
-    // });
-
     const {
         data: userCandidate,
         isLoading: isLoadingCandidate,
@@ -33,14 +25,6 @@ export function useUserQueries() {
         queryFn: () => getListCandidateService(candidatePage),
         placeholderData: (previousData) => previousData,
     });
-
-    // const userRecruiter = useQuery({
-    //     queryKey: QUERY_KEYS.user.recruiter,
-    //     queryFn: () => getListRecruiterService(recruiterPage),
-    //     placeholderData: (previousData) => previousData,
-    //     refetchOnWindowFocus: false,
-    //     refetchOnReconnect: false,
-    // });
 
     const {
         data: userRecruiter,
