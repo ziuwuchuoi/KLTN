@@ -11,7 +11,6 @@ import {
     CodeProblemDetail,
     CodeLanguage,
     CodeSubmitData,
-    CodeSubmitResult,
 } from "@/services/code.service";
 
 export const useCodeQueries = (

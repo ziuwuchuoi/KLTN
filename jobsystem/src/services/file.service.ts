@@ -58,6 +58,42 @@ export interface JDDetail {
     visibility: string; // public or private
 }
 
+export interface AtsCheckParams {
+    formatting_tips: string[];
+    issues: string[];
+    missing_entities: [];
+    missing_keywords: string[];
+    recommendations: string[];
+}
+
+export interface SkillAnalysisParams {
+    match_percent: number;
+    matched_skills: string[];
+    missing_skills: string[];
+}
+
+export interface SummaryParams {
+    fit_level: string;
+    overall_score: number;
+    similarity_score: number;
+    skill_match_score: number;
+}
+
+export interface EvaluatedCVResult {
+    _id: string;
+    cvId: string;
+    jdId: string;
+    candidateId: string;
+    reviewCVResponse: {
+        ai_review: string;
+        ats_check: AtsCheckParams;
+        skills_analysis: SkillAnalysisParams;
+        summary: SummaryParams;
+    };
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 export const getListCVService = async (
     candidateId: string,
     limit = 20,
@@ -126,5 +162,11 @@ export const uploadJDService = async (data: Partial<JDDetail>) => {
     const response = await axiosInstance.post(`/cvs/uploadJD`, data);
 
     console.log("response", response.data);
+    return response.data.data;
+};
+
+export const evaluateCVService = async (cvId: string, jdId: string): Promise<EvaluatedCVResult> => {
+    const response = await axiosInstance.post(`/cvs/reviewCV/${cvId}/${jdId}`);
+
     return response.data.data;
 };

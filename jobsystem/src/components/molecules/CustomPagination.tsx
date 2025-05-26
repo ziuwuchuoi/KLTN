@@ -41,7 +41,7 @@ export const CustomPagination = ({ currentPage, totalPages, onPageChange }: Cust
     const pages = generatePageNumbers();
 
     return (
-        <Pagination className="mt-6 mb-6">
+        <Pagination className="mt-6 mb-6 w-fit">
             <PaginationContent>
                 <PaginationItem>
                     <PaginationPrevious
@@ -62,7 +62,7 @@ export const CustomPagination = ({ currentPage, totalPages, onPageChange }: Cust
                     </PaginationItem>
                 ))}
 
-                <PaginationItem>
+                <PaginationItem >
                     <PaginationNext
                         onClick={() => onPageChange(currentPage + 1)}
                         className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}

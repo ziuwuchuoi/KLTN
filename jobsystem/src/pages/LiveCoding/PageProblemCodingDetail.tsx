@@ -22,12 +22,7 @@ import {
 import { useCodeQueries } from "./hooks/useCodeQueries";
 import { CodeEditor } from "@/components/molecules/code/CodeEditor";
 import type { CodeLanguage, CodeSubmitResult } from "@/services/code.service";
-
-const difficultyColors = {
-    Easy: "bg-green-500/20 text-green-400 border-green-500/30",
-    Medium: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-    Hard: "bg-red-500/20 text-red-400 border-red-500/30",
-};
+import { difficultyColors } from "@/components/molecules/dashboard/columns";
 
 const PageProblemCodingDetail = () => {
     const params = useParams();
@@ -131,51 +126,40 @@ const PageProblemCodingDetail = () => {
         );
     }
 
-    console.log("code", code);
-
     return (
         <div className="flex flex-col w-full">
-            {/* Header Section - Fixed */}
-            <div className="fixed top-16 left-0 right-0 z-10">
-                <div className="container mx-auto px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => navigate("/live-coding")}
-                                className="text-slate-300 hover:text-white"
-                            >
-                                <ArrowLeft className="w-4 h-4 mr-2" />
-                                Problem List
-                            </Button>
-                            <div className="flex items-center gap-2">
-                                <span className="text-slate-400">#{problem.problemId}</span>
-                                <h1 className="text-xl font-semibold">{problem.title}</h1>
-                                <Badge className={difficultyColors[problem.difficulty]}>{problem.difficulty}</Badge>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             {/* Main Content - Full Height */}
-            <div className="pt-32 h-screen flex">
+            <div className="pt-20 h-screen flex">
                 <div className="flex-1 grid lg:grid-cols-2 gap-6 px-6 pb-6 h-full">
                     <div className="flex flex-col h-full">
                         <Card className="flex-1 bg-slate-800/50 border-slate-700 flex flex-col">
                             <CardHeader className="pb-2">
+                                <div className="flex items-center gap-4">
+                                    {/* <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => navigate("/live-coding")}
+                                        className="text-slate-300 hover:text-white w-6 h-6"
+                                    >
+                                        <ArrowLeft className="w-4 h-4 mr-2 text-white" />
+                                    </Button> */}
+                                    <div className="flex items-center gap-2 text-white">
+                                        <span>#{problem.problemId}</span>
+                                        <h1 className="text-xl font-semibold">{problem.title}</h1>
+                                        <Badge className={difficultyColors[problem.difficulty]}>
+                                            {problem.difficulty}
+                                        </Badge>
+                                    </div>
+                                </div>
                                 <Tabs defaultValue="description" className="w-full">
-                                    <TabsList className="grid w-full grid-cols-3 bg-slate-700">
+                                    <TabsList className="grid w-full grid-cols-2 bg-slate-700">
                                         <TabsTrigger value="description">Description</TabsTrigger>
-                                        <TabsTrigger value="editorial">Editorial</TabsTrigger>
                                         <TabsTrigger value="submissions">Submissions</TabsTrigger>
                                     </TabsList>
 
                                     <TabsContent value="description" className="mt-4 flex-1">
                                         <ScrollArea className="h-[calc(100vh-280px)]">
                                             <div className="space-y-6 pr-4">
-                                                Problem Content
                                                 <div
                                                     className="prose prose-invert max-w-none"
                                                     dangerouslySetInnerHTML={{ __html: problem.content }}
@@ -187,7 +171,7 @@ const PageProblemCodingDetail = () => {
                                                             <Badge
                                                                 key={tag}
                                                                 variant="secondary"
-                                                                className="bg-slate-700 text-slate-300"
+                                                                className="bg-slate-700 text-slate-300 hover:text-slate-900"
                                                             >
                                                                 {tag}
                                                             </Badge>
@@ -201,7 +185,7 @@ const PageProblemCodingDetail = () => {
                                                             variant="ghost"
                                                             size="sm"
                                                             onClick={() => setShowHints(!showHints)}
-                                                            className="text-yellow-400 hover:text-yellow-300"
+                                                            className="text-yellow-400 hover:text-slate-900"
                                                         >
                                                             <Lightbulb className="w-4 h-4 mr-2" />
                                                             {showHints ? "Hide" : "Show"} Hints ({problem.hints.length})
@@ -224,12 +208,6 @@ const PageProblemCodingDetail = () => {
                                                 )}
                                             </div>
                                         </ScrollArea>
-                                    </TabsContent>
-
-                                    <TabsContent value="editorial">
-                                        <div className="text-center py-8 text-slate-400">
-                                            Editorial content would go here
-                                        </div>
                                     </TabsContent>
 
                                     <TabsContent value="submissions">
@@ -281,7 +259,7 @@ const PageProblemCodingDetail = () => {
                                     </Select>
                                 </div>
                             </CardHeader>
-                            <CardContent className="flex-1 p-0 flex flex-col">
+                            <CardContent className="flex-1 p-0 flex flex-col max-h-screen">
                                 <div className={`flex-1 ${showResults ? "h-1/2" : "h-full"}`}>
                                     <CodeEditor
                                         value={code}
@@ -292,7 +270,7 @@ const PageProblemCodingDetail = () => {
 
                                 {/* Submission Results */}
                                 {submissionResult && showResults && (
-                                    <div className="h-1/2 border-t border-slate-700">
+                                    <div className="border-t border-slate-700">
                                         <div className="flex items-center justify-between p-4 bg-slate-800/50 border-b border-slate-700">
                                             <div className="flex items-center gap-2">
                                                 {submissionResult.success ? (

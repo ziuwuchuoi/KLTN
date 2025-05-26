@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import QuizNavigation from "./QuizNavigation";
 import QuestionCard from "./QuestionCard";
 import { Button } from "@/components/ui/button";
 import { useQuizQueries } from "./hooks/useQuizQueries";
 import { cn } from "@/components/utils/general.utils";
+import { ArrowLeft } from "lucide-react";
 
 export type QuizResult = {
     actualDuration: number;
@@ -24,9 +25,10 @@ export type QuizResult = {
 const PageQuizDetail = () => {
     const { quizId } = useParams();
     const { useQuizDetail, submitQuiz } = useQuizQueries();
-    const { data: quiz } = useQuizDetail(quizId);
+    const { data: quiz, isLoading } = useQuizDetail(quizId);
 
     const location = useLocation();
+    const navigate = useNavigate()
     const [startTime] = useState(location.state.startTime);
     const [duration, setDuration] = useState(0);
 
@@ -105,10 +107,31 @@ const PageQuizDetail = () => {
         }
     };
 
+    if (isLoading) {
+        return (
+            <div className="flex flex-col w-full pt-20">
+                <div className="min-h-screen flex items-center justify-center">
+                    <div className="animate-pulse text-center">
+                        <div className="h-8 bg-slate-700 rounded w-64 mb-4 mx-auto"></div>
+                        <div className="h-4 bg-slate-700 rounded w-48 mx-auto"></div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     if (!quiz) {
         return (
-            <div className="text-white text-center py-20">
-                <p>Quiz not found. Please go back and select a quiz.</p>
+            <div className="flex flex-col w-full pt-20">
+                <div className="min-h-screen flex items-center justify-center">
+                    <div className="text-center">
+                        <h1 className="text-2xl font-bold mb-4">Quiz not found</h1>
+                        <Button onClick={() => navigate("/quiz")} variant="outline">
+                            <ArrowLeft className="w-4 h-4 mr-2" />
+                            Back to Quizzes
+                        </Button>
+                    </div>
+                </div>
             </div>
         );
     }
