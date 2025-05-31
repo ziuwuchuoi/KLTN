@@ -17,6 +17,8 @@ import PageCaseQuiz from "./pages/Quizz/PageCaseQuiz";
 import PagePersonalityQuiz from "./pages/Quizz/PagePersonalityQuiz";
 import PageQuizDetail from "./pages/Quizz/PageQuizDetail";
 import PageLiveCoding from "./pages/LiveCoding/PageLiveCoding";
+import PageJobs from "./pages/Job/PageJob";
+import PageJobDetail from "./pages/Job/PageJobDetail";
 
 // dashboard pages (admin only)
 import PageDashboard from "./pages/Dashboard/PageDashboard";
@@ -57,6 +59,10 @@ const AppRoutes = () => (
                 {/* Live Coding */}
                 <Route path="live-coding" element={<PageLiveCoding />} />
                 <Route path="live-coding/:codingId" element={<PageProblemCodingDetail />} />
+
+                     {/* Live Coding */}
+                <Route path="jobs" element={<PageJobs />} />
+                <Route path="jobs/:jobId" element={<PageJobDetail />} />
 
                 {/* Landing (optional for user) */}
                 <Route path="home" element={<PageLanding />} />

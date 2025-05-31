@@ -12,6 +12,12 @@ export interface Recruiter {
     updatedAt: Date;
 }
 
+export interface updateInfoParams {
+    position: string;
+    companyName: string;
+    companyWebsite: string;
+}
+
 // only admin can get list of recruiters
 export const getListRecruiterService = async (
     limit = 20,
@@ -25,3 +31,8 @@ export const getListRecruiterService = async (
     return response.data.data;
 };
 
+export const updateRecruiterProfileService = async (data: updateInfoParams) => {
+    const response = await axiosInstance.post(`/recruiters/updateRecruiter`, data);
+
+    return response.data.data;
+};

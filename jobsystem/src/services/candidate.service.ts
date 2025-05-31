@@ -10,6 +10,16 @@ export interface Candidate {
     updatedAt: Date;
 }
 
+export interface updateInfoParams {
+    experience: string[];
+    skills: string[];
+    education: string[];
+    projects: string[];
+    summary: string;
+    certifications: string[];
+    languages: string[];
+}
+
 // only admin can get list of candidates
 export const getListCandidateService = async (
     limit = 20,
@@ -20,5 +30,11 @@ export const getListCandidateService = async (
 }> => {
     const response = await axiosInstance.get(`/users/candidates?limit=${limit}&page=${page}`);
     console.log("response.data.data candi", response.data.data);
+    return response.data.data;
+};
+
+export const updateCandidateProfileService = async (data: updateInfoParams) => {
+    const response = await axiosInstance.post(`/candidates/updateCandidateProfile`, data);
+
     return response.data.data;
 };

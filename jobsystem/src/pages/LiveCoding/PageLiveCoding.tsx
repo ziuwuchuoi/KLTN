@@ -39,7 +39,7 @@ const PageLiveCoding = () => {
     return (
         <div className="flex flex-col p-6 w-full">
             {/* Fixed Section */}
-            <div className="flex flex-row items-end w-full mt-40 mb-5 justify-around">
+            <div className="flex flex-row items-end w-full justify-around">
                 <CustomHeroSection title="Coding" subtitle="Center" align="center" />
             </div>
 

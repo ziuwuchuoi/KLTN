@@ -41,7 +41,7 @@ const TabRecruiter = () => {
                         data={requestedRecruiters}
                         isLoading={isRecruiterLoading}
                         loadingMessage="Loading recruiter..."
-                    />{" "}
+                    />
                 </TabsContent>
             </Tabs>
         </div>

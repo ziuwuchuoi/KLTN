@@ -1,5 +1,7 @@
 import axiosInstance from "./axiosInstance";
 
+export type ApplicationStatus = "pending" | "shortlisted" | "rejected" | "accepted";
+
 export interface CVItem {
     _id: string;
     candidateId: string;
@@ -18,6 +20,26 @@ export interface JDItem {
     location: string;
     benefits: string[];
     visibility: string; // public or private
+}
+
+export interface ApplicationItem {
+    _id: string;
+    candidateId: string;
+    cvId: string;
+    jdId: string;
+    evaluationId: string;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface EvaluatedCVItem {
+    _id: string;
+    candidateId: string;
+    cvId: string;
+    jdId: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface CVDetail {
@@ -56,6 +78,18 @@ export interface JDDetail {
     };
     benefits: string[];
     visibility: string; // public or private
+    verified: boolean;
+}
+
+export interface ApplicationDetail {
+    _id: string;
+    candidateId: string;
+    cvId: string;
+    jdId: string;
+    evaluationId: string;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface AtsCheckParams {
@@ -79,7 +113,7 @@ export interface SummaryParams {
     skill_match_score: number;
 }
 
-export interface EvaluatedCVResult {
+export interface EvaluatedCVDetail {
     _id: string;
     cvId: string;
     jdId: string;
@@ -94,6 +128,8 @@ export interface EvaluatedCVResult {
     updatedAt: Date;
 }
 
+// CV
+
 export const getListCVService = async (
     candidateId: string,
     limit = 20,
@@ -102,6 +138,7 @@ export const getListCVService = async (
     items: CVItem[];
     meta: { limit: number; page: number; total: number; totalPages: number };
 }> => {
+    console.log("candidateId", candidateId)
     const url = candidateId
         ? `/cvs/list-cvs?candidateId=${candidateId}&limit=${limit}&page=${page}`
         : `/cvs/list-cvs?limit=${limit}&page=${page}`;
@@ -135,8 +172,10 @@ export const uploadCVService = async (file: File) => {
     return saveRes.data?.data;
 };
 
+// JD
+
 export const getListJDService = async (
-    creatorUserId: string,
+    creatorUserId: string, // list by candidate or recruiter
     limit = 20,
     page = 1
 ): Promise<{
@@ -145,9 +184,11 @@ export const getListJDService = async (
 }> => {
     const url = creatorUserId
         ? `/cvs/list-jds?creatorUserId=${creatorUserId}&limit=${limit}&page=${page}`
-        : `/cvs/list-jds?limit=${limit}&page=${page}`;
+        : `/cvs/list-jds?visibility=public&verified=true&limit=${limit}&page=${page}`;
 
     const response = await axiosInstance.get(url);
+    console.log("list jd", response.data.data);
+
     return response.data.data;
 };
 
@@ -165,8 +206,73 @@ export const uploadJDService = async (data: Partial<JDDetail>) => {
     return response.data.data;
 };
 
-export const evaluateCVService = async (cvId: string, jdId: string): Promise<EvaluatedCVResult> => {
-    const response = await axiosInstance.post(`/cvs/reviewCV/${cvId}/${jdId}`);
+// Application
 
+export const getListApplicationService = async (
+    candidateId: string, // sort in candidate
+    jdId: string, // sort in recruiter
+    limit = 20,
+    page = 1
+): Promise<{
+    items: ApplicationItem[];
+    meta: { limit: number; page: number; total: number; totalPages: number };
+}> => {
+    const url = candidateId
+        ? `/cvs/list-applications?candidateId=${candidateId}&limit=${limit}&page=${page}`
+        : jdId
+          ? `/cvs/list-applications?jdId=${jdId}&limit=${limit}&page=${page}`
+          : `/cvs/list-applications?limit=${limit}&page=${page}`;
+
+    const response = await axiosInstance.get(url);
+    return response.data.data;
+};
+
+export const getApplicationByIdService = async (apId: string): Promise<ApplicationDetail> => {
+    const response = await axiosInstance.get(`/cvs/application/${apId}`);
+    return response.data.data;
+};
+
+export const updateApplicationStatusService = async (
+    apId: string,
+    status: ApplicationStatus
+): Promise<ApplicationDetail> => {
+    const response = await axiosInstance.post(`/cvs/application/${apId}/status`, status);
+    return response.data.data;
+};
+
+export const applyCVService = async (cvId: string, jdId: string): Promise<ApplicationDetail> => {
+    const response = await axiosInstance.post(`/cvs/applyCV/${cvId}/${jdId}`);
+
+    return response.data.data;
+};
+
+// evaluation
+
+export const getListEvaluatedCVService = async (
+    candidateId: string, // sort in candidate
+    jdId: string, // sort in recruiter
+    limit = 20,
+    page = 1
+): Promise<{
+    items: EvaluatedCVItem[];
+    meta: { limit: number; page: number; total: number; totalPages: number };
+}> => {
+    const url = candidateId
+        ? `/cvs/list-evaluations?candidateId=${candidateId}&limit=${limit}&page=${page}`
+        : jdId
+          ? `/cvs/list-evaluations?jdId=${jdId}&limit=${limit}&page=${page}`
+          : `/cvs/list-evaluations?limit=${limit}&page=${page}`;
+
+    const response = await axiosInstance.get(url);
+    return response.data.data;
+};
+
+export const getEvaluatedCVByIdService = async (evaluationId: string): Promise<EvaluatedCVDetail> => {
+    const response = await axiosInstance.get(`/cvs/evaluation/${evaluationId}`);
+    return response.data.data;
+};
+
+export const evaluateCVService = async (cvId: string, jdId: string): Promise<EvaluatedCVDetail> => {
+    const response = await axiosInstance.post(`/cvs/reviewCV/${cvId}/${jdId}`);
     return response.data.data;
 };
