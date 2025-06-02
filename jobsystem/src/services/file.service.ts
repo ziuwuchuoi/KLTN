@@ -5,6 +5,7 @@ export type ApplicationStatus = "pending" | "shortlisted" | "rejected" | "accept
 export interface CVItem {
     _id: string;
     candidateId: string;
+    position: string;
     fileUrl: string;
     fileName: string;
     createdAt: Date;
@@ -16,6 +17,7 @@ export interface JDItem {
     creatorUserId: string;
     title: string;
     description: string;
+    position: string;
     companyName: string;
     location: string;
     benefits: string[];
@@ -47,6 +49,7 @@ export interface CVDetail {
     candidateId: string;
     fileUrl: string;
     fileName: string;
+    position: string;
     information: {
         certifications: string[];
         education: string[];
@@ -65,6 +68,7 @@ export interface JDDetail {
     creatorUserId: string;
     title: string;
     description: string;
+    position: string;
     companyName: string;
     location: string;
     requirements: {
@@ -113,6 +117,12 @@ export interface SummaryParams {
     skill_match_score: number;
 }
 
+export interface AIReviewParams {
+    strengths: string[];
+    weaknesses: string[];
+    suggestions: string[];
+}
+
 export interface EvaluatedCVDetail {
     _id: string;
     cvId: string;
@@ -138,7 +148,7 @@ export const getListCVService = async (
     items: CVItem[];
     meta: { limit: number; page: number; total: number; totalPages: number };
 }> => {
-    console.log("candidateId", candidateId)
+    console.log("candidateId", candidateId);
     const url = candidateId
         ? `/cvs/list-cvs?candidateId=${candidateId}&limit=${limit}&page=${page}`
         : `/cvs/list-cvs?limit=${limit}&page=${page}`;
@@ -156,6 +166,8 @@ export const uploadCVService = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
 
+    console.log("file", file);
+
     const uploadRes = await axiosInstance.post("/cvs/uploadFile", formData, {
         headers: {
             "Content-Type": "multipart/form-data",
@@ -164,10 +176,15 @@ export const uploadCVService = async (file: File) => {
 
     const imageUrl = uploadRes.data?.data?.imageUrl;
 
+    console.log("imageUrl", imageUrl);
+
     const fileUrl = imageUrl;
     const fileName = file.name;
+    const position = "Frontend Developer"
 
-    const saveRes = await axiosInstance.post("/cvs/uploadCV", { fileName, fileUrl });
+    const saveRes = await axiosInstance.post("/cvs/uploadCV", { fileName, fileUrl, position });
+
+    console.log("saveRes", saveRes.data);
 
     return saveRes.data?.data;
 };

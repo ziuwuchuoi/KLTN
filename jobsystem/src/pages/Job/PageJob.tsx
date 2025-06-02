@@ -29,7 +29,7 @@ const PageJDs = () => {
     });
 
     const handleJDClick = (jd) => {
-        navigate(`/JDs/${jd._id}`);
+        navigate(`/jobs/${jd._id}`);
     };
 
     const truncateText = (text: string, maxLength: number) => {
@@ -83,72 +83,8 @@ const PageJDs = () => {
                             </CardContent>
                         </Card>
                     </div>
-
-                    {/* Stats Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12 w-full">
-                        <Card className="bg-gradient-to-br from-blue-600 to-blue-700 border-0 text-white">
-                            <CardHeader className="pb-3">
-                                <div className="flex items-center gap-3">
-                                    <Building2 className="w-8 h-8" />
-                                    <div>
-                                        <CardTitle className="text-2xl">1,200+</CardTitle>
-                                        <CardDescription className="text-blue-100">Active Companies</CardDescription>
-                                    </div>
-                                </div>
-                            </CardHeader>
-                        </Card>
-
-                        <Card className="bg-gradient-to-br from-green-600 to-green-700 border-0 text-white">
-                            <CardHeader className="pb-3">
-                                <div className="flex items-center gap-3">
-                                    <Users className="w-8 h-8" />
-                                    <div>
-                                        <CardTitle className="text-2xl">50K+</CardTitle>
-                                        <CardDescription className="text-green-100">JD Seekers</CardDescription>
-                                    </div>
-                                </div>
-                            </CardHeader>
-                        </Card>
-
-                        <Card className="bg-gradient-to-br from-purple-600 to-purple-700 border-0 text-white">
-                            <CardHeader className="pb-3">
-                                <div className="flex items-center gap-3">
-                                    <TrendingUp className="w-8 h-8" />
-                                    <div>
-                                        <CardTitle className="text-2xl">95%</CardTitle>
-                                        <CardDescription className="text-purple-100">Success Rate</CardDescription>
-                                    </div>
-                                </div>
-                            </CardHeader>
-                        </Card>
-
-                        <Card className="bg-gradient-to-br from-orange-600 to-orange-700 border-0 text-white">
-                            <CardHeader className="pb-3">
-                                <div className="flex items-center gap-3">
-                                    <Star className="w-8 h-8" />
-                                    <div>
-                                        <CardTitle className="text-2xl">4.8/5</CardTitle>
-                                        <CardDescription className="text-orange-100">User Rating</CardDescription>
-                                    </div>
-                                </div>
-                            </CardHeader>
-                        </Card>
-                    </div>
-
-                    {/* Featured Companies */}
-                    <div className="w-full mb-12">
-                        <h2 className="text-2xl font-bold text-center mb-8">Trusted by Leading Companies</h2>
-                        <div className="grid grid-cols-2 md:grid-cols-6 gap-8 opacity-60">
-                            {["Google", "Microsoft", "Apple", "Amazon", "Meta", "Netflix"].map((company) => (
-                                <div key={company} className="text-center">
-                                    <div className="bg-slate-800 rounded-lg p-4 h-16 flex items-center justify-center">
-                                        <span className="text-slate-300 font-semibold">{company}</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
                 </div>
+                
             </div>
 
             {/* JDs Section */}

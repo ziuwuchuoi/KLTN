@@ -1,17 +1,15 @@
-"use client";
-
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Zap, TrendingUp } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Check, ChevronRight, Loader2 } from "lucide-react";
+import { CVSelectionStep } from "./stepCV/CVSelectionStep";
+import { JDSelectionStep } from "./stepJD/JDSelectionStep";
+import { ReviewStep } from "./reviewStep/ReviewStep";
+import { EvaluationResults } from "./resultStep/EvaluationResults";
+import { RecommendationsSection } from "./resultStep/RecommendationSection";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { useCVQueries, useJDQueries } from "./hooks/useFileQueries";
 import { evaluateCVService } from "@/services/file.service";
 import type { JDDetail, EvaluatedCVDetail } from "@/services/file.service";
-import { CVSelectionSection } from "./CVSelection";
-import { JDSelectionSection } from "./JDSelection";
-import { EvaluationResults } from "./EvaluationResults";
-import { RecommendationsSection } from "./RecommendationSection";
 import CustomHeroSection from "@/components/molecules/CustomHeroSection";
 
 const defaultJD: Partial<JDDetail> = {
@@ -20,21 +18,29 @@ const defaultJD: Partial<JDDetail> = {
     companyName: "",
     location: "",
     requirements: {
-        experience: [""],
-        skills: [""],
-        education: [""],
-        projects: [""],
+        experience: [],
+        skills: [],
+        education: [],
+        projects: [],
         summary: "",
-        certifications: [""],
-        languages: [""],
+        certifications: [],
+        languages: [],
     },
-    benefits: [""],
+    benefits: [],
     visibility: "private",
 };
 
+const steps = [
+    { id: 1, title: "Choose CV", description: "Select your CV and position" },
+    { id: 2, title: "Job Description", description: "Select or create job requirements" },
+    { id: 3, title: "Review & Evaluate", description: "Review and start evaluation" },
+];
+
 const PageEvaluateCV = () => {
     const { user } = useAuthStore();
+    const [currentStep, setCurrentStep] = useState(1);
     const [selectedCVId, setSelectedCVId] = useState<string>("");
+    const [selectedPosition, setSelectedPosition] = useState<string>("");
     const [selectedJDId, setSelectedJDId] = useState<string>("");
     const [jdData, setJDData] = useState<Partial<JDDetail>>(defaultJD);
     const [isEvaluating, setIsEvaluating] = useState(false);
@@ -43,25 +49,39 @@ const PageEvaluateCV = () => {
 
     const resultsRef = useRef<HTMLDivElement>(null);
 
-    const { uploadJD } = useJDQueries();
+    const isJDDataValid = () => {
+        return (
+            jdData.title?.trim() && jdData.description?.trim() && jdData.companyName?.trim() && jdData.location?.trim()
+        );
+    };
 
-    const handleEvaluate = async () => {
-        if (!selectedCVId || (!selectedJDId && !isJDDataValid())) return;
+    const canProceedStep1 = selectedCVId && selectedPosition;
+    const canProceedStep2 = selectedJDId || isJDDataValid();
+    const canEvaluate = selectedCVId && selectedPosition && (selectedJDId || isJDDataValid());
+
+    const handleNextStep = () => {
+        if (currentStep < 3) {
+            setCurrentStep(currentStep + 1);
+        }
+    };
+
+    const handlePrevStep = () => {
+        if (currentStep > 1) {
+            setCurrentStep(currentStep - 1);
+        }
+    };
+
+    const handleEvaluate = async (jdIdToUse?: string) => {
+        if (!canEvaluate) return;
 
         setIsEvaluating(true);
         setShowResults(false);
 
         try {
-            let jdIdToUse = selectedJDId;
+            const finalJDId = jdIdToUse || selectedJDId;
 
-            // If no JD selected, upload the manual JD data
-            if (!selectedJDId && isJDDataValid()) {
-                const uploadedJD = await uploadJD.mutateAsync(jdData);
-                jdIdToUse = uploadedJD._id;
-            }
-
-            // Then evaluate CV against JD
-            const result = await evaluateCVService(selectedCVId, jdIdToUse);
+            // Evaluate CV against JD
+            const result = await evaluateCVService(selectedCVId, finalJDId);
 
             setEvaluationResult(result);
             setShowResults(true);
@@ -80,97 +100,151 @@ const PageEvaluateCV = () => {
         }
     };
 
-    const isJDDataValid = () => {
-        return (
-            jdData.title?.trim() && jdData.description?.trim() && jdData.companyName?.trim() && jdData.location?.trim()
-        );
-    };
-
-    const canEvaluate = selectedCVId && (selectedJDId || isJDDataValid()) && !isEvaluating;
-
     return (
-        <div className="flex flex-col w-full">
-            {/* Main Input Section - Max Screen Height */}
-            <div className="max-h-screen flex flex-col px-6 py-8">
-                <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col min-h-0 mt-20">
-                    {/* Input Grid */}
-                    <div className="flex-1 grid lg:grid-cols-2 gap-6 min-h-0">
-                        {/* CV Selection */}
-                        <Card className="bg-slate-800/50 border-slate-700 flex flex-col min-h-0">
-                            <CardHeader className="flex-shrink-0">
-                                <CardTitle className="flex items-center gap-2 text-white">
-                                    <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                                        <span className="text-white font-bold">1</span>
-                                    </div>
-                                    Select Your CV
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="flex-1 min-h-0">
-                                <CVSelectionSection
-                                    selectedCVId={selectedCVId}
-                                    onCVSelect={setSelectedCVId}
-                                    userId={user._id}
-                                />
-                            </CardContent>
-                        </Card>
+        <div className="flex flex-col p-6 w-full">
+            {/* Fixed Section */}
+            <div className="flex flex-row items-end w-full justify-around mt-10">
+                <CustomHeroSection title="Coding" subtitle="Center" align="center" />
+            </div>
 
-                        {/* JD Selection/Input */}
-                        <Card className="bg-slate-800/50 border-slate-700 flex flex-col min-h-0">
-                            <CardHeader className="flex-shrink-0">
-                                <CardTitle className="flex items-center gap-2 text-white">
-                                    <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
-                                        <span className="text-white font-bold">2</span>
+            <div className="flex items-center justify-center my-4">
+                <div className="flex items-center">
+                    {steps.map((step, index) => (
+                        <div key={step.id} className="flex items-center">
+                            <div className="flex flex-row items-center justify-center">
+                                <div
+                                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                        currentStep === step.id
+                                            ? "bg-purple-600 border-purple-600 text-white"
+                                            : currentStep > step.id
+                                              ? "bg-green-600 border-green-600 text-white"
+                                              : "bg-slate-800 border-slate-600 text-slate-400"
+                                    }`}
+                                >
+                                    {currentStep > step.id ? (
+                                        <Check className="w-4 h-4" />
+                                    ) : (
+                                        <span className="text-sm font-semibold">{step.id}</span>
+                                    )}
+                                </div>
+                                <div className="ml-3 text-left">
+                                    <div
+                                        className={`font-bold ${
+                                            currentStep === step.id
+                                                ? "text-purple-400"
+                                                : currentStep > step.id
+                                                  ? "text-green-400"
+                                                  : "text-slate-400"
+                                        }`}
+                                    >
+                                        {step.title}
                                     </div>
-                                    Job Description
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="flex-1 min-h-0">
-                                <JDSelectionSection
-                                    selectedJDId={selectedJDId}
-                                    onJDSelect={setSelectedJDId}
-                                    jdData={jdData}
-                                    onJDDataChange={setJDData}
-                                    userId={user._id}
+                                    <div className="text-sm text-slate-500">{step.description}</div>
+                                </div>
+                            </div>
+                            {index < steps.length - 1 && (
+                                <ChevronRight
+                                    className={`w-6 h-6 mx-6 ${currentStep > step.id ? "text-green-400" : "text-slate-600"}`}
                                 />
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    {/* Evaluate Button */}
-                    <div className="mt-6 text-center flex-shrink-0">
-                        <Button
-                            onClick={handleEvaluate}
-                            disabled={!canEvaluate}
-                            size="lg"
-                            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-12 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-                        >
-                            {isEvaluating ? (
-                                <>
-                                    <Loader2 className="w-5 h-5 mr-3 animate-spin" />
-                                    Analyzing Your CV...
-                                </>
-                            ) : (
-                                <>
-                                    <Zap className="w-5 h-5 mr-3" />
-                                    Evaluate CV Match
-                                </>
                             )}
-                        </Button>
-                        {!canEvaluate && !isEvaluating && (
-                            <p className="text-slate-400 text-sm mt-2">Please select a CV and job description</p>
-                        )}
-                    </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Step Content */}
+            <div className="flex flex-col min-h-screen">
+                <div className="w-[80%] mx-auto px-6 py-12">
+                    {/* Step 1: CV Selection */}
+                    {currentStep === 1 && (
+                        <CVSelectionStep
+                            selectedCVId={selectedCVId}
+                            onCVSelect={setSelectedCVId}
+                            selectedPosition={selectedPosition}
+                            onPositionSelect={setSelectedPosition}
+                            userId={user._id}
+                        />
+                    )}
+
+                    {/* Step 2: JD Selection */}
+                    {currentStep === 2 && (
+                        <JDSelectionStep
+                            selectedJDId={selectedJDId}
+                            onJDSelect={setSelectedJDId}
+                            jdData={jdData}
+                            onJDDataChange={setJDData}
+                            userId={user._id}
+                        />
+                    )}
+
+                    {/* Step 3: Review */}
+                    {currentStep === 3 && (
+                        <ReviewStep
+                            selectedCVId={selectedCVId}
+                            selectedPosition={selectedPosition}
+                            selectedJDId={selectedJDId}
+                            jdData={jdData}
+                            onEvaluate={handleEvaluate}
+                            isEvaluating={isEvaluating}
+                            canEvaluate={canEvaluate ? true : false}
+                        />
+                    )}
+
+                    {/* Navigation Buttons */}
+                    {!isEvaluating && (
+                        <div className="flex justify-between mt-12">
+                            <Button
+                                variant="outline"
+                                onClick={handlePrevStep}
+                                disabled={currentStep === 1}
+                                className="border-slate-600 text-slate-300 hover:text-white"
+                            >
+                                Previous Step
+                            </Button>
+
+                            {currentStep < 3 ? (
+                                <Button
+                                    onClick={handleNextStep}
+                                    disabled={
+                                        (currentStep === 1 && !canProceedStep1) ||
+                                        (currentStep === 2 && !canProceedStep2)
+                                    }
+                                    className="bg-purple-600 hover:bg-purple-700"
+                                >
+                                    Next Step
+                                    <ChevronRight className="w-4 h-4 ml-2" />
+                                </Button>
+                            ) : null}
+                        </div>
+                    )}
+
+                    {/* Loading State */}
+                    {isEvaluating && (
+                        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+                            <Card className="bg-slate-800 border-slate-700 p-8">
+                                <CardContent className="flex flex-col items-center space-y-4">
+                                    <Loader2 className="w-12 h-12 animate-spin text-purple-400" />
+                                    <div className="text-center">
+                                        <h3 className="text-xl font-semibold text-white mb-2">Analyzing Your CV</h3>
+                                        <p className="text-slate-400">
+                                            Our AI is evaluating your CV against the job requirements...
+                                        </p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    )}
                 </div>
             </div>
 
             {/* Results Section */}
             {showResults && evaluationResult && (
-                <div ref={resultsRef} className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-950">
+                <div ref={resultsRef} className="min-h-screen bg-gradient-to-b from-slate-950 to-black">
                     <div className="max-w-7xl mx-auto px-6 py-16">
                         {/* Results Header */}
                         <div className="text-center mb-12">
                             <div className="inline-flex items-center gap-2 bg-green-600/20 text-green-400 px-4 py-2 rounded-full mb-4">
-                                <TrendingUp className="w-4 h-4" />
+                                <Check className="w-4 h-4" />
                                 Analysis Complete
                             </div>
                             <h2 className="text-3xl font-bold text-white mb-4">Your CV Evaluation Results</h2>

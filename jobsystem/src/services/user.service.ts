@@ -3,7 +3,7 @@ import axiosInstance from "./axiosInstance";
 // candidate and recruiter
 export const getUserProfileService = async () => {
     const response = await axiosInstance.get("/users/getUserProfile");
-    console.log("response pro5", response);
+    console.log("response pro5", response.data.data);
     return response.data.data;
 };
 

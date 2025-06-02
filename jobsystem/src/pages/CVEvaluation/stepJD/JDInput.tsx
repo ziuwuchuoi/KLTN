@@ -167,6 +167,16 @@ export function JDInputForm({ jdData, onJDDataChange, onSubmit }: JDInputFormPro
                                 </div>
 
                                 <div className="space-y-2">
+                                    <label className="text-xs font-medium text-slate-300">Position *</label>
+                                    <Input
+                                        value={jdData.position || ""}
+                                        onChange={(e) => updateField("position", e.target.value)}
+                                        placeholder="e.g. Frontend Developer"
+                                        className="bg-slate-700 border-slate-600 text-white h-8"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
                                     <label className="text-xs font-medium text-slate-300">Company Name *</label>
                                     <Input
                                         value={jdData.companyName || ""}
