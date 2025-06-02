@@ -3,13 +3,11 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, MapPin, Calendar, CheckCircle, Plus, FileText } from "lucide-react";
+import { Plus, Building2, CheckCircle, Upload, FileText, X } from "lucide-react";
 import { useJDQueries } from "../hooks/useFileQueries";
 import { JDInputForm } from "./JDInput";
-import type { JDDetail } from "@/services/file.service";
 import { FileItem } from "../items/FileItem";
+import type { JDDetail } from "@/services/file.service";
 
 interface JDSelectionStepProps {
     selectedJDId: string;
@@ -20,35 +18,17 @@ interface JDSelectionStepProps {
 }
 
 export function JDSelectionStep({ selectedJDId, onJDSelect, jdData, onJDDataChange, userId }: JDSelectionStepProps) {
-    const [activeTab, setActiveTab] = useState("select");
+    const [showCreateForm, setShowCreateForm] = useState(false);
 
     const { jds, isJDDataLoading, uploadJD } = useJDQueries(userId);
-
-    const formatDate = (date: Date) => {
-        return new Date(date).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-        });
-    };
-
-    const truncateText = (text: string, maxLength: number) => {
-        if (text.length <= maxLength) return text;
-        return text.substring(0, maxLength) + "...";
-    };
-
-    const handleTabChange = (value: string) => {
-        setActiveTab(value);
-        if (value === "create") {
-            onJDSelect("");
-        }
-    };
 
     const handleJDSubmit = async () => {
         try {
             const newJD = await uploadJD.mutateAsync(jdData);
-            setActiveTab("select");
+            // Return to selection view and select the newly created JD
+            setShowCreateForm(false);
             onJDSelect(newJD._id);
+            // Reset form data
             onJDDataChange({
                 title: "",
                 description: "",
@@ -71,132 +51,107 @@ export function JDSelectionStep({ selectedJDId, onJDSelect, jdData, onJDDataChan
         }
     };
 
+    const handleBackToSelection = () => {
+        setShowCreateForm(false);
+    };
+
     return (
-        <div className="grid lg:grid-cols-3 gap-8 h-full">
-            {/* Left Side - JD List */}
-            <div className="lg:col-span-1">
-                <Card className="bg-slate-800/50 border-slate-700 h-full">
-                    <CardHeader>
-                        <div className="flex items-center justify-between">
-                            <CardTitle className="flex items-center gap-2 text-white">
-                                <Building2 className="w-5 h-5 text-purple-400" />
-                                Job Descriptions
-                            </CardTitle>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setActiveTab("create")}
-                                className="border-slate-600 text-slate-300 hover:text-white"
-                            >
-                                <Plus className="w-4 h-4 mr-2" />
-                                Create New
-                            </Button>
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        {isJDDataLoading ? (
-                            <div className="space-y-3">
-                                {Array.from({ length: 4 }).map((_, i) => (
-                                    <div key={i} className="p-4 bg-slate-700/50 rounded-lg animate-pulse">
-                                        <div className="h-4 bg-slate-600 rounded w-3/4 mb-2"></div>
-                                        <div className="h-3 bg-slate-600 rounded w-1/2 mb-2"></div>
-                                        <div className="h-3 bg-slate-600 rounded w-full"></div>
+        <div className="w-full space-y-8">
+            <Card className="bg-slate-800/50 border-slate-700">
+                <CardHeader>
+                    <div className="flex items-center justify-between">
+                        <CardTitle className="flex items-center gap-2 text-white">
+                            <FileText className="w-5 h-5 text-blue-400" />
+                            Select Your CV
+                        </CardTitle>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setShowCreateForm(!showCreateForm)}
+                            className="border-slate-600 text-slate-300 hover:text-white"
+                        >
+                            <Plus className="w-4 h-4 mr-2" />
+                            Upload New CV
+                        </Button>
+                    </div>
+                </CardHeader>
+                <CardContent className="space-y-4 overflow-y-auto">
+                    {/* Upload Section */}
+                    {showCreateForm ? (
+                        <Card className="bg-slate-700/30 border-slate-600">
+                            <CardContent className="p-4">
+                                <div className="space-y-6">
+                                    {/* Header with back button */}
+                                    <div className="flex items-center gap-4">
+                                        <Button
+                                            variant="ghost"
+                                            onClick={handleBackToSelection}
+                                            className="text-slate-300 hover:text-white"
+                                        >
+                                            ← Back to Selection
+                                        </Button>
                                     </div>
-                                ))}
-                            </div>
-                        ) : jds.length === 0 ? (
-                            <div className="text-center py-8">
-                                <FileText className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                                <h4 className="text-lg font-semibold text-white mb-2">No Job Descriptions</h4>
-                                <p className="text-slate-400 mb-4">Create your first job description.</p>
-                                <Button
-                                    variant="outline"
-                                    className="border-slate-600"
-                                    onClick={() => setActiveTab("create")}
-                                >
-                                    <Plus className="w-4 h-4 mr-2" />
-                                    Create JD
-                                </Button>
-                            </div>
-                        ) : (
-                            <ScrollArea className="h-[600px]">
-                                <div className="space-y-3">
+
+                                    {/* Form */}
+                                    <JDInputForm
+                                        jdData={jdData}
+                                        onJDDataChange={onJDDataChange}
+                                        onSubmit={handleJDSubmit}
+                                    />
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <div className="text-white font-semibold">
+                            Your list of JDs
+                            {/* CV List */}
+                            {isJDDataLoading ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {Array.from({ length: 6 }).map((_, i) => (
+                                        <div key={i} className="p-4 bg-slate-700/50 rounded-lg animate-pulse">
+                                            <div className="h-4 bg-slate-600 rounded w-3/4 mb-2"></div>
+                                            <div className="h-3 bg-slate-600 rounded w-1/2"></div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : jds.length === 0 ? (
+                                <div className="text-center py-12">
+                                    <Upload className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+                                    <h4 className="text-xl font-semibold text-white mb-2">No JDs Found</h4>
+                                    <p className="text-slate-400 mb-6">Upload your first JD to start evaluation.</p>
+                                    <Button
+                                        variant="outline"
+                                        className="border-slate-600"
+                                        onClick={() => setShowCreateForm(true)}
+                                    >
+                                        <Plus className="w-4 h-4 mr-2" />
+                                        Upload JD
+                                    </Button>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
                                     {jds.map((jd) => (
                                         <FileItem
                                             key={jd._id}
                                             id={jd._id}
                                             title={jd.title}
                                             subtitle={jd.companyName}
-                                            description={jd.location}
+                                            description={`We are looking for a ${jd.title.toLowerCase()}...`}
                                             selected={selectedJDId === jd._id}
-                                            onSelect={() => {
-                                                onJDSelect(jd._id);
-                                                setActiveTab("select");
-                                            }}
+                                            onSelect={onJDSelect}
                                             colorScheme="purple"
                                             icon={<Building2 className="w-5 h-5 text-purple-400 flex-shrink-0" />}
-                                            descriptionIcon={<MapPin className="w-3 h-3 flex-shrink-0" />}
+                                            maxTitleLength={50}
+                                            maxSubtitleLength={40}
+                                            maxDescriptionLength={60}
                                         />
                                     ))}
                                 </div>
-                            </ScrollArea>
-                        )}
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Right Side - Create/Edit Form */}
-            <div className="lg:col-span-2">
-                <Tabs value={activeTab} onValueChange={handleTabChange} className="h-full">
-                    <TabsList className="grid w-full grid-cols-2 bg-slate-700 mb-4">
-                        <TabsTrigger value="select">Selected JD</TabsTrigger>
-                        <TabsTrigger value="create">Create New JD</TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="select" className="mt-0 h-full">
-                        {selectedJDId ? (
-                            <Card className="bg-slate-800/50 border-slate-700 h-full">
-                                <CardHeader>
-                                    <CardTitle className="text-white">Selected Job Description</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="text-center py-12">
-                                        <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
-                                        <h3 className="text-xl font-semibold text-white mb-2">
-                                            Job Description Selected
-                                        </h3>
-                                        <p className="text-slate-400">
-                                            You can proceed to the next step or create a new JD.
-                                        </p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ) : (
-                            <Card className="bg-slate-800/50 border-slate-700 h-full">
-                                <CardContent className="flex items-center justify-center h-full">
-                                    <div className="text-center py-12">
-                                        <Building2 className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                                        <h3 className="text-xl font-semibold text-white mb-2">No JD Selected</h3>
-                                        <p className="text-slate-400 mb-6">
-                                            Select a job description from the list or create a new one.
-                                        </p>
-                                        <Button
-                                            onClick={() => setActiveTab("create")}
-                                            className="bg-purple-600 hover:bg-purple-700"
-                                        >
-                                            Create New JD
-                                        </Button>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        )}
-                    </TabsContent>
-
-                    <TabsContent value="create" className="mt-0 h-full">
-                        <JDInputForm jdData={jdData} onJDDataChange={onJDDataChange} onSubmit={handleJDSubmit} />
-                    </TabsContent>
-                </Tabs>
-            </div>
+                            )}
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
         </div>
     );
 }

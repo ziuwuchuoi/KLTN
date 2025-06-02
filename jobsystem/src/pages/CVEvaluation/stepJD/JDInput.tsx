@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -171,7 +173,7 @@ export function JDInputForm({ jdData, onJDDataChange, onSubmit }: JDInputFormPro
                                     <Input
                                         value={jdData.position || ""}
                                         onChange={(e) => updateField("position", e.target.value)}
-                                        placeholder="e.g. Frontend Developer"
+                                        placeholder="e.g. Software Engineer"
                                         className="bg-slate-700 border-slate-600 text-white h-8"
                                     />
                                 </div>
@@ -212,7 +214,6 @@ export function JDInputForm({ jdData, onJDDataChange, onSubmit }: JDInputFormPro
                         {currentStep === 1 && (
                             <div className="space-y-3">
                                 <h4 className="font-semibold text-white text-sm">Skills & Experience</h4>
-
                                 <ArrayInput
                                     label="Required Skills"
                                     items={jdData.requirements?.skills || []}
@@ -270,9 +271,9 @@ export function JDInputForm({ jdData, onJDDataChange, onSubmit }: JDInputFormPro
                                     label="Languages"
                                     items={jdData.requirements?.languages || []}
                                     placeholder="e.g. English (fluent), Spanish (conversational)"
-                                    onAdd={() => addArrayItem("Languages", true)}
-                                    onRemove={(index) => removeArrayItem("Languages", index, true)}
-                                    onChange={(index, value) => updateArrayItem("Languages", index, value, true)}
+                                    onAdd={() => addArrayItem("languages", true)}
+                                    onRemove={(index) => removeArrayItem("languages", index, true)}
+                                    onChange={(index, value) => updateArrayItem("languages", index, value, true)}
                                 />
 
                                 <ArrayInput
@@ -290,7 +291,6 @@ export function JDInputForm({ jdData, onJDDataChange, onSubmit }: JDInputFormPro
                         {currentStep === 3 && (
                             <div className="space-y-3">
                                 <h4 className="font-semibold text-white text-sm">Benefits & Perks</h4>
-
                                 <ArrayInput
                                     label="Benefits"
                                     items={jdData.benefits || []}
@@ -314,7 +314,7 @@ export function JDInputForm({ jdData, onJDDataChange, onSubmit }: JDInputFormPro
                         className="border-slate-600 text-slate-300"
                     >
                         <ArrowLeft className="w-4 h-4 mr-2" />
-                        Back
+                        Previous
                     </Button>
 
                     {currentStep < steps.length - 1 ? (

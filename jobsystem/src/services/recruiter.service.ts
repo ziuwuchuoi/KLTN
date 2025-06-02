@@ -27,12 +27,10 @@ export const getListRecruiterService = async (
     meta: { limit: number; page: number; total: number; totalPages: number };
 }> => {
     const response = await axiosInstance.get(`/users/recruiters?limit=${limit}&page=${page}`);
-    console.log("response.data candi", response.data);
     return response.data.data;
 };
 
 export const updateRecruiterProfileService = async (data: updateInfoParams) => {
     const response = await axiosInstance.post(`/recruiters/updateRecruiter`, data);
-
     return response.data.data;
 };

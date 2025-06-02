@@ -83,11 +83,7 @@ const PageQuizDetail = () => {
                 startTime: startTime,
             });
 
-            console.log("res", response);
-
             setResultQuestion(response.data);
-
-            console.log("result", resultQuestion);
 
             setIsSubmitted(true);
         } catch (error) {

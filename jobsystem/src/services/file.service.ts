@@ -148,7 +148,6 @@ export const getListCVService = async (
     items: CVItem[];
     meta: { limit: number; page: number; total: number; totalPages: number };
 }> => {
-    console.log("candidateId", candidateId);
     const url = candidateId
         ? `/cvs/list-cvs?candidateId=${candidateId}&limit=${limit}&page=${page}`
         : `/cvs/list-cvs?limit=${limit}&page=${page}`;
@@ -162,11 +161,8 @@ export const getCVByIdService = async (cvId: string): Promise<CVDetail> => {
     return response.data.data;
 };
 
-export const uploadCVService = async (file: File) => {
+export const uploadCVService = async (file: File, position: string) => {
     const formData = new FormData();
-    formData.append("file", file);
-
-    console.log("file", file);
 
     const uploadRes = await axiosInstance.post("/cvs/uploadFile", formData, {
         headers: {
@@ -176,15 +172,10 @@ export const uploadCVService = async (file: File) => {
 
     const imageUrl = uploadRes.data?.data?.imageUrl;
 
-    console.log("imageUrl", imageUrl);
-
     const fileUrl = imageUrl;
     const fileName = file.name;
-    const position = "Frontend Developer"
 
     const saveRes = await axiosInstance.post("/cvs/uploadCV", { fileName, fileUrl, position });
-
-    console.log("saveRes", saveRes.data);
 
     return saveRes.data?.data;
 };
@@ -204,7 +195,6 @@ export const getListJDService = async (
         : `/cvs/list-jds?visibility=public&verified=true&limit=${limit}&page=${page}`;
 
     const response = await axiosInstance.get(url);
-    console.log("list jd", response.data.data);
 
     return response.data.data;
 };
@@ -215,11 +205,9 @@ export const getJDByIdService = async (jdId: string): Promise<JDDetail> => {
 };
 
 export const uploadJDService = async (data: Partial<JDDetail>) => {
-    console.log("uploading JD data", data);
 
     const response = await axiosInstance.post(`/cvs/uploadJD`, data);
 
-    console.log("response", response.data);
     return response.data.data;
 };
 
@@ -291,5 +279,6 @@ export const getEvaluatedCVByIdService = async (evaluationId: string): Promise<E
 
 export const evaluateCVService = async (cvId: string, jdId: string): Promise<EvaluatedCVDetail> => {
     const response = await axiosInstance.post(`/cvs/reviewCV/${cvId}/${jdId}`);
+    console.log("eva", response.data.data);
     return response.data.data;
 };

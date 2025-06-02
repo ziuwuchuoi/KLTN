@@ -105,7 +105,6 @@ export const getCodeLanguageService = async (): Promise<CodeLanguage[]> => {
 };
 
 export const submitCodeProblemService = async (data: CodeSubmitData): Promise<CodeSubmitResult> => {
-    console.log("data", data)
     const response = await axiosInstance.post(`/judge/submit`, data);
     return response.data.data;
 };

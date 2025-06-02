@@ -6,6 +6,7 @@ import {
     CVItem,
     CVDetail,
     applyCVService,
+    evaluateCVService,
 } from "@/services/file.service";
 import { getJDByIdService, uploadJDService, getListJDService, JDItem, JDDetail } from "@/services/file.service";
 import {
@@ -55,7 +56,7 @@ export const useCVQueries = (userId?: string, page: number = 1, limit: number = 
         });
 
     const uploadCV = useMutation({
-        mutationFn: (file: File) => uploadCVService(file),
+        mutationFn: ({file, position}: {file: File, position: string}) => uploadCVService(file, position),
         onSuccess: () => {
             console.log("CV uploaded successfully");
         },
@@ -158,6 +159,16 @@ export const useEvaluationQueries = (userId?: string, fileId?: string, page: num
             retry: 1,
         });
 
+    const evaluateCV = useMutation({
+        mutationFn: ({ cvId, jdId }: { cvId: string; jdId: string }) => evaluateCVService(cvId, jdId),
+        onSuccess: () => {
+            console.log("Evaluate successful");
+        },
+        onError: (error: Error) => {
+            console.log("Evaluate failed", error);
+        },
+    });
+
     const pagination = evaluatedCVData?.meta ?? {
         page: 1,
         limit: 20,
@@ -168,6 +179,7 @@ export const useEvaluationQueries = (userId?: string, fileId?: string, page: num
     return {
         evaluatedCVs: evaluatedCVData?.items || [],
         useEvaluatedCVDetail,
+        evaluateCV,
         pagination,
         isEvaluatedCVDataLoading,
         evaluatedCVError,

@@ -38,7 +38,6 @@ export function ThemeProvider({ children, defaultTheme, storageKey = "vite-ui-th
             root.classList.add(systemTheme);
             return;
         }
-        // console.log("Theme is: ", theme);
         root.classList.add(theme);
     }, [theme]);
 
