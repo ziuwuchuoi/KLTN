@@ -1,5 +1,12 @@
 import axiosInstance from "./axiosInstance";
 
+export interface GrantRecruiterResponse {
+    _id: string;
+    email: string;
+    name: string;
+    avatar: string;
+    canBeRecruiter: boolean;
+}
 // candidate and recruiter
 export const getUserProfileService = async () => {
     const response = await axiosInstance.get("/users/getUserProfile");
@@ -12,7 +19,10 @@ export const getAdminProfileService = async () => {
     return response.data.data;
 };
 
-export const grantRecruiterRoleService = async (email: string) => {
-    const response = await axiosInstance.get(`/users/grant-recruiter/${email}`);
-    return response.data;
+export const grantRecruiterRoleService = async (email: string): Promise<GrantRecruiterResponse> => {
+    console.log("email", email);
+    const response = await axiosInstance.put(`/users/grant-recruiter/${email}`);
+    console.log("response", response);
+
+    return response.data.data;
 };
