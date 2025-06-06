@@ -100,6 +100,7 @@ export function ApplyJobDialog({ isOpen, onClose, job }: ApplyJobDialogProps) {
             { file: selectedFile, position: uploadPosition },
             {
                 onSuccess: (newCV) => {
+                    console.log("newCV", newCV);
                     setSelectedCVId(newCV._id);
                     setShowUploadSection(false);
                     setSelectedFile(null);
@@ -323,7 +324,7 @@ export function ApplyJobDialog({ isOpen, onClose, job }: ApplyJobDialogProps) {
                                 </Button>
                             </div>
                         ) : (
-                            <ScrollArea className="max-h-60">
+                            <ScrollArea className="h-64">
                                 <div className="space-y-3">
                                     {cvs.map((cv) => (
                                         <Card

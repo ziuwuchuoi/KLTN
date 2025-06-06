@@ -51,8 +51,7 @@ export const useRecruiterQueries = (page = 1, limit = 20) => {
   const grantRecruiter = useMutation({
     mutationFn: (email: string) => grantRecruiterRoleService(email),
     onSuccess: () => {
-      // Invalidate and refetch recruiters data to update the lists
-      queryClient.invalidateQueries({ queryKey: ["recruiters"] })
+      queryClient.invalidateQueries({ queryKey: ["recruiters"], exact: false })
       console.log("Granted Recruiter successfully")
     },
     onError: (error: Error) => {

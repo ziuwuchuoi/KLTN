@@ -7,6 +7,8 @@ import {
     CVDetail,
     applyCVService,
     evaluateCVService,
+    getRecommendedJobsService,
+    RecommendedJDItem,
 } from "@/services/file.service";
 import { getJDByIdService, uploadJDService, getListJDService, JDItem, JDDetail } from "@/services/file.service";
 import {
@@ -31,6 +33,8 @@ export const QUERY_KEYS = {
 };
 
 export const useCVQueries = (userId?: string, page: number = 1, limit: number = 20) => {
+    const queryClient = useQueryClient();
+
     const {
         data: cvsData,
         isLoading: isCVDataLoading,
@@ -42,6 +46,8 @@ export const useCVQueries = (userId?: string, page: number = 1, limit: number = 
         queryKey: ["cvs", userId, page, limit],
         queryFn: () => getListCVService(userId, limit, page),
         placeholderData: (previousData) => previousData,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
     });
 
     const useCVDetail = (id: string) =>
@@ -56,9 +62,10 @@ export const useCVQueries = (userId?: string, page: number = 1, limit: number = 
         });
 
     const uploadCV = useMutation({
-        mutationFn: ({file, position}: {file: File, position: string}) => uploadCVService(file, position),
+        mutationFn: ({ file, position }: { file: File; position: string }) => uploadCVService(file, position),
         onSuccess: () => {
-            console.log("CV uploaded successfully");
+            queryClient.invalidateQueries({ queryKey: ["cvs"], exact: false });
+            console.log("CV upload successfully");
         },
         onError: (error: Error) => {
             console.log("CV upload failed", error);
@@ -83,6 +90,8 @@ export const useCVQueries = (userId?: string, page: number = 1, limit: number = 
 };
 
 export const useJDQueries = (userId?: string, page: number = 1, limit: number = 20) => {
+    const queryClient = useQueryClient();
+
     const {
         data: jdsData,
         isLoading: isJDDataLoading,
@@ -94,6 +103,8 @@ export const useJDQueries = (userId?: string, page: number = 1, limit: number = 
         queryKey: ["jds", userId, page, limit],
         queryFn: () => getListJDService(userId, limit, page),
         placeholderData: (previousData) => previousData,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
     });
 
     const useJDDetail = (id: string) =>
@@ -110,7 +121,8 @@ export const useJDQueries = (userId?: string, page: number = 1, limit: number = 
     const uploadJD = useMutation({
         mutationFn: (data: Partial<JDDetail>) => uploadJDService(data),
         onSuccess: () => {
-            console.log("JD uploaded successfully");
+            queryClient.invalidateQueries({ queryKey: ["jds"], exact: false });
+            console.log("CV upload successfully");
         },
         onError: (error: Error) => {
             console.log("JD upload failed", error);
@@ -146,6 +158,8 @@ export const useEvaluationQueries = (userId?: string, fileId?: string, page: num
         queryKey: ["evaluations", userId, fileId, page, limit],
         queryFn: () => getListEvaluatedCVService(userId, fileId, page, limit),
         placeholderData: (previousData) => previousData,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
     });
 
     const useEvaluatedCVDetail = (id: string) =>
@@ -200,6 +214,8 @@ export const useApplicationQueries = (userId?: string, fileId?: string, page: nu
         queryKey: ["applications", userId, fileId, page, limit],
         queryFn: () => getListApplicationService(userId, fileId, page, limit),
         placeholderData: (previousData) => previousData,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
     });
 
     const useApplicationDetail = (id: string) =>
@@ -216,7 +232,7 @@ export const useApplicationQueries = (userId?: string, fileId?: string, page: nu
     const applyCV = useMutation({
         mutationFn: ({ cvId, jdId }: { cvId: string; jdId: string }) => applyCVService(cvId, jdId),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["applications"] });
+            queryClient.invalidateQueries({ queryKey: ["applications"], exact: false });
             console.log("Application submitted successfully");
         },
         onError: (error: Error) => {
@@ -252,5 +268,25 @@ export const useApplicationQueries = (userId?: string, fileId?: string, page: nu
         pagination,
         isApplicationDataLoading,
         applicationError,
+    };
+};
+
+export const useRecommendationQueries = (userId: string) => {
+    const {
+        data: recommendedJobsData,
+        isLoading: isRecJobDataLoading,
+        error: recJobError,
+    } = useQuery<RecommendedJDItem[]>({
+        queryKey: ["recommended-jobs", userId],
+        queryFn: () => getRecommendedJobsService(userId),
+        placeholderData: (prev) => prev,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+    });
+
+    return {
+        recommendedJobs: recommendedJobsData || [],
+        isRecJobDataLoading,
+        recJobError,
     };
 };

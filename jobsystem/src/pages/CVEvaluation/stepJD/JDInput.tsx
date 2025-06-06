@@ -86,7 +86,7 @@ export function JDInputForm({ jdData, onJDDataChange, onSubmit }: JDInputFormPro
 
     const isBasicInfoValid = () => {
         return (
-            jdData.title?.trim() && jdData.companyName?.trim() && jdData.location?.trim() && jdData.description?.trim()
+            jdData.title?.trim() && jdData.position?.trim() && jdData.companyName?.trim() && jdData.location?.trim() && jdData.description?.trim()
         );
     };
 

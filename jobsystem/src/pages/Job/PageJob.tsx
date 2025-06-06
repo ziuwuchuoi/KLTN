@@ -5,17 +5,26 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search, MapPin, Building2, Users, TrendingUp, Star, ArrowRight } from "lucide-react";
-import { useJDQueries } from "../CVEvaluation/hooks/useFileQueries";
+import { useJDQueries, useRecommendationQueries } from "../CVEvaluation/hooks/useFileQueries";
 import { CustomTable } from "@/components/molecules/dashboard/CustomTable";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const PageJDs = () => {
     const navigate = useNavigate();
+    const { user } = useAuthStore();
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState("");
     const [locationFilter, setLocationFilter] = useState("");
 
     // Get public jd listings (no userId means public JDs)
-    const { jds, pagination, isJDDataLoading } = useJDQueries(undefined, currentPage, 20);
+    const { jds, pagination, isJDDataLoading, useJDDetail } = useJDQueries(undefined, currentPage, 20);
+
+    const { recommendedJobs } = useRecommendationQueries(user._id);
+
+    const refinedRecommendedJDs = recommendedJobs?.map((item) => ({
+        ...item.values,
+        _id: item.id,
+    }));
 
     const filteredJDs = jds.filter((jd) => {
         const matchesSearch =
@@ -27,6 +36,8 @@ const PageJDs = () => {
 
         return matchesSearch && matchesLocation;
     });
+
+    const dataToDisplay = refinedRecommendedJDs?.length > 0 ? refinedRecommendedJDs : filteredJDs;
 
     const handleJDClick = (jd) => {
         navigate(`/jobs/${jd._id}`);
@@ -84,7 +95,6 @@ const PageJDs = () => {
                         </Card>
                     </div>
                 </div>
-                
             </div>
 
             {/* JDs Section */}
@@ -97,7 +107,7 @@ const PageJDs = () => {
 
                     {/* JD Listings Table */}
                     <CustomTable
-                        data={filteredJDs}
+                        data={dataToDisplay}
                         columns={[
                             {
                                 header: "JD Title",
@@ -171,7 +181,7 @@ const PageJDs = () => {
                         isLoading={isJDDataLoading}
                         loadingMessage="Loading JDs..."
                         onRowClick={handleJDClick}
-                        expandable={true}
+                        expandable={false}
                         expandedContent={(jd) => (
                             <div className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -227,7 +237,7 @@ const PageJDs = () => {
                                 </div>
                             </div>
                         )}
-                        className="bg-slate-800/50 border-slate-700"
+                        className="bg-slate-800/50 border-slate-700 p-2"
                         emptyMessage="No JDs found matching your criteria"
                     />
 

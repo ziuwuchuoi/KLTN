@@ -19,32 +19,38 @@ interface JDSelectionStepProps {
 
 export function JDSelectionStep({ selectedJDId, onJDSelect, jdData, onJDDataChange, userId }: JDSelectionStepProps) {
     const [showCreateForm, setShowCreateForm] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
 
     const { jds, isJDDataLoading, uploadJD } = useJDQueries(userId);
 
-    const handleJDSubmit = async () => {
+    const handleUpload = async () => {
         try {
-            const newJD = await uploadJD.mutateAsync(jdData);
-            // Return to selection view and select the newly created JD
-            setShowCreateForm(false);
-            onJDSelect(newJD._id);
-            // Reset form data
-            onJDDataChange({
-                title: "",
-                description: "",
-                companyName: "",
-                location: "",
-                requirements: {
-                    experience: [],
-                    skills: [],
-                    education: [],
-                    projects: [],
-                    languages: [],
-                    certifications: [],
-                    summary: "",
+            setIsUploading(true);
+
+            uploadJD.mutate(jdData, {
+                onSuccess: (newJD) => {
+                    setShowCreateForm(false);
+                    onJDSelect(newJD._id);
+                    // Reset form data
+                    onJDDataChange({
+                        title: "",
+                        position: "",
+                        description: "",
+                        companyName: "",
+                        location: "",
+                        requirements: {
+                            experience: [""],
+                            skills: [""],
+                            education: [""],
+                            projects: [""],
+                            languages: [""],
+                            certifications: [""],
+                            summary: "",
+                        },
+                        benefits: [""],
+                        visibility: "private",
+                    });
                 },
-                benefits: [],
-                visibility: "private",
             });
         } catch (error) {
             console.error("Failed to upload JD:", error);
@@ -62,7 +68,7 @@ export function JDSelectionStep({ selectedJDId, onJDSelect, jdData, onJDDataChan
                     <div className="flex items-center justify-between">
                         <CardTitle className="flex items-center gap-2 text-white">
                             <FileText className="w-5 h-5 text-blue-400" />
-                            Select Your CV
+                            Select Your JD
                         </CardTitle>
                         <Button
                             variant="outline"
@@ -71,7 +77,7 @@ export function JDSelectionStep({ selectedJDId, onJDSelect, jdData, onJDDataChan
                             className="border-slate-600 text-slate-300 hover:text-white"
                         >
                             <Plus className="w-4 h-4 mr-2" />
-                            Upload New CV
+                            Upload New JD
                         </Button>
                     </div>
                 </CardHeader>
@@ -96,7 +102,7 @@ export function JDSelectionStep({ selectedJDId, onJDSelect, jdData, onJDDataChan
                                     <JDInputForm
                                         jdData={jdData}
                                         onJDDataChange={onJDDataChange}
-                                        onSubmit={handleJDSubmit}
+                                        onSubmit={handleUpload}
                                     />
                                 </div>
                             </CardContent>

@@ -6,13 +6,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, MapPin, Building2, Search, Users, Clock, DollarSign, Star } from "lucide-react";
-import { useJDQueries } from "../CVEvaluation/hooks/useFileQueries";
+import { useJDQueries, useRecommendationQueries } from "../CVEvaluation/hooks/useFileQueries";
 import { ApplyJobDialog } from "./dialogs/ApplyJobDialog";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const PageJobDetail = () => {
     const params = useParams();
     const navigate = useNavigate();
     const jobId = params.jobId as string;
+    const { user } = useAuthStore();
 
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedJobId, setSelectedJobId] = useState<string>(jobId || "");
@@ -20,6 +22,13 @@ const PageJobDetail = () => {
 
     // Get public job listings for the left panel
     const { jds, isJDDataLoading, useJDDetail } = useJDQueries(undefined, 1, 50);
+
+    const { recommendedJobs } = useRecommendationQueries(user._id);
+
+    const refinedRecommendedJDs = recommendedJobs?.map((item) => ({
+        ...item.values,
+        _id: item.id,
+    }));
 
     // Get selected job detail
     const { data: selectedJob, isLoading: isJobDetailLoading } = useJDDetail(selectedJobId);
@@ -37,6 +46,8 @@ const PageJobDetail = () => {
             setSelectedJobId(jobId);
         }
     }, [jobId, selectedJobId]);
+
+    const dataToDisplay = refinedRecommendedJDs?.length > 0 ? refinedRecommendedJDs : filteredJobs;
 
     const handleJobSelect = (job) => {
         setSelectedJobId(job._id);
@@ -89,7 +100,7 @@ const PageJobDetail = () => {
                                         ) : filteredJobs.length === 0 ? (
                                             <div className="text-center py-8 text-slate-400">No jobs found</div>
                                         ) : (
-                                            filteredJobs.map((job) => (
+                                            dataToDisplay.map((job) => (
                                                 <div
                                                     key={job._id}
                                                     onClick={() => handleJobSelect(job)}
@@ -192,144 +203,136 @@ const PageJobDetail = () => {
                                         </div>
                                     </CardHeader>
 
-                                    <CardContent className="flex-1 p-0">
-                                        <ScrollArea className="h-[calc(100vh-320px)]">
-                                            <div className="p-6 space-y-6">
-                                                {/* Job Description */}
-                                                <div className="space-y-3">
-                                                    <h3 className="text-lg font-semibold text-white">
-                                                        Job Description
-                                                    </h3>
-                                                    <div className="prose prose-invert max-w-none">
-                                                        <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">
-                                                            {selectedJob.description}
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                                {/* Requirements */}
-                                                {selectedJob.requirements && (
-                                                    <div className="space-y-3">
-                                                        <h3 className="text-lg font-semibold text-white">
-                                                            Requirements
-                                                        </h3>
-                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                            {selectedJob.requirements.skills.length > 0 && (
-                                                                <div>
-                                                                    <h4 className="font-medium text-slate-300 mb-2">
-                                                                        Skills
-                                                                    </h4>
-                                                                    <div className="flex flex-wrap gap-1">
-                                                                        {selectedJob.requirements.skills.map(
-                                                                            (skill, index) => (
-                                                                                <Badge
-                                                                                    key={skill}
-                                                                                    variant="secondary"
-                                                                                    className="text-xs bg-slate-700 text-slate-300 hover:text-slate-900"
-                                                                                >
-                                                                                    {skill}
-                                                                                </Badge>
-                                                                            )
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                            )}
-
-                                                            {selectedJob.requirements.experience.length > 0 && (
-                                                                <div>
-                                                                    <h4 className="font-medium text-slate-300 mb-2">
-                                                                        Experience
-                                                                    </h4>
-                                                                    <ul className="text-sm text-slate-400 space-y-1">
-                                                                        {selectedJob.requirements.experience.map(
-                                                                            (exp, index) => (
-                                                                                <li key={index}>• {exp}</li>
-                                                                            )
-                                                                        )}
-                                                                    </ul>
-                                                                </div>
-                                                            )}
-
-                                                            {selectedJob.requirements.education.length > 0 && (
-                                                                <div>
-                                                                    <h4 className="font-medium text-slate-300 mb-2">
-                                                                        Education
-                                                                    </h4>
-                                                                    <ul className="text-sm text-slate-400 space-y-1">
-                                                                        {selectedJob.requirements.education.map(
-                                                                            (edu, index) => (
-                                                                                <li key={index}>• {edu}</li>
-                                                                            )
-                                                                        )}
-                                                                    </ul>
-                                                                </div>
-                                                            )}
-
-                                                            {selectedJob.requirements.languages.length > 0 && (
-                                                                <div>
-                                                                    <h4 className="font-medium text-slate-300 mb-2">
-                                                                        Languages
-                                                                    </h4>
-                                                                    <div className="flex flex-wrap gap-1">
-                                                                        {selectedJob.requirements.languages.map(
-                                                                            (lang, index) => (
-                                                                                <Badge
-                                                                                    key={lang}
-                                                                                    variant="secondary"
-                                                                                    className="text-xs bg-slate-700 text-slate-300 hover:text-slate-900"
-                                                                                >
-                                                                                    {lang}
-                                                                                </Badge>
-                                                                            )
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                                {/* Benefits */}
-                                                <div className="space-y-3">
-                                                    <h3 className="text-lg font-semibold text-white">
-                                                        Benefits & Perks
-                                                    </h3>
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                                        {selectedJob.benefits.map((benefit, index) => (
-                                                            <div
-                                                                key={index}
-                                                                className="flex items-center gap-2 text-slate-300"
-                                                            >
-                                                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                                                {benefit}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-
-                                                {/* Apply Section */}
-                                                <div className="bg-blue-600/10 border border-blue-500/20 rounded-lg p-6">
-                                                    <div className="flex items-center justify-between">
-                                                        <div>
-                                                            <h3 className="text-lg font-semibold text-white mb-2">
-                                                                Ready to Apply?
-                                                            </h3>
-                                                            <p className="text-slate-300">
-                                                                Submit your application with your best CV and get
-                                                                noticed by {selectedJob.companyName}
-                                                            </p>
-                                                        </div>
-                                                        <Button
-                                                            onClick={() => setShowApplyDialog(true)}
-                                                            size="lg"
-                                                            className="bg-blue-600 hover:bg-blue-700"
-                                                        >
-                                                            Apply Now
-                                                        </Button>
-                                                    </div>
+                                    <CardContent className="flex-1 p-0 overflow-y-auto">
+                                        <div className="p-6 space-y-6">
+                                            {/* Job Description */}
+                                            <div className="space-y-3">
+                                                <h3 className="text-lg font-semibold text-white">Job Description</h3>
+                                                <div className="prose prose-invert max-w-none">
+                                                    <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">
+                                                        {selectedJob.description}
+                                                    </p>
                                                 </div>
                                             </div>
-                                        </ScrollArea>
+
+                                            {/* Requirements */}
+                                            {selectedJob.requirements && (
+                                                <div className="space-y-3">
+                                                    <h3 className="text-lg font-semibold text-white">Requirements</h3>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        {selectedJob.requirements.skills.length > 0 && (
+                                                            <div>
+                                                                <h4 className="font-medium text-slate-300 mb-2">
+                                                                    Skills
+                                                                </h4>
+                                                                <div className="flex flex-wrap gap-1">
+                                                                    {selectedJob.requirements.skills.map(
+                                                                        (skill, index) => (
+                                                                            <Badge
+                                                                                key={skill}
+                                                                                variant="secondary"
+                                                                                className="text-xs bg-slate-700 text-slate-300 hover:text-slate-900"
+                                                                            >
+                                                                                {skill}
+                                                                            </Badge>
+                                                                        )
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {selectedJob.requirements.experience.length > 0 && (
+                                                            <div>
+                                                                <h4 className="font-medium text-slate-300 mb-2">
+                                                                    Experience
+                                                                </h4>
+                                                                <ul className="text-sm text-slate-400 space-y-1">
+                                                                    {selectedJob.requirements.experience.map(
+                                                                        (exp, index) => (
+                                                                            <li key={index}>• {exp}</li>
+                                                                        )
+                                                                    )}
+                                                                </ul>
+                                                            </div>
+                                                        )}
+
+                                                        {selectedJob.requirements.education.length > 0 && (
+                                                            <div>
+                                                                <h4 className="font-medium text-slate-300 mb-2">
+                                                                    Education
+                                                                </h4>
+                                                                <ul className="text-sm text-slate-400 space-y-1">
+                                                                    {selectedJob.requirements.education.map(
+                                                                        (edu, index) => (
+                                                                            <li key={index}>• {edu}</li>
+                                                                        )
+                                                                    )}
+                                                                </ul>
+                                                            </div>
+                                                        )}
+
+                                                        {selectedJob.requirements.languages.length > 0 && (
+                                                            <div>
+                                                                <h4 className="font-medium text-slate-300 mb-2">
+                                                                    Languages
+                                                                </h4>
+                                                                <div className="flex flex-wrap gap-1">
+                                                                    {selectedJob.requirements.languages.map(
+                                                                        (lang, index) => (
+                                                                            <Badge
+                                                                                key={lang}
+                                                                                variant="secondary"
+                                                                                className="text-xs bg-slate-700 text-slate-300 hover:text-slate-900"
+                                                                            >
+                                                                                {lang}
+                                                                            </Badge>
+                                                                        )
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Benefits */}
+                                            <div className="space-y-3">
+                                                <h3 className="text-lg font-semibold text-white">Benefits & Perks</h3>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                                    {selectedJob.benefits.map((benefit, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className="flex items-center gap-2 text-slate-300"
+                                                        >
+                                                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                                            {benefit}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            {/* Apply Section */}
+                                            <div className="bg-blue-600/10 border border-blue-500/20 rounded-lg p-6">
+                                                <div className="flex items-center justify-between">
+                                                    <div>
+                                                        <h3 className="text-lg font-semibold text-white mb-2">
+                                                            Ready to Apply?
+                                                        </h3>
+                                                        <p className="text-slate-300">
+                                                            Submit your application with your best CV and get noticed by{" "}
+                                                            {selectedJob.companyName}
+                                                        </p>
+                                                    </div>
+                                                    <Button
+                                                        onClick={() => setShowApplyDialog(true)}
+                                                        size="lg"
+                                                        className="bg-blue-600 hover:bg-blue-700"
+                                                    >
+                                                        Apply Now
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </CardContent>
                                 </>
                             )}

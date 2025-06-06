@@ -138,6 +138,30 @@ export interface EvaluatedCVDetail {
     updatedAt: Date;
 }
 
+export interface RecommendedJDItem {
+    id: string;
+    values: {
+        candidateId: string;
+        creatorUserId: string;
+        title: string;
+        position: string;
+        description: string;
+        companyName: string;
+        location: string;
+        summary: string;
+        experience: string[];
+        education: string[];
+        certifications: string[];
+        languages: string[];
+        projects: string[];
+        skills: string[];
+        benefits: string[];
+        type: string;
+        visibility: string;
+        verified: boolean;
+    };
+}
+
 // CV
 
 export const getListCVService = async (
@@ -163,6 +187,7 @@ export const getCVByIdService = async (cvId: string): Promise<CVDetail> => {
 
 export const uploadCVService = async (file: File, position: string) => {
     const formData = new FormData();
+    formData.append("file", file);
 
     const uploadRes = await axiosInstance.post("/cvs/uploadFile", formData, {
         headers: {
@@ -175,7 +200,7 @@ export const uploadCVService = async (file: File, position: string) => {
     const fileUrl = imageUrl;
     const fileName = file.name;
 
-    const saveRes = await axiosInstance.post("/cvs/uploadCV", { fileName, fileUrl, position });
+    const saveRes = await axiosInstance.post("/cvs/uploadCV", { position, fileUrl, fileName });
 
     return saveRes.data?.data;
 };
@@ -205,7 +230,6 @@ export const getJDByIdService = async (jdId: string): Promise<JDDetail> => {
 };
 
 export const uploadJDService = async (data: Partial<JDDetail>) => {
-
     const response = await axiosInstance.post(`/cvs/uploadJD`, data);
 
     return response.data.data;
@@ -280,5 +304,22 @@ export const getEvaluatedCVByIdService = async (evaluationId: string): Promise<E
 export const evaluateCVService = async (cvId: string, jdId: string): Promise<EvaluatedCVDetail> => {
     const response = await axiosInstance.post(`/cvs/reviewCV/${cvId}/${jdId}`);
     console.log("eva", response.data.data);
+    return response.data.data;
+};
+
+// recommended JD
+
+export const getRecommendedJobsService = async (
+    candidateId: string, // list by candidate or recruiter
+    limit = 20,
+    page = 1
+): Promise<
+    RecommendedJDItem[]
+    // meta: { limit: number; page: number; total: number; totalPages: number };
+> => {
+    const url = `/recombee/recommend/jd?candidateId=${candidateId}&limit=${limit}&page=${page}`;
+
+    const response = await axiosInstance.get(url);
+
     return response.data.data;
 };
