@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "non.geist";
 import "non.geist/mono";
+import AuthProvider from "./AuthProvider";
 
 export function App() {
     const queryClient = new QueryClient();
@@ -15,12 +16,12 @@ export function App() {
             <QueryClientProvider client={queryClient}>
                 <BrowserRouter>
                     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-                        {/* <AuthProvider> */}
+                        <AuthProvider>
                             <TooltipProvider>
                                 <AppRoutes />
                                 <Toaster />
                             </TooltipProvider>
-                        {/* </AuthProvider> */}
+                        </AuthProvider>
                     </ThemeProvider>
                 </BrowserRouter>
             </QueryClientProvider>
