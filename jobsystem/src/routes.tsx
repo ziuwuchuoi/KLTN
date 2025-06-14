@@ -33,6 +33,9 @@ import TabApplication from "./pages/Dashboard/TabApplication";
 import TabJobDescription from "./pages/Dashboard/TabJobDescription";
 import PageProblemCodingDetail from "./pages/LiveCoding/PageProblemCodingDetail";
 
+// profile
+import PageProfile from "./pages/Profile/PageProfile";
+
 const AppRoutes = () => (
     <Routes>
         {/* Public Routes */}
@@ -60,12 +63,14 @@ const AppRoutes = () => (
                 <Route path="live-coding" element={<PageLiveCoding />} />
                 <Route path="live-coding/:codingId" element={<PageProblemCodingDetail />} />
 
-                     {/* Live Coding */}
+                {/* Live Coding */}
                 <Route path="jobs" element={<PageJobs />} />
                 <Route path="jobs/:jobId" element={<PageJobDetail />} />
 
                 {/* Landing (optional for user) */}
                 <Route path="home" element={<PageLanding />} />
+
+                <Route path="profile" element={<PageProfile />} />
             </Route>
         </Route>
 
