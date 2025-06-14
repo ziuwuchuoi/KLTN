@@ -3,12 +3,11 @@ import AppRoutes from "./routes";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "./components/ui/tooltip";
-// import { AuthProvider } from "./AuthProvider";
+import AuthProvider from "./AuthProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "non.geist";
 import "non.geist/mono";
-import AuthProvider from "./AuthProvider";
 
 export function App() {
     const queryClient = new QueryClient();
