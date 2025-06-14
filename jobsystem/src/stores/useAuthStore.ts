@@ -39,7 +39,7 @@ type AuthState = {
     setError: (error: string | null) => void;
     login: (params: LoginParams) => Promise<void>;
     googleLogin: (role: string) => Promise<void>;
-    handleGoogleRedirect: () => Promise<void>;
+    handleGoogleRedirect: (isOAuth: boolean, token: string) => Promise<void>;
     loginAdmin: (email: string, password: string) => Promise<void>;
     signupRecruiter: (params: SignupRecruiterParams) => Promise<void>;
     logout: () => Promise<void>;
@@ -143,14 +143,8 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
 
-            handleGoogleRedirect: async () => {
+            handleGoogleRedirect: async (isOAuth: boolean, token: string) => {
                 try {
-                    set({ isAuthChecking: true });
-
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const isOAuth = urlParams.get("login_oauth2") === "true";
-                    const token = urlParams.get("token");
-
                     if (isOAuth && token) {
                         set({ token: token, error: null });
                         await get().fetchUserProfile();
@@ -160,8 +154,6 @@ export const useAuthStore = create<AuthState>()(
                 } catch (error) {
                     console.error("Failed to handle Google redirect:", error);
                     set({ error: "Failed to finalize Google login" });
-                } finally {
-                    set({ isAuthChecking: false });
                 }
             },
 
