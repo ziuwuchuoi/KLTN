@@ -5,15 +5,12 @@ import {
     getCodeProblemTagsService,
     getCodeLanguageService,
     submitCodeProblemService,
+    createCodeProblemService,
 } from "@/services/code.service";
-import {
-    CodeProblem,
-    CodeProblemDetail,
-    CodeLanguage,
-    CodeSubmitData,
-} from "@/services/code.service";
+import { CodeProblem, CodeProblemDetail, CodeLanguage, CodeSubmitData } from "@/services/code.service";
 
 export const useCodeQueries = (
+    userId?: string,
     selectedTag: string = "",
     selectedDifficulty: string = "",
     page: number = 1,
@@ -29,9 +26,11 @@ export const useCodeQueries = (
         problems: CodeProblem[];
         pagination: { limit: number; page: number; total: number; totalPages: number };
     }>({
-        queryKey: ["code-problems", selectedTag, selectedDifficulty, page, limit],
-        queryFn: () => getListCodeProblemService(selectedTag, selectedDifficulty, limit, page),
+        queryKey: ["code-problems", userId, selectedTag, selectedDifficulty, limit, page],
+        queryFn: () => getListCodeProblemService(userId, selectedTag, selectedDifficulty, limit, page),
         placeholderData: (previousData) => previousData,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
     });
 
     // Tags
@@ -45,11 +44,11 @@ export const useCodeQueries = (
     });
 
     // Problem detail
-    const useCodeProblemDetail = (codingId: string) => {
+    const useCodeProblemDetail = (problemId: string) => {
         return useQuery<CodeProblemDetail>({
-            queryKey: ["code-problem-detail", codingId],
-            queryFn: () => getCodeProblemDetailService(codingId),
-            enabled: !!codingId,
+            queryKey: ["code-problem-detail", problemId],
+            queryFn: () => getCodeProblemDetailService(problemId),
+            enabled: !!problemId,
         });
     };
 
@@ -78,6 +77,31 @@ export const useCodeQueries = (
         },
     });
 
+    const createCodeProblem = useMutation({
+        mutationFn: (data: Partial<CodeProblemDetail>) => createCodeProblemService(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["code-problems"], exact: false });
+            console.log("Code problem created successfully");
+        },
+        onError: (err) => {
+            console.error("Error creating code problem:", err);
+        },
+    });
+
+    const updateCodeProblem = useMutation({
+        mutationFn: ({ problemId, data }: { problemId: string; data: Partial<CodeProblemDetail> }) =>
+            updateCodeProblem(problemId, data),
+        onSuccess: (_, { problemId }) => {
+            // Invalidate the detail view of the updated quiz
+            queryClient.invalidateQueries({
+                queryKey: ["code-problem-detail", problemId],
+            });
+        },
+        onError: (err) => {
+            console.error("Error updating code:", err);
+        },
+    });
+
     const pagination = codeProblemsData?.pagination ?? {
         page: 1,
         limit: 20,
@@ -99,8 +123,10 @@ export const useCodeQueries = (
         isLanguagesLoading,
         languagesError,
 
-        useCodeProblemDetail, 
+        useCodeProblemDetail,
 
-        submitCodeMutation, 
+        createCodeProblem,
+        updateCodeProblem,
+        submitCodeMutation,
     };
 };

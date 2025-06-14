@@ -68,6 +68,7 @@ export interface CodeSubmitResult {
 }
 
 export const getListCodeProblemService = async (
+    creatorUserId: string,
     tag: string,
     difficulty: string,
     limit = 20,
@@ -76,16 +77,28 @@ export const getListCodeProblemService = async (
     problems: CodeProblem[];
     pagination: { limit: number; page: number; total: number; totalPages: number };
 }> => {
-    const url =
-        tag && difficulty
-            ? `/leetcode/problems?tag=${tag}&difficulty=${difficulty}&limit=${limit}&page=${page}`
-            : tag
-              ? `/leetcode/problems?tag=${tag}&limit=${limit}&page=${page}`
-              : difficulty
-                ? `/leetcode/problems?difficulty=${difficulty}&limit=${limit}&page=${page}`
-                : `/leetcode/problems?limit=${limit}&page=${page}`;
+    const base = `/leetcode/problems?limit=${limit}&page=${page}`;
 
+    const url =
+        creatorUserId && tag && difficulty
+            ? `${base}&creatorUserId=${creatorUserId}&tag=${tag}&difficulty=${difficulty}`
+            : creatorUserId && tag
+              ? `${base}&creatorUserId=${creatorUserId}&tag=${tag}`
+              : creatorUserId && difficulty
+                ? `${base}&creatorUserId=${creatorUserId}&difficulty=${difficulty}`
+                : tag && difficulty
+                  ? `${base}&tag=${tag}&difficulty=${difficulty}`
+                  : tag
+                    ? `${base}&tag=${tag}`
+                    : difficulty
+                      ? `${base}&difficulty=${difficulty}`
+                      : creatorUserId
+                        ? `${base}&creatorUserId=${creatorUserId}`
+                        : base;
+
+    console.log("url code", url);
     const response = await axiosInstance.get(url);
+    console.log("code data", response.data.data);
     return response.data.data;
 };
 
@@ -104,7 +117,27 @@ export const getCodeLanguageService = async (): Promise<CodeLanguage[]> => {
     return response.data.data;
 };
 
+export const testCodeProblemService = async (data: CodeSubmitData): Promise<CodeSubmitResult> => {
+    const response = await axiosInstance.post(`/judge/test`, data);
+    return response.data.data;
+};
+
 export const submitCodeProblemService = async (data: CodeSubmitData): Promise<CodeSubmitResult> => {
     const response = await axiosInstance.post(`/judge/submit`, data);
+    return response.data.data;
+};
+
+// recruiter's
+
+export const createCodeProblemService = async (data: Partial<CodeProblemDetail>): Promise<CodeProblemDetail> => {
+    const response = await axiosInstance.post(`/leetcode/create-problem`, data);
+    return response.data.data;
+};
+
+export const updateCodeProblemService = async (
+    problemId: string,
+    data: Partial<CodeProblemDetail>
+): Promise<CodeProblemDetail> => {
+    const response = await axiosInstance.patch(`/leetcode/update-problem/${problemId}`, data);
     return response.data.data;
 };

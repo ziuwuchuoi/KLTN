@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import CustomHeroSection from "@/components/molecules/CustomHeroSection";
-import { TbSearch } from "react-icons/tb";
+import { TbQuote, TbSearch } from "react-icons/tb";
 import { Input } from "@/components/ui/input";
 
 import { useNavigate } from "react-router-dom";
@@ -17,7 +17,7 @@ const PageTechnicalQuiz = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const navigate = useNavigate();
 
-    const { technicalQuizzes, paginationMeta } = useQuizQueries(selectedCategory, page, limit);
+    const { technicalQuizzes, paginationMeta } = useQuizQueries(null, selectedCategory, page, limit);
 
     const filteredQuizzes = useMemo(() => {
         const categoryFiltered = selectedCategory
@@ -32,11 +32,11 @@ const PageTechnicalQuiz = () => {
     }, [searchQuery, selectedCategory, technicalQuizzes]);
 
     const handleQuizClick = (quiz) => {
-        const startTime = new Date().toISOString(); 
+        const startTime = new Date().toISOString();
         navigate(`/quiz/technical/${quiz._id}`, {
-            state: { startTime }, 
+            state: { startTime },
         });
-    }; 
+    };
 
     return (
         <>
@@ -76,7 +76,14 @@ const PageTechnicalQuiz = () => {
                     {/* Quiz Grid */}
                     <div className="p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {filteredQuizzes.map((item) => (
-                            <QuizCard key={item.id} item={item} onStartClick={() => handleQuizClick(item)} />
+                            <QuizCard
+                                key={item.id}
+                                item={item}
+                                onStartClick={() => handleQuizClick(item)}
+                                color="hover:from-purple-500 to-pink-500"
+                                borderColor="hover:border-purple-500"
+                                icon={<TbQuote className="text-purple-400" />}
+                            />
                         ))}
 
                         {searchQuery && filteredQuizzes.length === 0 && (

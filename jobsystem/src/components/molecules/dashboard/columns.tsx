@@ -11,7 +11,7 @@ export const difficultyColors = {
 export const getCodeProblemColumns = (handleProblemClick: (id: string) => void) => [
     {
         header: "#",
-        cell: (problem) => <span className="font-medium text-slate-300">{problem.problemId}</span>,
+        cell: (problem) => <div className="font-medium text-slate-300">{problem.problemId}</div>,
         className: "w-12",
     },
     {
@@ -79,11 +79,11 @@ export const getCandidateColumns = (handleCandidateClick: (userId: string) => vo
     },
     {
         header: "Name",
-        cell: (item) => <span className="font-medium text-white">{item.user.name}</span>,
+        cell: (item) => <div className="font-medium text-white">{item.user.name}</div>,
     },
     {
         header: "Email",
-        cell: (item) => <span className="text-slate-300">{item.user.email}</span>,
+        cell: (item) => <div className="text-slate-300">{item.user.email}</div>,
     },
     {
         header: "Role",
@@ -143,11 +143,11 @@ export const getRecruiterColumns = (handleRecruiterClick: (userId: string) => vo
     },
     {
         header: "Name",
-        cell: (item) => <span className="font-medium text-white">{item.user.name}</span>,
+        cell: (item) => <div className="font-medium text-white">{item.user.name}</div>,
     },
     {
         header: "Email",
-        cell: (item) => <span className="text-slate-300">{item.user.email}</span>,
+        cell: (item) => <div className="text-slate-300">{item.user.email}</div>,
     },
     {
         header: "Role",
@@ -202,11 +202,11 @@ export const getRequestRecruiterColumns = (handleRequestRecruiterClick: (userId:
     },
     {
         header: "Name",
-        cell: (item) => <span className="font-medium text-white">{item.user.name}</span>,
+        cell: (item) => <div className="font-medium text-white">{item.user.name}</div>,
     },
     {
         header: "Email",
-        cell: (item) => <span className="text-slate-300">{item.user.email}</span>,
+        cell: (item) => <div className="text-slate-300">{item.user.email}</div>,
     },
     {
         header: "Role",
@@ -242,8 +242,126 @@ export const getRequestRecruiterColumns = (handleRequestRecruiterClick: (userId:
     },
 ];
 
-export const getJDColumns = (handleJDClick: (id: string) => void) => [];
+export const getJDColumns = (handleJDClick: (id: string) => void) => [
+    {
+        header: "#",
+        cell: (jd) => <div className="font-medium text-slate-300 truncate">{jd._id}</div>,
+        className: "max-w-30",
+    },
+    {
+        header: "Title",
+        cell: (jd) => <div className="font-medium text-white truncate">{jd.title}</div>,
+        className: "max-w-50",
+    },
+    {
+        header: "Position",
+        cell: (jd) => <div className="font-medium text-white">{jd.position}</div>,
+    },
+    {
+        header: "Visibility",
+        cell: (jd) => (
+            <Badge variant="outline" className={`bg-blue-500/20 text-blue-400 border-blue-500/30`}>
+                {jd.visibility?.includes("public") ? "Public" : "Private"}
+            </Badge>
+        ),
+        className: "w-28",
+    },
+    {
+        header: "Actions",
+        cell: (jd) => (
+            <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleJDClick(jd._id);
+                }}
+                className="text-blue-400 hover:text-blue-300"
+            >
+                View more
+            </Button>
+        ),
+        className: "w-20",
+    },
+];
 
-export const getCVColumns = (handleCVClick: (id: string) => void) => [];
+export const getCVColumns = (handleCVClick: (id: string) => void) => [
+    {
+        header: "#",
+        cell: (cv) => <div className="font-medium text-slate-300 truncate">{cv._id}</div>,
+        className: "max-w-30",
+    },
+    {
+        header: "File Name",
+        cell: (cv) => <div className="font-medium text-white truncate">{cv.fileName}</div>,
+        className: "max-w-50",
+    },
+    {
+        header: "Position",
+        cell: (cv) => <div className="font-medium text-white">{cv.position}</div>,
+    },
+    {
+        header: "Actions",
+        cell: (cv) => (
+            <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleCVClick(cv._id);
+                }}
+                className="text-blue-400 hover:text-blue-300"
+            >
+                View more
+            </Button>
+        ),
+        className: "w-20",
+    },
+];
 
-export const getApplicantionColumns = (handleApplicantionClick: (id: string) => void) => [];
+export const getApplicantionColumns = (handleApplicantionClick: (id: string) => void) => [
+    {
+        header: "#",
+        cell: (appId) => <div className="font-medium text-slate-300 truncate">{appId._id}</div>,
+        className: "w-12",
+    },
+    {
+        header: "Title",
+        cell: (appId) => <div className="font-medium text-white truncate">{appId.title}</div>,
+    },
+    {
+        header: "Description",
+        cell: (appId) => <div className="font-medium text-white truncate">{appId.description}</div>,
+        className: "w-24",
+    },
+    {
+        header: "Position",
+        cell: (appId) => <div className="font-medium text-white">{appId.position}</div>,
+    },
+    {
+        header: "Visibility",
+        cell: (appId) => (
+            <Badge variant="outline" className={`bg-blue-500/20 text-blue-400 border-blue-500/30`}>
+                {appId.visibility?.includes("public") ? "Public" : "Private"}
+            </Badge>
+        ),
+        className: "w-28",
+    },
+    {
+        header: "Actions",
+        cell: (appId) => (
+            <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleApplicantionClick(appId._id);
+                }}
+                className="text-blue-400 hover:text-blue-300"
+            >
+                View more
+            </Button>
+        ),
+        className: "w-20",
+    },
+];

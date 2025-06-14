@@ -20,6 +20,7 @@ const PageLiveCoding = () => {
     const [searchQuery, setSearchQuery] = useState("");
 
     const { codeProblems, pagination, isCodeProblemsLoading, tags, isTagsLoading } = useCodeQueries(
+        null,
         selectedTags.join(","),
         selectedDifficulty === "All" ? "" : selectedDifficulty,
         currentPage,

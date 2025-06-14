@@ -6,6 +6,7 @@ import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CustomDialog from "@/components/molecules/CustomDialog";
 import { TbQuote } from "react-icons/tb";
+import { cn } from "@/components/utils/general.utils";
 
 export interface QuizItem {
     id: number | string;
@@ -51,9 +52,12 @@ interface QuizCardProps {
     item: QuizItem;
     onStartClick: () => void;
     requiredConfirm?: boolean;
+    color?: string;
+    borderColor?: string;
+    icon?: React.ReactNode;
 }
 
-export const QuizCard = ({ item, onStartClick, requiredConfirm = true }: QuizCardProps) => {
+export const QuizCard = ({ item, onStartClick, requiredConfirm = true, color, borderColor, icon }: QuizCardProps) => {
     const [openConfirm, setOpenConfirm] = useState(false);
 
     const handleStart = () => {
@@ -72,21 +76,21 @@ export const QuizCard = ({ item, onStartClick, requiredConfirm = true }: QuizCar
     return (
         <Card
             key={item.id}
-            className={`group relative overflow-hidden bg-black/40 backdrop-blur-sm border border-zinc-800/50 ${
-                item.borderColor
-            } transition-all duration-300`}
+            className={cn(
+                "group relative overflow-hidden bg-black/40 backdrop-blur-sm border border-zinc-800/50 transition-all duration-300",
+                borderColor ?? item.borderColor
+            )}
         >
             <div
-                className={`absolute inset-0 bg-gradient-to-br ${
-                    item.color
-                } opacity-10 group-hover:opacity-20 transition-opacity`}
+                className={cn(
+                    "absolute inset-0 bg-gradient-to-br opacity-10 group-hover:opacity-20 transition-opacity",
+                    color ?? item.color
+                )}
             />
 
             <div className="relative p-6 flex flex-col h-full">
                 <div className="flex items-start gap-4 mb-4">
-                    <div className="p-3 rounded-xl bg-black/30 border border-white/10">
-                        {item.icon ? item.icon : <TbQuote className="icon-sm text-red-400" />}
-                    </div>
+                    <div className="p-3 rounded-xl bg-black/30 border border-white/10">{icon ?? item.icon}</div>
                     <div>
                         <h3 className="text-xl font-semibold text-white mb-2">{item.title}</h3>
                         <p className="text-gray-400 text-sm">{item.description}</p>
@@ -104,6 +108,7 @@ export const QuizCard = ({ item, onStartClick, requiredConfirm = true }: QuizCar
                     </Button>
                 </div>
             </div>
+
             {requiredConfirm && (
                 <CustomDialog
                     open={openConfirm}

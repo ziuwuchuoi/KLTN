@@ -1,9 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+    createQuizService,
     getListCategoriesService,
     getListQuizzesService,
     getQuizDetailService,
+    QuizCreation,
     submitQuizService,
+    updateQuizService,
 } from "@/services/quiz.service";
 
 export interface TechnicalCategoryItem {
@@ -31,7 +34,12 @@ export interface SubmitQuizPayload {
     answers: { qIndex: number; chosenOption: number }[];
 }
 
-export const useQuizQueries = (selectedCategory: string = "", page: number = 1, limit: number = 20) => {
+export const useQuizQueries = (
+    userId?: string,
+    selectedCategory: string = "",
+    page: number = 1,
+    limit: number = 20
+) => {
     const queryClient = useQueryClient();
 
     const {
@@ -48,9 +56,11 @@ export const useQuizQueries = (selectedCategory: string = "", page: number = 1, 
         isLoading: isLoadingQuizzes,
         isError: isErrorQuizzes,
     } = useQuery({
-        queryKey: ["technical-quizzes", selectedCategory, page],
-        queryFn: () => getListQuizzesService(selectedCategory, limit, page),
+        queryKey: ["technical-quizzes", userId, selectedCategory, limit, page],
+        queryFn: () => getListQuizzesService(userId, selectedCategory, limit, page),
         placeholderData: (previousData) => previousData,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
     });
 
     const useQuizDetail = (quizId: string) => {
@@ -79,6 +89,31 @@ export const useQuizQueries = (selectedCategory: string = "", page: number = 1, 
         },
     });
 
+    const createQuiz = useMutation({
+        mutationFn: (data: Partial<QuizCreation>) => createQuizService(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["technical-quizzes"], exact: false });
+            console.log("Quiz created successfully");
+        },
+        onError: (err) => {
+            console.error("Error creating quiz:", err);
+        },
+    });
+
+    const updateQuiz = useMutation({
+        mutationFn: ({ quizId, data }: { quizId: string; data: Partial<QuizCreation> }) =>
+            updateQuizService(quizId, data),
+        onSuccess: (_, { quizId }) => {
+            // Invalidate the detail view of the updated quiz
+            queryClient.invalidateQueries({
+                queryKey: ["technical-quiz-detail", quizId],
+            });
+        },
+        onError: (err) => {
+            console.error("Error updating quiz:", err);
+        },
+    });
+
     const technicalQuizzes = data?.items ?? [];
     const paginationMeta = data?.meta ?? { page: 1, limit: 20, total: 0, totalPages: 1 };
 
@@ -92,6 +127,8 @@ export const useQuizQueries = (selectedCategory: string = "", page: number = 1, 
         isLoadingQuizzes,
         isErrorQuizzes,
 
+        createQuiz,
+        updateQuiz,
         submitQuiz,
 
         useQuizDetail,
