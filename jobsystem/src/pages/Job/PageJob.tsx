@@ -8,6 +8,7 @@ import { Search, MapPin, Building2, Users, TrendingUp, Star, ArrowRight } from "
 import { useJDQueries, useRecommendationQueries } from "../CVEvaluation/hooks/useFileQueries";
 import { CustomTable } from "@/components/molecules/dashboard/CustomTable";
 import { useAuthStore } from "@/stores/useAuthStore";
+import CustomHeroSection from "@/components/molecules/CustomHeroSection";
 
 const PageJDs = () => {
     const navigate = useNavigate();
@@ -51,23 +52,14 @@ const PageJDs = () => {
     return (
         <div className="flex flex-col w-full">
             {/* Hero Section */}
-            <div className="min-h-screen flex flex-col items-center justify-center px-6">
-                <div className="flex flex-col items-center justify-center w-full max-w-7xl">
+            <div className="flex flex-col items-center justify-center px-6">
+                <div className="flex flex-col items-center justify-center w-full max-w-7xl mt-40">
                     {/* Hero Title */}
-                    <div className="text-center mb-12">
-                        <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                            Find Your Dream JD
-                        </h1>
-                        <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-                            Discover thousands of jd opportunities from top companies. Apply with your CV and get
-                            matched with the perfect role.
-                        </p>
-                    </div>
-
+                    <CustomHeroSection />
                     {/* Search Section */}
-                    <div className="w-full max-w-4xl mb-12">
+                    <div className="w-full mt-5">
                         <Card className="bg-slate-800/50 border-slate-700">
-                            <CardContent className="p-6">
+                            <CardContent className="p-2">
                                 <div className="flex flex-col md:flex-row gap-4">
                                     <div className="relative flex-1">
                                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
@@ -98,13 +90,8 @@ const PageJDs = () => {
             </div>
 
             {/* JDs Section */}
-            <div className="min-h-screen w-full bg-gradient-to-b from-gray-900 to-zinc-950 flex flex-col px-6 py-16">
+            <div className=" w-full flex flex-col px-6 pt-4 pb-16">
                 <div className="max-w-7xl mx-auto w-full">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold mb-4">Latest JD Opportunities</h2>
-                        <p className="text-slate-300">Discover your next career move from our curated jd listings</p>
-                    </div>
-
                     {/* JD Listings Table */}
                     <CustomTable
                         data={dataToDisplay}
