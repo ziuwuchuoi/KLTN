@@ -50,7 +50,10 @@ const TabRecruiter = () => {
     return (
         <div className="w-full">
             <div className="flex items-center justify-between mb-4">
-                <h1 className="text-3xl font-bold">Recruiters</h1>
+                <div>
+                    <h1 className="text-3xl font-bold text-white">Recruiters</h1>
+                    <p className="text-gray-400 mt-1">Manage and track recruiters</p>
+                </div>
                 <Button variant="outline">Add Recruiter</Button>
             </div>
 

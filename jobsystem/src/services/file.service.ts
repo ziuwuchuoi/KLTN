@@ -33,6 +33,9 @@ export interface ApplicationItem {
     status: string;
     createdAt: string;
     updatedAt: string;
+    overallScore: number;
+    cv: Partial<CVItem>; // no createdAt updatedAt
+    jd: JDItem;
 }
 
 export interface EvaluatedCVItem {
@@ -83,6 +86,8 @@ export interface JDDetail {
     benefits: string[];
     visibility: string; // public or private
     verified: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface ApplicationDetail {
@@ -92,6 +97,10 @@ export interface ApplicationDetail {
     jdId: string;
     evaluationId: string;
     status: string;
+    overallScore: number;
+    cv: CVDetail;
+    jd: JDDetail;
+    evaluation: EvaluatedCVDetail;
     createdAt: string;
     updatedAt: string;
 }
@@ -111,10 +120,8 @@ export interface SkillAnalysisParams {
 }
 
 export interface SummaryParams {
-    fit_level: string;
     overall_score: number;
     similarity_score: number;
-    skill_match_score: number;
 }
 
 export interface AIReviewParams {
@@ -231,7 +238,11 @@ export const getJDByIdService = async (jdId: string): Promise<JDDetail> => {
 
 export const uploadJDService = async (data: Partial<JDDetail>) => {
     const response = await axiosInstance.post(`/cvs/uploadJD`, data);
+    return response.data.data;
+};
 
+export const updateJDService = async (jdId: string, data: Partial<JDDetail>): Promise<JDDetail> => {
+    const response = await axiosInstance.patch(`/cvs/updateJD/${jdId}`, data);
     return response.data.data;
 };
 

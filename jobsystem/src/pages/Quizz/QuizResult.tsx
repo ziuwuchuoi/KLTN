@@ -1,4 +1,4 @@
-import { Quiz } from "./hooks/useQuizQueries";
+import { Quiz } from "@/services/quiz.service";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Check, X } from "lucide-react";
 import { cn } from "@/components/utils/general.utils";

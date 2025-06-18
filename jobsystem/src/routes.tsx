@@ -35,6 +35,7 @@ import PageProblemCodingDetail from "./pages/LiveCoding/PageProblemCodingDetail"
 
 // profile
 import PageProfile from "./pages/Profile/PageProfile";
+import TabTestset from "./pages/Dashboard/TabTestSet";
 
 const AppRoutes = () => (
     <Routes>
@@ -82,6 +83,7 @@ const AppRoutes = () => (
                 <Route path="recruiters" element={<TabRecruiter />} />
                 <Route path="applications" element={<TabApplication />} />
                 <Route path="jobdescriptions" element={<TabJobDescription />} />
+                <Route path="testsets" element={<TabTestset />} />
             </Route>
         </Route>
 

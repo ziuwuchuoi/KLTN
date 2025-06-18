@@ -49,6 +49,12 @@ const menuItems: {
         icon: <TbFileCertificate className="h-5 w-5" />,
         permissionAllowed: "recruiter",
     },
+     {
+        title: "Test Sets",
+        path: "/dashboard/testsets",
+        icon: <TbFileCertificate className="h-5 w-5" />,
+        permissionAllowed: "recruiter",
+    },
 ];
 
 const CustomSideBar = () => {

@@ -10,7 +10,14 @@ import {
     getRecommendedJobsService,
     RecommendedJDItem,
 } from "@/services/file.service";
-import { getJDByIdService, uploadJDService, getListJDService, JDItem, JDDetail } from "@/services/file.service";
+import {
+    getJDByIdService,
+    uploadJDService,
+    updateJDService,
+    getListJDService,
+    JDItem,
+    JDDetail,
+} from "@/services/file.service";
 import {
     getEvaluatedCVByIdService,
     getListEvaluatedCVService,
@@ -129,6 +136,18 @@ export const useJDQueries = (userId?: string, page: number = 1, limit: number = 
         },
     });
 
+    const updateJD = useMutation({
+        mutationFn: ({ jdId, data }: { jdId: string; data: Partial<JDDetail> }) => updateJDService(jdId, data),
+        onSuccess: (_, updatedJD) => {
+            queryClient.invalidateQueries({
+                queryKey: QUERY_KEYS.jdDetail(updatedJD.jdId),
+            });
+        },
+        onError: (error: Error) => {
+            console.log("JD upload failed", error);
+        },
+    });
+
     const pagination = jdsData?.meta ?? {
         page: 1,
         limit: 20,
@@ -138,6 +157,7 @@ export const useJDQueries = (userId?: string, page: number = 1, limit: number = 
 
     return {
         jds: jdsData?.items || [],
+        updateJD,
         uploadJD,
         useJDDetail,
         pagination,

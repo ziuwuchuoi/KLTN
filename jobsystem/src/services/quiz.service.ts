@@ -1,20 +1,26 @@
 import axiosInstance from "./axiosInstance";
-import { TechnicalQuiz } from "@/pages/Quizz/hooks/useQuizQueries";
-import { QuizItem } from "@/pages/Quizz/QuizCategory";
 
-export interface QuizCreation {
+export interface QuizItem {
     _id: string;
     title: string;
     categories: string[];
-    questions: {
-        question: string;
-        options: string[];
-        correctAnswer: number;
-        explanation?: string;
-    }[];
+    sourceUrl: string;
+    questions: Quiz[];
     duration: number;
     createdAt: Date;
     updatedAt: Date;
+}
+export interface Quiz {
+    question: string;
+    options: string[];
+    correctAnswer: number;
+    explanation?: string;
+}
+
+export interface TechnicalCategoryItem {
+    id: number;
+    name: string;
+    children?: TechnicalCategoryItem[];
 }
 
 export const getListCategoriesService = async () => {
@@ -28,7 +34,7 @@ export const getListQuizzesService = async (
     limit = 20,
     page = 1
 ): Promise<{
-    items: QuizItem[];
+    items: Partial<QuizItem>[];
     meta: { limit: number; page: number; total: number; totalPages: number };
 }> => {
     const base = `/quiz/getListQuizzes?limit=${limit}&page=${page}`;
@@ -49,7 +55,7 @@ export const getListQuizzesService = async (
     return response.data.data;
 };
 
-export const getQuizDetailService = async (quizId: string): Promise<TechnicalQuiz> => {
+export const getQuizDetailService = async (quizId: string): Promise<Partial<QuizItem>> => {
     const response = await axiosInstance.get(`/quiz/getQuizDetail/${quizId}`);
     return response.data.data;
 };
@@ -68,12 +74,12 @@ export const getListQuizSubmitsService = async (quizId: string, candidateId: str
 
 // recruiter's
 
-export const createQuizService = async (data: Partial<QuizCreation>): Promise<QuizCreation> => {
+export const createQuizService = async (data: Partial<QuizItem>): Promise<Partial<QuizItem>> => {
     const response = await axiosInstance.post(`/quiz/create-quiz/`, data);
     return response.data;
 };
 
-export const updateQuizService = async (quizId: string, data: Partial<QuizCreation>): Promise<QuizCreation> => {
+export const updateQuizService = async (quizId: string, data: Partial<QuizItem>): Promise<Partial<QuizItem>> => {
     const response = await axiosInstance.patch(`/quiz/update-quiz/${quizId}`, data);
     return response.data;
 };

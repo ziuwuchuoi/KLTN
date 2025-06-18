@@ -11,7 +11,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Folder } from "lucide-react";
 import { cn } from "@/components/utils/general.utils";
-import { useQuizQueries, TechnicalCategoryItem } from "./hooks/useQuizQueries";
+import { useQuizQueries} from "./hooks/useQuizQueries";
+import { TechnicalCategoryItem } from "@/services/quiz.service";
 
 interface QuizCategoryMenuProps {
     className?: string;
