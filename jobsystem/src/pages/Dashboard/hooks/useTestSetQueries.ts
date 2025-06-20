@@ -27,9 +27,9 @@ export const useTestSetQueries = () => {
 
     const linkTestSet = useMutation({
         mutationFn: (data: Partial<TestSetItem>) => linkTestSetService(data),
-        onSuccess: (res) => {
-            queryClient.invalidateQueries({ queryKey: ["test-set-detail", res.jdId] });
-            console.log("Linked test set successfully:", res);
+        onSuccess: (_, testSet) => {
+            queryClient.invalidateQueries({ queryKey: ["test-set-detail", testSet.jdId] });
+            console.log("Linked test set successfully:", testSet);
         },
         onError: (err) => {
             console.error("Error linking test set:", err);
@@ -38,9 +38,9 @@ export const useTestSetQueries = () => {
 
     const updateTestSet = useMutation({
         mutationFn: (data: Partial<TestSetItem>) => updateTestSetService(data),
-        onSuccess: (res) => {
-            queryClient.invalidateQueries({ queryKey: ["test-set-detail", res.jdId] });
-            console.log("Updated test set successfully:", res);
+        onSuccess: (_, updatedTestSet) => {
+            queryClient.invalidateQueries({ queryKey: ["test-set-detail", updatedTestSet.jdId] });
+            console.log("Updated test set successfully:", updatedTestSet);
         },
         onError: (err) => {
             console.error("Error updating test set:", err);

@@ -9,13 +9,15 @@ import { CustomTable } from "@/components/molecules/dashboard/CustomTable";
 import { getJDColumns } from "@/components/molecules/dashboard/columns";
 import { DialogCreateJD } from "./dialogs/DialogCreateJD";
 import { DialogJD } from "./dialogs/DialogJD";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const TabJobDescription = () => {
+    const { user } = useAuthStore();
     const [selectedJD, setSelectedJD] = useState<JDItem | null>(null);
     const [isViewJDOpen, setIsViewJDOpen] = useState(false);
     const [isCreateJDOpen, setIsCreateJDOpen] = useState(false);
 
-    const { jds, isJDDataLoading } = useJDQueries();
+    const { jds, isJDDataLoading } = useJDQueries(user._id);
 
     const handleJDClick = (jdId: string) => {
         const jd = jds?.find((jd) => jd._id === jdId);

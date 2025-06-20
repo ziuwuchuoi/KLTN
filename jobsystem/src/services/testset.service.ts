@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosInstance";
 import { CodeProblem } from "./code.service";
-import { QuizCreation } from "./quiz.service";
+import { QuizItem } from "./quiz.service";
 
 export interface TestSetItem {
     _id: string;
@@ -18,7 +18,7 @@ export interface TestSetDetail {
     creatorUserId: string;
     jdId: string;
     duration: number;
-    quizzes: Partial<QuizCreation>[]; // no createdAt and updatedAt
+    quizzes: Partial<QuizItem>[]; // no createdAt and updatedAt
     problems: Partial<CodeProblem>[]; // no url
 }
 
@@ -56,6 +56,8 @@ export interface CodeSubmitTestSet {
 
 export const linkTestSetService = async (data: Partial<TestSetItem>): Promise<TestSetItem> => {
     const response = await axiosInstance.post(`/testSet/linkTestSet/`, data);
+
+    console.log("respon linked", response.data.data);
     return response.data.data;
 };
 
