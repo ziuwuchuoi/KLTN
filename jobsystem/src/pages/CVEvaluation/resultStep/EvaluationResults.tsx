@@ -83,12 +83,12 @@ export function EvaluationResults({ result }: EvaluationResultsProps) {
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Fit Level */}
-            <div className="text-center p-4 bg-slate-700/30 rounded-lg">
+            {/* <div className="text-center p-4 bg-slate-700/30 rounded-lg">
               <p className="text-slate-400 text-sm mb-1">Candidate Fit Level</p>
               <p className={`text-2xl font-bold ${getFitLevelColor(summary.fit_level)}`}>
                 {summary.fit_level.toUpperCase()}
               </p>
-            </div>
+            </div> */}
 
             {/* Matched Skills */}
             <div>
