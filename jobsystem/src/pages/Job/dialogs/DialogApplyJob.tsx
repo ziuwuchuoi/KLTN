@@ -15,7 +15,7 @@ import type { JDDetail } from "@/services/file.service";
 import { useAuthStore } from "@/stores/useAuthStore";
 import CustomDialog from "@/components/molecules/CustomDialog";
 
-interface ApplyJobDialogProps {
+interface DialogApplyJobProps {
     isOpen: boolean;
     onClose: () => void;
     job: JDDetail;
@@ -36,7 +36,7 @@ const positions = [
     "Engineering Manager",
 ];
 
-export function ApplyJobDialog({ isOpen, onClose, job }: ApplyJobDialogProps) {
+export function DialogApplyJob({ isOpen, onClose, job }: DialogApplyJobProps) {
     const { user } = useAuthStore();
     const [selectedCVId, setSelectedCVId] = useState<string>("");
     const [isApplying, setIsApplying] = useState(false);
@@ -172,8 +172,8 @@ export function ApplyJobDialog({ isOpen, onClose, job }: ApplyJobDialogProps) {
             onOpenChange={(open) => !open && handleClose()}
             onClose={handleClose}
             dialogTitle="Apply for Position"
-            className="bg-slate-800 border-slate-700 max-w-2xl max-h-[80vh]"
-            childrenContainerClassName="space-y-6 p-6"
+            className="max-w-5xl bg-slate-900 border-slate-700 w-[80%] h-fit max-h-[80%]"
+            childrenContainerClassName="space-y-6"
         >
             {/* Job Info */}
             <div className="bg-slate-700/30 p-4 rounded-lg">
@@ -376,11 +376,11 @@ export function ApplyJobDialog({ isOpen, onClose, job }: ApplyJobDialogProps) {
 
             {/* Action Buttons */}
             {!showUploadSection && (
-                <div className="flex gap-3 pt-4 border-t border-slate-700">
+                <div className="flex justify-end gap-3">
                     <Button
                         variant="outline"
                         onClick={handleClose}
-                        className="flex-1 border-slate-600 text-white"
+                        className="border-slate-600 text-slate-300 hover:bg-slate-700"
                         disabled={isApplying || isUploading}
                     >
                         Cancel
@@ -388,7 +388,7 @@ export function ApplyJobDialog({ isOpen, onClose, job }: ApplyJobDialogProps) {
                     <Button
                         onClick={handleApply}
                         disabled={!selectedCVId || isApplying || isUploading}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700"
+                        className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
                     >
                         {isApplying ? "Applying..." : "Submit Application"}
                     </Button>

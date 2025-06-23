@@ -1,12 +1,13 @@
+"use client";
+
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, ChevronRight, Loader2 } from "lucide-react";
+import { Check, ChevronRight, Loader2, Zap } from "lucide-react";
 import { CVSelectionStep } from "./stepCV/CVSelectionStep";
 import { JDSelectionStep } from "./stepJD/JDSelectionStep";
 import { ReviewStep } from "./reviewStep/ReviewStep";
 import { EvaluationResults } from "./resultStep/EvaluationResults";
-import { RecommendationsSection } from "./resultStep/RecommendationSection";
 import { useAuthStore } from "@/stores/useAuthStore";
 import type { JDDetail, EvaluatedCVDetail } from "@/services/file.service";
 import { useEvaluationQueries } from "./hooks/useFileQueries";
@@ -28,6 +29,43 @@ const defaultJD: Partial<JDDetail> = {
     },
     benefits: [],
     visibility: "private",
+};
+
+const mockEvaluatedCV: EvaluatedCVDetail = {
+    _id: "cv_eval_123456",
+    cvId: "cv_78910",
+    jdId: "jd_45678",
+    candidateId: "user_12345",
+    reviewCVResponse: {
+        ai_review:
+            "The CV demonstrates a strong alignment with the job requirements, particularly in technical skills and experience. Some minor improvements could enhance clarity and ATS compatibility.",
+        ats_check: {
+            formatting_tips: [
+                "Use consistent font styles and sizes.",
+                "Avoid using tables and images.",
+                "Use standard section headings (e.g., 'Experience', 'Education').",
+            ],
+            issues: ["Some sections use non-standard headings.", "Uncommon file format might not be ATS-friendly."],
+            missing_entities: [],
+            missing_keywords: ["REST APIs", "Agile", "Unit Testing"],
+            recommendations: [
+                "Replace custom section titles with standardized ones.",
+                "Ensure your resume is saved in PDF format compatible with ATS.",
+                "Add keywords that match the job description.",
+            ],
+        },
+        skills_analysis: {
+            match_percent: 82,
+            matched_skills: ["JavaScript", "React", "Node.js", "MongoDB"],
+            missing_skills: ["TypeScript", "GraphQL", "Jest"],
+        },
+        summary: {
+            overall_score: 85,
+            similarity_score: 78,
+        },
+    },
+    createdAt: new Date("2025-06-23T10:00:00Z"),
+    updatedAt: new Date("2025-06-23T11:00:00Z"),
 };
 
 const steps = [
@@ -101,13 +139,13 @@ const PageEvaluateCV = () => {
     };
 
     return (
-        <div className="flex flex-col p-6 w-full">
+        <div className="flex flex-col p-6 pt-15 w-full min-h-screen">
             {/* Fixed Section */}
             <div className="flex flex-row items-end w-full justify-around mt-20">
-                <CustomHeroSection title="Coding" subtitle="Center" align="center" description="" />
+                <CustomHeroSection title="CV Evaluation" subtitle="Center" align="center" description="" />
             </div>
 
-            <div className="flex flex-col min-h-screen">
+            <div className="flex flex-col">
                 <div className="flex items-center justify-center mt-2">
                     <div className="flex items-center">
                         {steps.map((step, index) => (
@@ -154,7 +192,7 @@ const PageEvaluateCV = () => {
                 </div>
 
                 {/* Step Content */}
-                <div className="flex flex-col min-h-screen">
+                <div className="flex flex-col">
                     <div className="w-[80%] mx-auto mt-6">
                         {/* Step 1: CV Selection */}
                         {currentStep === 1 && (
@@ -211,7 +249,17 @@ const PageEvaluateCV = () => {
                                         Next Step
                                         <ChevronRight className="w-4 h-4 ml-2" />
                                     </Button>
-                                ) : null}
+                                ) : (
+                                    <Button
+                                        onClick={() => handleEvaluate()}
+                                        disabled={!canEvaluate || isEvaluating}
+                                        size="lg"
+                                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold"
+                                    >
+                                        <Zap className="w-5 h-5 mr-2" />
+                                        {isEvaluating ? "Evaluating..." : "Start CV Evaluation"}
+                                    </Button>
+                                )}
                             </div>
                         )}
 
@@ -235,9 +283,10 @@ const PageEvaluateCV = () => {
                 </div>
 
                 {/* Results Section */}
-                {showResults && evaluationResult && (
-                    <div ref={resultsRef} className="min-h-screen bg-gradient-to-b from-slate-950 to-black">
-                        <div className="max-w-7xl mx-auto px-6 py-16">
+                {/* {showResults && evaluationResult && ( */}
+                {mockEvaluatedCV && (
+                    <div ref={resultsRef} className="min-h-screen py-16">
+                        <div className="mx-auto px-10 pt-16">
                             {/* Results Header */}
                             <div className="text-center mb-12">
                                 <div className="inline-flex items-center gap-2 bg-green-600/20 text-green-400 px-4 py-2 rounded-full mb-4">
@@ -245,17 +294,13 @@ const PageEvaluateCV = () => {
                                     Analysis Complete
                                 </div>
                                 <h2 className="text-3xl font-bold text-white mb-4">Your CV Evaluation Results</h2>
-                                <p className="text-slate-300 max-w-2xl mx-auto">
+                                <p className="text-slate-300 mx-auto">
                                     Here's how your CV performs against the job requirements, along with personalized
                                     recommendations.
                                 </p>
                             </div>
 
-                            {/* Evaluation Results */}
-                            <EvaluationResults result={evaluationResult} />
-
-                            {/* Recommendations */}
-                            <RecommendationsSection evaluationResult={evaluationResult} />
+                            <EvaluationResults result={mockEvaluatedCV} />
                         </div>
                     </div>
                 )}

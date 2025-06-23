@@ -1,242 +1,294 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Badge } from "@/components/ui/badge"
-import { FileText, Building2, MapPin, Briefcase, Calendar, ChevronDown, ChevronUp, Zap } from "lucide-react"
-import { useCVQueries, useJDQueries } from "../hooks/useFileQueries"
-import { useState } from "react"
-import type { JDDetail } from "@/services/file.service"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { FileText, Building2, MapPin, ChevronDown, ChevronUp, Zap } from "lucide-react";
+import { useCVQueries, useJDQueries } from "../hooks/useFileQueries";
+import { useState } from "react";
+import { FileItem } from "../items/FileItem";
+import type { JDDetail } from "@/services/file.service";
 
 interface ReviewStepProps {
-  selectedCVId: string
-  selectedJDId: string
-  jdData: Partial<JDDetail>
-  onEvaluate: (jdId?: string) => Promise<void>
-  isEvaluating: boolean
-  canEvaluate: boolean
+    selectedCVId: string;
+    selectedJDId: string;
+    jdData: Partial<JDDetail>;
+    onEvaluate: (jdId?: string) => Promise<void>;
+    isEvaluating: boolean;
+    canEvaluate: boolean;
 }
 
 export function ReviewStep({
-  selectedCVId,
-  selectedJDId,
-  jdData,
-  onEvaluate,
-  isEvaluating,
-  canEvaluate,
+    selectedCVId,
+    selectedJDId,
+    jdData,
+    onEvaluate,
+    isEvaluating,
+    canEvaluate,
 }: ReviewStepProps) {
-  const [showJDDetails, setShowJDDetails] = useState(false)
-  const { useCVDetail } = useCVQueries()
-  const { useJDDetail, uploadJD } = useJDQueries()
+    const [showJDDetails, setShowJDDetails] = useState(false);
+    const { useCVDetail } = useCVQueries();
+    const { useJDDetail, uploadJD } = useJDQueries();
 
-  const { data: cvDetail } = useCVDetail(selectedCVId)
-  const { data: jdDetail } = useJDDetail(selectedJDId)
+    const { data: cvDetail } = useCVDetail(selectedCVId);
+    const { data: jdDetail } = useJDDetail(selectedJDId);
 
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    })
-  }
+    const displayJD = jdDetail || jdData;
 
-  const handleEvaluate = async () => {
-    if (!selectedJDId && jdData.title) {
-      // Need to upload JD first
-      try {
-        const newJD = await uploadJD.mutateAsync(jdData)
-        await onEvaluate(newJD._id)
-      } catch (error) {
-        console.error("Failed to upload JD:", error)
-      }
-    } else {
-      await onEvaluate()
-    }
-  }
+    const handleCVView = () => {
+        if (cvDetail?.fileUrl) {
+            window.open(cvDetail.fileUrl, "_blank");
+        }
+    };
 
-  const displayJD = jdDetail || jdData
+    const handleCVDownload = () => {
+        if (cvDetail?.fileUrl) {
+            const link = document.createElement("a");
+            link.href = cvDetail.fileUrl;
+            link.download = cvDetail.fileName || "cv.pdf";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    };
 
-  return (
-    <div className="grid lg:grid-cols-2 gap-8 min-h-[600px]">
-      {/* Left Column - CV Details */}
-      <Card className="bg-slate-800/50 border-slate-700">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-white">
-            <FileText className="w-5 h-5 text-blue-400" />
-            Selected CV
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* CV Details */}
-          {cvDetail && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <FileText className="w-6 h-6 text-blue-400" />
-                <div>
-                  <h3 className="font-semibold text-white">CV Document</h3>
-                  <p className="text-blue-300">{cvDetail.fileName}</p>
-                  <p className="text-xs text-slate-400">Uploaded {formatDate(cvDetail.createdAt)}</p>
-                </div>
-              </div>
+    return (
+        <div className="grid lg:grid-cols-2 gap-8 h-fit">
+            {/* Left Column - CV Details */}
+            <Card className="bg-slate-800/50 border-slate-700">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-white">
+                        <FileText className="w-5 h-5 text-blue-400" />
+                        Your CV
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    {/* CV FileItem Display */}
+                    {cvDetail && (
+                        <div className="space-y-4">
+                            <FileItem
+                                id={cvDetail._id}
+                                title={cvDetail.fileName || cvDetail.position}
+                                subtitle={cvDetail.position}
+                                selected={true}
+                                colorScheme="blue"
+                                date={new Date(cvDetail.createdAt)}
+                                datePrefix="Uploaded"
+                                onView={handleCVView}
+                                onDownload={handleCVDownload}
+                                showCheckmark={false}
+                                className="border-blue-500/50 bg-blue-600/10"
+                            />
 
-              {/* CV Information Summary */}
-              <div className="bg-slate-700/30 rounded-lg p-4 space-y-3">
-                <h4 className="font-medium text-white">CV Summary</h4>
-                {cvDetail.information.summary && (
-                  <p className="text-slate-300 text-sm leading-relaxed">{cvDetail.information.summary}</p>
-                )}
-
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-slate-400">Skills:</span>
-                    <span className="text-white ml-2">{cvDetail.information.skills.length}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400">Experience:</span>
-                    <span className="text-white ml-2">{cvDetail.information.experience.length}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400">Education:</span>
-                    <span className="text-white ml-2">{cvDetail.information.education.length}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400">Projects:</span>
-                    <span className="text-white ml-2">{cvDetail.information.projects.length}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Right Column - Job Description */}
-      <Card className="bg-slate-800/50 border-slate-700">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-white">
-              <Building2 className="w-5 h-5 text-purple-400" />
-              Job Description
-            </CardTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowJDDetails(!showJDDetails)}
-              className="text-slate-400 hover:text-white"
-            >
-              {showJDDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Basic JD Info */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <Building2 className="w-6 h-6 text-purple-400" />
-              <div>
-                <h3 className="font-semibold text-white">{displayJD.title}</h3>
-                <p className="text-purple-300">{displayJD.companyName}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 text-slate-400">
-              <MapPin className="w-4 h-4" />
-              <span>{displayJD.location}</span>
-            </div>
-
-            {selectedJDId && (
-              <div className="flex items-center gap-2 text-slate-400">
-                <Calendar className="w-4 h-4" />
-                <span>Created {formatDate(new Date())}</span>
-              </div>
-            )}
-          </div>
-
-          {/* JD Details (Expandable) */}
-          {showJDDetails && (
-            <ScrollArea className="h-[400px]">
-              <div className="space-y-4 pr-4">
-                {/* Description */}
-                <div>
-                  <h4 className="font-medium text-white mb-2">Description</h4>
-                  <p className="text-slate-300 text-sm leading-relaxed">{displayJD.description}</p>
-                </div>
-
-                {/* Requirements */}
-                {displayJD.requirements && (
-                  <div className="space-y-3">
-                    <h4 className="font-medium text-white">Requirements</h4>
-
-                    {displayJD.requirements.skills && displayJD.requirements.skills.length > 0 && (
-                      <div>
-                        <h5 className="text-sm font-medium text-slate-400 mb-2">Skills</h5>
-                        <div className="flex flex-wrap gap-1">
-                          {displayJD.requirements.skills.map((skill, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {skill}
-                            </Badge>
-                          ))}
+                            {/* CV Information Summary */}
                         </div>
-                      </div>
                     )}
+                </CardContent>
+            </Card>
 
-                    {displayJD.requirements.experience && displayJD.requirements.experience.length > 0 && (
-                      <div>
-                        <h5 className="text-sm font-medium text-slate-400 mb-2">Experience</h5>
-                        <ul className="text-sm text-slate-300 space-y-1">
-                          {displayJD.requirements.experience.map((exp, index) => (
-                            <li key={index}>• {exp}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {displayJD.requirements.education && displayJD.requirements.education.length > 0 && (
-                      <div>
-                        <h5 className="text-sm font-medium text-slate-400 mb-2">Education</h5>
-                        <ul className="text-sm text-slate-300 space-y-1">
-                          {displayJD.requirements.education.map((edu, index) => (
-                            <li key={index}>• {edu}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Benefits */}
-                {displayJD.benefits && displayJD.benefits.length > 0 && (
-                  <div>
-                    <h4 className="font-medium text-white mb-2">Benefits</h4>
-                    <div className="grid grid-cols-1 gap-2">
-                      {displayJD.benefits.map((benefit, index) => (
-                        <div key={index} className="flex items-center gap-2 text-slate-300 text-sm">
-                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                          {benefit}
-                        </div>
-                      ))}
+            {/* Right Column - Job Description */}
+            <Card className="bg-slate-800/50 border-slate-700">
+                <CardHeader>
+                    <div className="flex items-center justify-between">
+                        <CardTitle className="flex items-center gap-2 text-white">
+                            <Building2 className="w-5 h-5 text-purple-400" />
+                            Job Description
+                        </CardTitle>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowJDDetails(!showJDDetails)}
+                            className="text-slate-400 hover:text-white"
+                        >
+                            {showJDDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                            <span className="ml-2 text-sm">{showJDDetails ? "Less" : "More"}</span>
+                        </Button>
                     </div>
-                  </div>
-                )}
-              </div>
-            </ScrollArea>
-          )}
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    {/* Job Header - Always Visible */}
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <h3 className="text-xl font-semibold text-white">{displayJD.title}</h3>
+                            <div className="flex items-center gap-4 text-slate-400">
+                                <div className="flex items-center gap-2">
+                                    <Building2 className="w-4 h-4" />
+                                    {displayJD.companyName}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <MapPin className="w-4 h-4" />
+                                    {displayJD.location}
+                                </div>
+                            </div>
+                        </div>
 
-          {/* Evaluate Button */}
-          <div className="pt-4 border-t border-slate-700">
-            <Button
-              onClick={handleEvaluate}
-              disabled={!canEvaluate || isEvaluating}
-              size="lg"
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold"
-            >
-              <Zap className="w-5 h-5 mr-2" />
-              {isEvaluating ? "Evaluating..." : "Start CV Evaluation"}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
+                        {/* Brief Description */}
+                        {!showJDDetails && (
+                            <div>
+                                <p className="text-slate-300 text-sm leading-relaxed line-clamp-3">
+                                    {displayJD.description}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Detailed JD Content (Expandable) - JobDetailContent Style */}
+                    {showJDDetails && (
+                        <ScrollArea className="h-[350px]">
+                            <div className="space-y-6 pr-4">
+                                {/* Job Description */}
+                                <div className="space-y-3">
+                                    <h4 className="text-lg font-semibold text-white">Job Description</h4>
+                                    <div className="prose prose-invert max-w-none">
+                                        <p className="text-sm text-slate-400 leading-relaxed  whitespace-pre-wrap">
+                                            {displayJD.description}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Requirements */}
+                                {displayJD.requirements && (
+                                    <div className="space-y-4">
+                                        <h4 className="text-lg font-semibold text-white">Requirements</h4>
+
+                                        {/* Skills */}
+                                        {displayJD.requirements.skills && displayJD.requirements.skills.length > 0 && (
+                                            <div>
+                                                <h5 className="font-medium text-slate-300 mb-3">Skills</h5>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {displayJD.requirements.skills.map((skill, index) => (
+                                                        <Badge
+                                                            key={index}
+                                                            variant="secondary"
+                                                            className="text-xs bg-slate-700 text-slate-300 hover:text-slate-900"
+                                                        >
+                                                            {skill}
+                                                        </Badge>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Experience */}
+                                        {displayJD.requirements.experience &&
+                                            displayJD.requirements.experience.length > 0 && (
+                                                <div>
+                                                    <h5 className="font-medium text-slate-300 mb-3">Experience</h5>
+                                                    <ul className="text-sm text-slate-400 space-y-2">
+                                                        {displayJD.requirements.experience.map((exp, index) => (
+                                                            <li key={index} className="flex items-start gap-2">
+                                                                <span className="text-blue-400 mt-1">•</span>
+                                                                <span>{exp}</span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                        {/* Education */}
+                                        {displayJD.requirements.education &&
+                                            displayJD.requirements.education.length > 0 && (
+                                                <div>
+                                                    <h5 className="font-medium text-slate-300 mb-3">Education</h5>
+                                                    <ul className="text-sm text-slate-400 space-y-2">
+                                                        {displayJD.requirements.education.map((edu, index) => (
+                                                            <li key={index} className="flex items-start gap-2">
+                                                                <span className="text-blue-400 mt-1">•</span>
+                                                                <span>{edu}</span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                        {/* Languages */}
+                                        {displayJD.requirements.languages &&
+                                            displayJD.requirements.languages.length > 0 && (
+                                                <div>
+                                                    <h5 className="font-medium text-slate-300 mb-3">Languages</h5>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {displayJD.requirements.languages.map((lang, index) => (
+                                                            <Badge
+                                                                key={index}
+                                                                variant="secondary"
+                                                                className="text-xs bg-slate-700 text-slate-300 hover:text-slate-900"
+                                                            >
+                                                                {lang}
+                                                            </Badge>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                        {/* Certifications */}
+                                        {displayJD.requirements.certifications &&
+                                            displayJD.requirements.certifications.length > 0 && (
+                                                <div>
+                                                    <h5 className="font-medium text-slate-300 mb-3">Certifications</h5>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {displayJD.requirements.certifications.map((cert, index) => (
+                                                            <Badge
+                                                                key={index}
+                                                                variant="secondary"
+                                                                className="text-xs bg-green-700/20 text-green-300 border-green-500/30"
+                                                            >
+                                                                {cert}
+                                                            </Badge>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                        {/* Projects */}
+                                        {displayJD.requirements.projects &&
+                                            displayJD.requirements.projects.length > 0 && (
+                                                <div>
+                                                    <h5 className="font-medium text-slate-300 mb-3">
+                                                        Project Experience
+                                                    </h5>
+                                                    <ul className="text-sm text-slate-400 space-y-2">
+                                                        {displayJD.requirements.projects.map((project, index) => (
+                                                            <li key={index} className="flex items-start gap-2">
+                                                                <span className="text-blue-400 mt-1">•</span>
+                                                                <span>{project}</span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                        {/* Summary */}
+                                        {displayJD.requirements.summary && (
+                                            <div>
+                                                <h5 className="font-medium text-slate-300 mb-3">Summary</h5>
+                                                <p className="text-sm text-slate-400 leading-relaxed">
+                                                    {displayJD.requirements.summary}
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Benefits */}
+                                {displayJD.benefits && displayJD.benefits.length > 0 && (
+                                    <div className="space-y-3">
+                                        <h4 className="text-lg font-semibold text-white">Benefits & Perks</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            {displayJD.benefits.map((benefit, index) => (
+                                                <div key={index} className="flex items-center gap-3 text-slate-300">
+                                                    <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
+                                                    <span className="text-sm">{benefit}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </ScrollArea>
+                    )}
+                </CardContent>
+            </Card>
+        </div>
+    );
 }

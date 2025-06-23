@@ -1,3 +1,5 @@
+"use client";
+
 import type React from "react";
 
 import { useState } from "react";
@@ -5,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FileText, Calendar, CheckCircle, Upload, Plus, X, Briefcase } from "lucide-react";
+import { FileText, Upload, Plus, X } from "lucide-react";
 import { useCVQueries } from "../hooks/useFileQueries";
 import { FileItem } from "../items/FileItem";
 
@@ -13,6 +15,7 @@ interface CVSelectionStepProps {
     selectedCVId: string;
     onCVSelect: (cvId: string) => void;
     userId: string;
+    disabled?: boolean;
 }
 
 const positions = [
@@ -30,7 +33,7 @@ const positions = [
     "Engineering Manager",
 ];
 
-export function CVSelectionStep({ selectedCVId, onCVSelect, userId }: CVSelectionStepProps) {
+export function CVSelectionStep({ selectedCVId, onCVSelect, userId, disabled = false }: CVSelectionStepProps) {
     const [showUploadSection, setShowUploadSection] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadPosition, setUploadPosition] = useState<string>("");
@@ -39,6 +42,8 @@ export function CVSelectionStep({ selectedCVId, onCVSelect, userId }: CVSelectio
     const { cvs, isCVDataLoading, uploadCV } = useCVQueries(userId);
 
     const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (disabled) return;
+
         const file = event.target.files?.[0];
         if (!file) return;
 
@@ -60,7 +65,7 @@ export function CVSelectionStep({ selectedCVId, onCVSelect, userId }: CVSelectio
     };
 
     const handleUpload = async () => {
-        if (!selectedFile || !uploadPosition) return;
+        if (!selectedFile || !uploadPosition || disabled) return;
 
         setIsUploading(true);
 
@@ -84,17 +89,20 @@ export function CVSelectionStep({ selectedCVId, onCVSelect, userId }: CVSelectio
     };
 
     const handleCancelUpload = () => {
+        if (disabled) return;
         setShowUploadSection(false);
         setSelectedFile(null);
         setUploadPosition("");
     };
 
-    const formatDate = (date: Date) => {
-        return new Date(date).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-        });
+    const handleCVSelect = (cvId: string) => {
+        if (disabled) return;
+        onCVSelect(cvId);
+    };
+
+    const handleToggleUpload = () => {
+        if (disabled) return;
+        setShowUploadSection(!showUploadSection);
     };
 
     return (
@@ -110,8 +118,9 @@ export function CVSelectionStep({ selectedCVId, onCVSelect, userId }: CVSelectio
                         <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setShowUploadSection(!showUploadSection)}
-                            className="border-slate-600 text-slate-300 hover:text-white"
+                            onClick={handleToggleUpload}
+                            disabled={disabled}
+                            className="border-slate-600 text-slate-300 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <Plus className="w-4 h-4 mr-2" />
                             Upload New CV
@@ -129,7 +138,8 @@ export function CVSelectionStep({ selectedCVId, onCVSelect, userId }: CVSelectio
                                         variant="ghost"
                                         size="sm"
                                         onClick={handleCancelUpload}
-                                        className="text-slate-400 hover:text-white"
+                                        disabled={disabled}
+                                        className="text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         <X className="w-4 h-4" />
                                     </Button>
@@ -139,8 +149,12 @@ export function CVSelectionStep({ selectedCVId, onCVSelect, userId }: CVSelectio
                                 {/* Position Selection */}
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-white">Target Position *</label>
-                                    <Select value={uploadPosition} onValueChange={setUploadPosition}>
-                                        <SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+                                    <Select
+                                        value={uploadPosition}
+                                        onValueChange={setUploadPosition}
+                                        disabled={disabled}
+                                    >
+                                        <SelectTrigger className="bg-slate-700 border-slate-600 text-white disabled:opacity-50 disabled:cursor-not-allowed">
                                             <SelectValue placeholder="Choose the position you're targeting" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -156,7 +170,9 @@ export function CVSelectionStep({ selectedCVId, onCVSelect, userId }: CVSelectio
                                 {/* File Selection */}
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-white">CV File *</label>
-                                    <div className="border-2 border-dashed border-slate-600 rounded-lg p-6 text-center">
+                                    <div
+                                        className={`border-2 border-dashed border-slate-600 rounded-lg p-6 text-center ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                                    >
                                         <Upload className="w-8 h-8 text-slate-400 mx-auto mb-3" />
                                         <p className="text-slate-300 mb-2">Choose a file or drag it here</p>
                                         <p className="text-xs text-slate-400 mb-4">PDF, DOC, DOCX up to 5MB</p>
@@ -166,13 +182,13 @@ export function CVSelectionStep({ selectedCVId, onCVSelect, userId }: CVSelectio
                                                 type="file"
                                                 accept=".pdf,.doc,.docx"
                                                 onChange={handleFileSelect}
-                                                disabled={isUploading}
-                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                                disabled={isUploading || disabled}
+                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
                                             />
                                             <Button
                                                 variant="outline"
-                                                disabled={isUploading}
-                                                className="border-slate-600 text-slate-300 hover:text-white"
+                                                disabled={isUploading || disabled}
+                                                className="border-slate-600 text-slate-300 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
                                                 {selectedFile ? "Change File" : "Browse Files"}
                                             </Button>
@@ -201,14 +217,15 @@ export function CVSelectionStep({ selectedCVId, onCVSelect, userId }: CVSelectio
                                     <Button
                                         variant="outline"
                                         onClick={handleCancelUpload}
-                                        className="flex-1 border-slate-600 text-white"
+                                        disabled={disabled}
+                                        className="flex-1 border-slate-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         Cancel
                                     </Button>
                                     <Button
                                         onClick={handleUpload}
-                                        disabled={!selectedFile || !uploadPosition || isUploading}
-                                        className="flex-1 bg-blue-600 hover:bg-blue-700"
+                                        disabled={!selectedFile || !uploadPosition || isUploading || disabled}
+                                        className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         {isUploading ? "Uploading..." : "Upload CV"}
                                     </Button>
@@ -234,9 +251,10 @@ export function CVSelectionStep({ selectedCVId, onCVSelect, userId }: CVSelectio
                                     <h4 className="text-xl font-semibold text-white mb-2">No CVs Found</h4>
                                     <p className="text-slate-400 mb-6">Upload your first CV to start evaluation.</p>
                                     <Button
-                                        variant="outline"
-                                        className="border-slate-600"
-                                        onClick={() => setShowUploadSection(true)}
+                                        variant="default"
+                                        className="border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed text-white "
+                                        onClick={handleToggleUpload}
+                                        disabled={disabled}
                                     >
                                         <Plus className="w-4 h-4 mr-2" />
                                         Upload CV
@@ -245,17 +263,18 @@ export function CVSelectionStep({ selectedCVId, onCVSelect, userId }: CVSelectio
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
                                     {cvs.map((cv) => (
-                                        <FileItem
-                                            key={cv._id}
-                                            id={cv._id}
-                                            title={cv.fileName}
-                                            date={cv.createdAt}
-                                            selected={selectedCVId === cv._id}
-                                            onSelect={() => onCVSelect(cv._id)}
-                                            colorScheme="blue"
-                                            icon={<FileText className="w-5 h-5 text-blue-400 flex-shrink-0" />}
-                                            datePrefix="Uploaded"
-                                        />
+                                        <div key={cv._id} className={disabled ? "pointer-events-none opacity-60" : ""}>
+                                            <FileItem
+                                                id={cv._id}
+                                                title={cv.fileName}
+                                                date={cv.createdAt}
+                                                selected={selectedCVId === cv._id}
+                                                onSelect={handleCVSelect}
+                                                colorScheme="blue"
+                                                icon={<FileText className="w-5 h-5 text-blue-400 flex-shrink-0" />}
+                                                datePrefix="Uploaded"
+                                            />
+                                        </div>
                                     ))}
                                 </div>
                             )}

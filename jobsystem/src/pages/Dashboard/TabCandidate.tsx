@@ -34,8 +34,6 @@ const TabCandidate = () => {
                     <h1 className="text-3xl font-bold text-white">Candidates</h1>
                     <p className="text-gray-400 mt-1">Manage and track candidates</p>
                 </div>
-
-                <Button variant="outline">Add Candidate</Button>
             </div>
 
             <CustomTable

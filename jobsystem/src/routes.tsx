@@ -13,8 +13,6 @@ import PageAIInterview from "./pages/AIInterview/PageAIInterview";
 import PageCVEvaluation from "./pages/CVEvaluation/PageCVEvaluation";
 import PageQuiz from "./pages/Quizz/PageQuiz";
 import PageTechnicalQuiz from "./pages/Quizz/PageTechnicalQuiz";
-import PageCaseQuiz from "./pages/Quizz/PageCaseQuiz";
-import PagePersonalityQuiz from "./pages/Quizz/PagePersonalityQuiz";
 import PageQuizDetail from "./pages/Quizz/PageQuizDetail";
 import PageLiveCoding from "./pages/LiveCoding/PageLiveCoding";
 import PageJobs from "./pages/Job/PageJob";
@@ -54,11 +52,7 @@ const AppRoutes = () => (
                 {/* Quizzes */}
                 <Route path="quiz" element={<PageQuiz />} />
                 <Route path="quiz/technical" element={<PageTechnicalQuiz />} />
-                <Route path="quiz/case" element={<PageCaseQuiz />} />
-                <Route path="quiz/personality" element={<PagePersonalityQuiz />} />
                 <Route path="quiz/technical/:quizId" element={<PageQuizDetail />} />
-                <Route path="quiz/case/:quizId" element={<PageQuizDetail />} />
-                <Route path="quiz/personality/:quizId" element={<PageQuizDetail />} />
 
                 {/* Live Coding */}
                 <Route path="live-coding" element={<PageLiveCoding />} />

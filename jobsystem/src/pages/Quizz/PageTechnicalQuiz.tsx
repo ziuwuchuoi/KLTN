@@ -6,9 +6,9 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { useQuizQueries } from "./hooks/useQuizQueries";
 import { QuizCategoryMenu } from "./QuizCategoryMenu";
-import { QuizCard } from "./QuizCategory";
 
 import { CustomPagination } from "@/components/molecules/CustomPagination";
+import { QuizItemCard } from "./QuizItemCard";
 
 const PageTechnicalQuiz = () => {
     const [selectedCategory, setSelectedCategory] = useState("");
@@ -57,7 +57,10 @@ const PageTechnicalQuiz = () => {
 
                         <QuizCategoryMenu
                             className="md:ml-8 w-full md:w-auto"
-                            onSelectCategory={(id) => setSelectedCategory(id.toString())}
+                            onSelectCategory={(id) => {
+                                setPage((prev) => (prev = 1));
+                                setSelectedCategory(id.toString());
+                            }}
                         />
 
                         {/* Selected Category Display */}
@@ -76,8 +79,8 @@ const PageTechnicalQuiz = () => {
                     {/* Quiz Grid */}
                     <div className="p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {filteredQuizzes.map((item) => (
-                            <QuizCard
-                                key={item.id}
+                            <QuizItemCard
+                                key={item._id}
                                 item={item}
                                 onStartClick={() => handleQuizClick(item)}
                                 color="hover:from-purple-500 to-pink-500"

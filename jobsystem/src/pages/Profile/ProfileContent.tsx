@@ -28,7 +28,7 @@ export function ProfileContent({ activeTab, user }: ProfileContentProps) {
     if (activeTab === "profile") {
         return (
             <Card className="border-gray-800 bg-black/20">
-                <CardHeader className="flex flex-row items-center justify-between">
+                <CardHeader className="flex flex-row justify-between">
                     <div>
                         <CardTitle className="text-white text-lg">Profile Information</CardTitle>
                         <CardDescription className="text-gray-400">
@@ -38,7 +38,7 @@ export function ProfileContent({ activeTab, user }: ProfileContentProps) {
                     <Button
                         onClick={() => setIsEditing(!isEditing)}
                         variant="outline"
-                        className="border-gray-700 hover:bg-gray-800"
+                        className="border-gray-700 hover:bg-gray-800 text-white"
                     >
                         <Edit className="h-4 w-4 mr-2" />
                         Edit Profile

@@ -10,13 +10,11 @@ const PageProfile = () => {
     const { user } = useAuthStore();
     const [activeTab, setActiveTab] = useState<TabType>("profile");
 
-    const updateAvatar = (avatar: string) => {
-        
-    };
+    const updateAvatar = (avatar: string) => {};
 
     return (
         <main className="min-h-screen bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 text-white">
-            <div className="container max-w-6xl mx-auto px-4 py-12">
+            <div className="max-w-6xl mx-auto px-4 py-12 pt-40">
                 <div className="space-y-8">
                     {/* Profile Header - Avatar, Name, Email */}
                     <ProfileHeader user={user} updateAvatar={updateAvatar} />
@@ -37,6 +35,6 @@ const PageProfile = () => {
             </div>
         </main>
     );
-}
+};
 
-export default PageProfile
+export default PageProfile;

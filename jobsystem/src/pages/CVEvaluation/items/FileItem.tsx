@@ -19,7 +19,7 @@ interface FileItemProps {
   subtitleIcon?: React.ReactNode
   descriptionIcon?: React.ReactNode
   selected: boolean
-  onSelect: (id: string) => void
+  onSelect?: (id: string) => void
   colorScheme?: ColorScheme
   date?: Date
   className?: string

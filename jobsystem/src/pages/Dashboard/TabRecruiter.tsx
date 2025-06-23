@@ -58,9 +58,19 @@ const TabRecruiter = () => {
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="mb-6">
-                    <TabsTrigger value="recruiters">Active Recruiters ({recruiters?.length || 0})</TabsTrigger>
-                    <TabsTrigger value="requests">Recruiter Requests ({requestedRecruiters?.length || 0})</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 bg-slate-800 border-slate-700">
+                    <TabsTrigger
+                        value="recruiters"
+                        className="data-[state=active]:bg-slate-700 data-[state=active]:text-white"
+                    >
+                        Active Recruiters ({recruiters?.length || 0})
+                    </TabsTrigger>
+                    <TabsTrigger
+                        value="requests"
+                        className="data-[state=active]:bg-slate-700 data-[state=active]:text-white"
+                    >
+                        Recruiter Requests ({requestedRecruiters?.length || 0})
+                    </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="recruiters">

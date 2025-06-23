@@ -1,3 +1,5 @@
+"use client";
+
 import {
     Pagination,
     PaginationContent,
@@ -46,7 +48,7 @@ export const CustomPagination = ({ currentPage, totalPages, onPageChange }: Cust
                 <PaginationItem>
                     <PaginationPrevious
                         onClick={() => onPageChange(currentPage - 1)}
-                        className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                        className={currentPage === 1 ? "pointer-events-none" : ""}
                     />
                 </PaginationItem>
 
@@ -62,10 +64,10 @@ export const CustomPagination = ({ currentPage, totalPages, onPageChange }: Cust
                     </PaginationItem>
                 ))}
 
-                <PaginationItem >
+                <PaginationItem>
                     <PaginationNext
                         onClick={() => onPageChange(currentPage + 1)}
-                        className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                        className={currentPage === totalPages ? "pointer-events-none" : ""}
                     />
                 </PaginationItem>
             </PaginationContent>

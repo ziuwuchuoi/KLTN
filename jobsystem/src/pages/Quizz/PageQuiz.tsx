@@ -1,8 +1,6 @@
-import CustomHeader from "@/components/molecules/CustomHeader";
 import CustomHeroSection from "@/components/molecules/CustomHeroSection";
-import QuizCategoriesList from "./QuizCategory";
-import FeaturedQuiz from "./FeaturedQuiz";
-import RecentQuizActivities from "./RecentQuizActivities";
+import QuizCategoriesList from "./QuizCategoriesList";
+
 
 const PageQuiz = () => {
     return (
@@ -16,11 +14,11 @@ const PageQuiz = () => {
                     </div>
                 </div>
             </div>
-
+{/* 
             <div className="min-h-screen w-full bg-gradient-to-b from-gray-900 to-zinc-950 flex flex-col items-center justify-center px-6 text-white py-16">
                 <FeaturedQuiz onStart={() => {}} />
                 <RecentQuizActivities onReview={() => {}} />
-            </div>
+            </div> */}
         </div>
     );
 };
