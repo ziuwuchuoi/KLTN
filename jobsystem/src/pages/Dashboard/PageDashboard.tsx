@@ -5,7 +5,6 @@ import { Outlet } from "react-router-dom";
 
 const PageDashboard = () => {
     const { token } = useAuthStore();
-    console.log("token", token);
     
     return (
         <SidebarProvider className="w-full">

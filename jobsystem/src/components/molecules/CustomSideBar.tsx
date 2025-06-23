@@ -59,7 +59,6 @@ const menuItems: {
 
 const CustomSideBar = () => {
     const { token, user, admin } = useAuthStore();
-    console.log("token", token);
 
     const userRoles = [...(user?.roles ?? []), admin?.role];
 
