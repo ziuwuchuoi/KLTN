@@ -25,7 +25,7 @@ const features = [
         href: "/cv-evaluation",
     },
     {
-        title: "AI Interview Simulation",
+        title: "AI Interview Simulation (Coming Soon)",
         description: "Practice real-world interview scenarios with AI-generated questions.",
         icon: (
             <svg className="h-12 w-12 text-green-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
