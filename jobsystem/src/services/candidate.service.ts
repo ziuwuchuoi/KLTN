@@ -10,7 +10,7 @@ export interface Candidate {
     updatedAt: Date;
 }
 
-export interface updateInfoParams {
+export interface CandidateUpdateParams {
     experience: string[];
     skills: string[];
     education: string[];
@@ -33,7 +33,7 @@ export const getListCandidateService = async (
     return response.data.data;
 };
 
-export const updateCandidateProfileService = async (data: updateInfoParams) => {
+export const updateCandidateProfileService = async (data: CandidateUpdateParams) => {
     const response = await axiosInstance.post(`/candidates/updateCandidateProfile`, data);
 
     return response.data.data;

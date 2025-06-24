@@ -1,3 +1,4 @@
+import { AdminUser, CandidateUser, RecruiterUser } from "@/types/types";
 import axiosInstance from "./axiosInstance";
 
 export interface GrantRecruiterResponse {
@@ -7,15 +8,16 @@ export interface GrantRecruiterResponse {
     avatar: string;
     canBeRecruiter: boolean;
 }
+
 // candidate and recruiter
-export const getUserProfileService = async () => {
+export const getUserProfileService = async (): Promise<RecruiterUser | CandidateUser > => {
     const response = await axiosInstance.get("/users/getUserProfile");
     console.log("pro5", response.data.data);
     return response.data.data;
 };
 
 // admin
-export const getAdminProfileService = async () => {
+export const getAdminProfileService = async (): Promise<AdminUser> => {
     const response = await axiosInstance.get("/admins/getAdminInfo");
     return response.data.data;
 };

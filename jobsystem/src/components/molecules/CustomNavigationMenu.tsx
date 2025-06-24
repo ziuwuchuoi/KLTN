@@ -36,7 +36,8 @@ const features = [
     },
     {
         title: "Quiz",
-        description: "Test and expand your knowledge with AI-generated quizzes designed to challenge your understanding.",
+        description:
+            "Test and expand your knowledge with AI-generated quizzes designed to challenge your understanding.",
         icon: (
             <svg className="h-12 w-12 text-yellow-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -86,9 +87,10 @@ const userMenu = [
 ];
 
 export function CustomNavigationMenu() {
-    const { user, logout, token } = useAuthStore();
-    console.log("token", token)
-    console.log("user", user)
+    const { user, logout, token, role } = useAuthStore();
+    console.log("token", token);
+    console.log("user", user);
+    console.log("role", role);
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -154,8 +156,7 @@ export function CustomNavigationMenu() {
                                             href={menuItem.href}
                                             onClick={menuItem.title === "Sign Out" ? handleLogout : undefined}
                                             className="h-[40px]"
-                                        >
-                                        </ListItem>
+                                        ></ListItem>
                                     ))}
                                 </ul>
                             </NavigationMenuContent>

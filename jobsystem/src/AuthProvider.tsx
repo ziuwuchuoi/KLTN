@@ -13,7 +13,7 @@ const AuthProvider = ({ children }) => {
         const isOAuth = urlParams.get("login_oauth2") === "true";
         const token = urlParams.get("token");
         
-        console.log("Auth state:", { isOAuth, token, currentUrl: location });
+        // console.log("Auth state:", { isOAuth, token, currentUrl: location });
         
         if (isOAuth) {
             const processGoogleCallback = async () => {

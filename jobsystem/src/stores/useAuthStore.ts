@@ -1,10 +1,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { BaseUser, BaseAdmin } from "../types/types";
 import { loginAdminService, loginService, logoutService, sigupRecruiterService } from "@/services/auth.service";
 import { getUserProfileService, getAdminProfileService } from "@/services/user.service";
 import { toast } from "sonner";
+import { AdminUser, RecruiterUser, CandidateUser } from "@/types/types";
 
 export interface LoginParams {
     role: string;
@@ -25,8 +25,10 @@ export interface SignupRecruiterParams {
 
 type AuthState = {
     token: string | null;
-    user: BaseUser | null;
-    admin: BaseAdmin | null;
+    user: RecruiterUser | CandidateUser | null;
+    admin: AdminUser | null;
+    role: string | null;
+
     error: string | null;
     isBlurScreenLoading: boolean;
     isAuthChecking: boolean;
@@ -34,8 +36,10 @@ type AuthState = {
     isLoading: boolean;
 
     setToken: (token: string | null) => void;
-    setUser: (user: BaseUser | null) => void;
-    setAdmin: (admin: BaseAdmin | null) => void;
+    setUser: (user: RecruiterUser | CandidateUser | null) => void;
+    setAdmin: (admin: AdminUser | null) => void;
+    setRole: (role: string | null) => void;
+
     setError: (error: string | null) => void;
     login: (params: LoginParams) => Promise<void>;
     googleLogin: (role: string) => Promise<void>;
@@ -43,9 +47,9 @@ type AuthState = {
     loginAdmin: (email: string, password: string) => Promise<void>;
     signupRecruiter: (params: SignupRecruiterParams) => Promise<void>;
     logout: () => Promise<void>;
-    fetchUserProfile: () => Promise<BaseUser>;
-    fetchAdminProfile: () => Promise<BaseUser>;
-    updateUser: (user: Partial<BaseUser>) => void;
+    fetchUserProfile: () => Promise<RecruiterUser | CandidateUser>;
+    fetchAdminProfile: () => Promise<AdminUser>;
+    updateUser: (user: Partial<RecruiterUser | CandidateUser>) => void;
     setIsBlurScreenLoading: (isLoading: boolean) => void;
 };
 
@@ -55,6 +59,8 @@ export const useAuthStore = create<AuthState>()(
             token: null,
             user: null,
             admin: null,
+            role: null,
+
             error: null,
             isBlurScreenLoading: false,
             isAuthChecking: false,
@@ -76,6 +82,12 @@ export const useAuthStore = create<AuthState>()(
             setAdmin: (admin) => {
                 set((state) => {
                     state.admin = admin;
+                });
+            },
+
+            setRole: (role) => {
+                set((state) => {
+                    state.role = role;
                 });
             },
 
@@ -102,7 +114,7 @@ export const useAuthStore = create<AuthState>()(
 
                         if (accessToken) {
                             set({ token: accessToken, error: null });
-
+                            get().setRole(role);
                             // Fetch user profile after getting token
                             await get().fetchUserProfile();
                         } else {
@@ -130,6 +142,7 @@ export const useAuthStore = create<AuthState>()(
                     const authUrl = response?.data?.data?.authUrl;
 
                     if (authUrl) {
+                        localStorage.setItem("oauth_role", role);
                         window.location.href = authUrl;
                         return;
                     } else {
@@ -147,6 +160,13 @@ export const useAuthStore = create<AuthState>()(
                 try {
                     if (isOAuth && token) {
                         set({ token: token, error: null });
+
+                        const storedRole = localStorage.getItem("oauth_role");
+                        if (storedRole) {
+                            get().setRole(storedRole);
+                            localStorage.removeItem("oauth_role");
+                        }
+
                         await get().fetchUserProfile();
                     } else {
                         toast.error("Authentication failed - no token received");
@@ -165,6 +185,7 @@ export const useAuthStore = create<AuthState>()(
 
                     if (response) {
                         set({ token: response, error: null });
+                        get().setRole("admin");
                         await get().fetchAdminProfile();
                     }
                 } catch (error) {
@@ -204,6 +225,7 @@ export const useAuthStore = create<AuthState>()(
                         state.token = null;
                         state.user = null;
                         state.error = null;
+                        state.role = null;
                         state.isAuthenticated = false;
                     });
                 } catch (error) {
@@ -241,10 +263,10 @@ export const useAuthStore = create<AuthState>()(
                             state.admin = responseWithRole;
                         });
 
-                        return responseWithRole; 
+                        return responseWithRole;
                     } else {
                         console.error("Failed to fetch user profile: No data returned");
-                        return null; 
+                        return null;
                     }
                 } catch (error) {
                     console.error("Fetch admin profile failed", error);
@@ -266,6 +288,7 @@ export const useAuthStore = create<AuthState>()(
                 token: state.token,
                 user: state.user,
                 admin: state.admin,
+                role: state.role,
             }),
         }
     )

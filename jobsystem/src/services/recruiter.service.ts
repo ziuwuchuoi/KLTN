@@ -12,7 +12,7 @@ export interface Recruiter {
     updatedAt: Date;
 }
 
-export interface updateInfoParams {
+export interface RecruiterUpdateParams {
     position: string;
     companyName: string;
     companyWebsite: string;
@@ -27,10 +27,11 @@ export const getListRecruiterService = async (
     meta: { limit: number; page: number; total: number; totalPages: number };
 }> => {
     const response = await axiosInstance.get(`/users/recruiters?limit=${limit}&page=${page}`);
+    console.log("recruiters", response.data.data);
     return response.data.data;
 };
 
-export const updateRecruiterProfileService = async (data: updateInfoParams) => {
+export const updateRecruiterProfileService = async (data: RecruiterUpdateParams) => {
     const response = await axiosInstance.post(`/recruiters/updateRecruiter`, data);
     return response.data.data;
 };

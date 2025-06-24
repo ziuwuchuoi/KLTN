@@ -16,13 +16,55 @@ export interface BaseUser {
     googleRefreshToken?: string;
 }
 
-export interface BaseAdmin {
+export interface CandidateUser {
     _id: string;
-    role: string;
     name: string;
     email: string;
-    phoneNumber: string;
-    permissions: { subject: string; action: string }[];
-    createdAt?: Date;
-    updatedAt?: Date;
+    avatar?: string;
+    roles: string[];
+    lastLoginDate?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    extraInfo?: {
+        position?: string;
+        information?: {
+            summary?: string;
+            skills?: string[];
+            experience?: string[];
+            education?: string[];
+            certifications?: string[];
+            languages?: string[];
+            projects?: string[];
+        };
+    };
+}
+
+export interface RecruiterUser {
+    _id: string;
+    name: string;
+    email: string;
+    avatar?: string;
+    roles: string[];
+    lastLoginDate?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    extraInfo?: {
+        companyName?: string;
+        companyWebsite?: string;
+        position?: string;
+    };
+}
+
+export interface AdminUser {
+    _id: string;
+    name: string;
+    email: string;
+    role: string;
+    phoneNumber?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    permissions?: {
+        subject: string;
+        action: string;
+    }[];
 }
