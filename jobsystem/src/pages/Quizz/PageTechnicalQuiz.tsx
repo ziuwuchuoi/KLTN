@@ -87,7 +87,7 @@ const PageTechnicalQuiz = () => {
                     <div className="flex-1 min-w-0">
                         {/* Search and Filter Controls */}
                         <div className="p-6">
-                            <div className="flex flex-row gap-4">
+                            <div className="flex flex-col gap-4">
                                 {/* Search Input Row */}
                                 <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
                                     {/* Search Input */}
@@ -124,12 +124,15 @@ const PageTechnicalQuiz = () => {
                                 {/* Active Filters Row */}
                                 {(selectedCategory || searchQuery) && (
                                     <div className="flex flex-wrap items-center gap-2">
+                                        <span className="text-sm text-gray-400">Active filters:</span>
                                         {searchQuery && (
                                             <Badge
                                                 variant="secondary"
                                                 className="bg-green-600/20 text-green-300 border-green-500/30 px-3 py-1 flex items-center gap-2"
                                             >
-                                                <span className="text-sm">Search: "{searchQuery}"</span>
+                                                <span className="text-sm max-w-60 truncate">
+                                                    Search: "{searchQuery}"
+                                                </span>
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
@@ -229,7 +232,7 @@ const PageTechnicalQuiz = () => {
                         <p className="text-gray-400">
                             {searchQuery || selectedCategory
                                 ? `${filteredQuizzes.length} quiz${filteredQuizzes.length !== 1 ? "es" : ""} found`
-                                : `Explore ${technicalQuizzes.length} technical quizzes`}
+                                : `Explore all technical quizzes`}
                         </p>
                     </div>
                 </div>

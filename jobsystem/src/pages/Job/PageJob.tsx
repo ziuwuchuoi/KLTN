@@ -9,6 +9,8 @@ import { useJDQueries, useRecommendationQueries } from "../CVEvaluation/hooks/us
 import { CustomTable } from "@/components/molecules/dashboard/CustomTable";
 import { useAuthStore } from "@/stores/useAuthStore";
 import CustomHeroSection from "@/components/molecules/CustomHeroSection";
+import { CustomPagination } from "@/components/molecules/CustomPagination";
+import { getJobColumns } from "@/components/molecules/dashboard/columns";
 
 const PageJDs = () => {
     const navigate = useNavigate();
@@ -95,76 +97,7 @@ const PageJDs = () => {
                     {/* JD Listings Table */}
                     <CustomTable
                         data={dataToDisplay}
-                        columns={[
-                            {
-                                header: "JD Title",
-                                cell: (jd) => (
-                                    <div className="space-y-1">
-                                        <div className="font-semibold text-white">{jd.title}</div>
-                                        <div className="flex items-center gap-2 text-sm text-slate-400">
-                                            <Building2 className="w-4 h-4" />
-                                            {jd.companyName}
-                                        </div>
-                                    </div>
-                                ),
-                            },
-                            {
-                                header: "Location",
-                                cell: (jd) => (
-                                    <div className="flex items-center gap-2 text-slate-300">
-                                        <MapPin className="w-4 h-4" />
-                                        {jd.location}
-                                    </div>
-                                ),
-                                className: "w-48",
-                            },
-                            {
-                                header: "Description",
-                                cell: (jd) => (
-                                    <div className="text-slate-400 text-sm">{truncateText(jd.description, 120)}</div>
-                                ),
-                            },
-                            {
-                                header: "Benefits",
-                                cell: (jd) => (
-                                    <div className="flex flex-wrap gap-1">
-                                        {jd.benefits.slice(0, 2).map((benefit, index) => (
-                                            <Badge
-                                                key={index}
-                                                variant="secondary"
-                                                className="text-xs bg-slate-700 text-slate-300"
-                                            >
-                                                {benefit}
-                                            </Badge>
-                                        ))}
-                                        {jd.benefits.length > 2 && (
-                                            <Badge variant="secondary" className="text-xs bg-slate-700 text-slate-300">
-                                                +{jd.benefits.length - 2}
-                                            </Badge>
-                                        )}
-                                    </div>
-                                ),
-                                className: "w-48",
-                            },
-                            {
-                                header: "Actions",
-                                cell: (jd) => (
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleJDClick(jd);
-                                        }}
-                                        className="text-blue-400 hover:text-blue-300"
-                                    >
-                                        View Details
-                                        <ArrowRight className="w-4 h-4 ml-2" />
-                                    </Button>
-                                ),
-                                className: "w-32",
-                            },
-                        ]}
+                        columns={getJobColumns(handleJDClick, truncateText)}
                         isLoading={isJDDataLoading}
                         loadingMessage="Loading JDs..."
                         onRowClick={handleJDClick}
@@ -229,50 +162,21 @@ const PageJDs = () => {
                     />
 
                     {/* Pagination */}
-                    <div className="flex items-center justify-between mt-8">
-                        <div className="text-sm text-slate-400">
-                            Showing {(currentPage - 1) * pagination.limit + 1} to{" "}
-                            {Math.min(currentPage * pagination.limit, pagination.total)} of {pagination.total} JDs
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setCurrentPage(currentPage - 1)}
-                                disabled={currentPage === 1}
-                                className="border-slate-700"
-                            >
-                                Previous
-                            </Button>
-
-                            <div className="flex items-center gap-1">
-                                {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
-                                    const page = i + 1;
-                                    return (
-                                        <Button
-                                            key={page}
-                                            variant={currentPage === page ? "default" : "outline"}
-                                            size="sm"
-                                            onClick={() => setCurrentPage(page)}
-                                            className="w-8 h-8 p-0 border-slate-700"
-                                        >
-                                            {page}
-                                        </Button>
-                                    );
-                                })}
+                    {!searchQuery && filteredJDs.length > 0 && (
+                        <div className="flex items-center justify-between mt-8">
+                            <div className="text-sm text-slate-400">
+                                Showing {(currentPage - 1) * pagination.limit + 1} to{" "}
+                                {Math.min(currentPage * pagination.limit, pagination.total)} of {pagination.total} jobs
                             </div>
-
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setCurrentPage(currentPage + 1)}
-                                disabled={currentPage === pagination.totalPages}
-                                className="border-slate-700"
-                            >
-                                Next
-                            </Button>
+                            <div>
+                                <CustomPagination
+                                    currentPage={currentPage}
+                                    totalPages={pagination.totalPages}
+                                    onPageChange={(newPage) => setCurrentPage(newPage)}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </div>

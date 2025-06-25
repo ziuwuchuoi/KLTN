@@ -7,12 +7,15 @@ import { useCandidateQueries } from "./hooks/useUserQueries";
 import { getCandidateColumns } from "@/components/molecules/dashboard/columns";
 import type { Candidate } from "@/services/candidate.service";
 import { DialogCandidate } from "./dialogs/DialogCandidate";
+import { CustomPagination } from "@/components/molecules/CustomPagination";
 
 const TabCandidate = () => {
     const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const limit = 20;
 
-    const { candidates, isCandidateLoading } = useCandidateQueries();
+    const { candidates, isCandidateLoading, pagination } = useCandidateQueries(currentPage, limit);
 
     const handleCandidateClick = (userId: string) => {
         const candidate = candidates?.find((c) => c.userId === userId);
@@ -44,6 +47,20 @@ const TabCandidate = () => {
                 emptyMessage="No candidates found"
                 className="bg-slate-800/50 border-slate-700"
             />
+
+            <div className="flex items-center justify-between">
+                <div className="text-sm text-slate-400">
+                    Showing {(currentPage - 1) * pagination.limit + 1} to{" "}
+                    {Math.min(currentPage * pagination.limit, pagination.total)} of {pagination.total} Candidates
+                </div>
+                <div>
+                    <CustomPagination
+                        currentPage={currentPage}
+                        totalPages={pagination.totalPages}
+                        onPageChange={(newPage) => setCurrentPage(newPage)}
+                    />
+                </div>
+            </div>
 
             <DialogCandidate isOpen={isDialogOpen} onClose={handleCloseDialog} candidate={selectedCandidate} />
         </div>

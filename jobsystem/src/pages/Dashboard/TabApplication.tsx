@@ -6,6 +6,7 @@ import { useApplicationQueries } from "../CVEvaluation/hooks/useFileQueries";
 import { CustomTable } from "@/components/molecules/dashboard/CustomTable";
 import { getApplicantionColumns } from "@/components/molecules/dashboard/columns";
 import { DialogApplication } from "./dialogs/DialogApplication";
+import { CustomPagination } from "@/components/molecules/CustomPagination";
 
 const TabApplication = () => {
     const [selectedApplication, setSelectedApplication] = useState<ApplicationItem | null>(null);
@@ -43,6 +44,8 @@ const TabApplication = () => {
                 emptyMessage="No applications found"
                 className="bg-slate-800/50 border-slate-700"
             />
+
+            {/*Missing the pagination*/}
 
             <DialogApplication
                 isOpen={isViewApplicationOpen}

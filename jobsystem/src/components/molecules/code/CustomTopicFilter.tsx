@@ -38,33 +38,11 @@ export const CustomTopicFilter = ({ availableTags, selectedTags, onTagsChange, i
     };
 
     return (
-        <div className="flex items-center gap-2">
-            {/* Selected Tags Display */}
-            {selectedTags.length > 0 && (
-                <div className="flex flex-wrap gap-1 max-w-md">
-                    {selectedTags.slice(0, 3).map((tag) => (
-                        <Badge
-                            key={tag}
-                            variant="secondary"
-                            className="bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
-                            onClick={() => handleTagToggle(tag)}
-                        >
-                            {tag}
-                            <X className="w-3 h-3 ml-1" />
-                        </Badge>
-                    ))}
-                    {selectedTags.length > 3 && (
-                        <Badge variant="secondary" className="bg-slate-600 text-slate-300">
-                            +{selectedTags.length - 3} more
-                        </Badge>
-                    )}
-                </div>
-            )}
-
+        <div className="flex items-start gap-2">
             {/* Filter Button */}
             <Popover open={isOpen} onOpenChange={setIsOpen}>
                 <PopoverTrigger asChild>
-                    <Button variant="outline" className="border-slate-700 bg-slate-800 hover:bg-slate-700">
+                    <Button variant="outline" size="lg" className="px-2 py-3 border-slate-700 bg-slate-800 hover:bg-slate-700">
                         <Filter className="w-4 h-4 mr-2" />
                         Topics
                         {selectedTags.length > 0 && (
@@ -152,6 +130,28 @@ export const CustomTopicFilter = ({ availableTags, selectedTags, onTagsChange, i
                     </div>
                 </PopoverContent>
             </Popover>
+
+            {/* Selected Tags Display */}
+            {selectedTags.length > 0 && (
+                <div className="flex flex-wrap gap-1 max-w-md">
+                    {selectedTags.slice(0, 3).map((tag) => (
+                        <Badge
+                            key={tag}
+                            variant="secondary"
+                            className="bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
+                            onClick={() => handleTagToggle(tag)}
+                        >
+                            {tag}
+                            <X className="w-3 h-3 ml-1" />
+                        </Badge>
+                    ))}
+                    {selectedTags.length > 3 && (
+                        <Badge variant="secondary" className="bg-slate-600 text-slate-300">
+                            +{selectedTags.length - 3} more
+                        </Badge>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

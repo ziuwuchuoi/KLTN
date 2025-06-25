@@ -13,6 +13,7 @@ import { DialogQuiz } from "./dialogs/DialogQuiz";
 import { DialogCreateCode } from "./dialogs/DialogCreateCode";
 import { DialogCode } from "./dialogs/DialogCode";
 import { DialogCreateQuiz } from "./dialogs/DialogCreateQuiz";
+import { CustomPagination } from "@/components/molecules/CustomPagination";
 
 const TabTestset = () => {
     const [activeTab, setActiveTab] = useState("quiz");
@@ -21,13 +22,16 @@ const TabTestset = () => {
     const [isCreateQuizOpen, setIsCreateQuizOpen] = useState(false);
     const [isViewQuizOpen, setIsViewQuizOpen] = useState(false);
 
-    const { technicalQuizzes, isLoadingQuizzes } = useQuizQueries(user?._id);
+    const [codePage, setCodePage] = useState(1);
+    const [quizPage, setQuizPage] = useState(1);
+
+    const { technicalQuizzes, isLoadingQuizzes, paginationMeta } = useQuizQueries(user?._id, null, quizPage);
 
     const [selectedCode, setSelectedCode] = useState<CodeProblem | null>(null);
     const [isCreateCodeOpen, setIsCreateCodeOpen] = useState(false);
     const [isViewCodeOpen, setIsViewCodeOpen] = useState(false);
 
-    const { codeProblems, isCodeProblemsLoading } = useCodeQueries(user?._id);
+    const { codeProblems, isCodeProblemsLoading, pagination } = useCodeQueries(user?._id, null, null, codePage);
 
     const handleQuizClick = (quizId: string) => {
         const quiz = technicalQuizzes?.find((q) => q._id === quizId);
@@ -85,6 +89,20 @@ const TabTestset = () => {
                         emptyMessage="No quizzes found"
                         className="bg-slate-800/50 border-slate-700"
                     />
+                    <div className="flex items-center justify-between">
+                        <div className="text-sm text-slate-400">
+                            Showing {(quizPage - 1) * paginationMeta.limit + 1} to{" "}
+                            {Math.min(quizPage * paginationMeta.limit, paginationMeta.total)} of {paginationMeta.total}{" "}
+                            Quizzes
+                        </div>
+                        <div>
+                            <CustomPagination
+                                currentPage={quizPage}
+                                totalPages={paginationMeta.totalPages}
+                                onPageChange={(newPage) => setQuizPage(newPage)}
+                            />
+                        </div>
+                    </div>
                     <DialogCreateQuiz isOpen={isCreateQuizOpen} onClose={() => setIsCreateQuizOpen(false)} />
                     <DialogQuiz isOpen={isViewQuizOpen} onClose={() => setIsViewQuizOpen(false)} quiz={selectedQuiz} />
                 </TabsContent>
@@ -98,6 +116,19 @@ const TabTestset = () => {
                         emptyMessage="No code problems found"
                         className="bg-slate-800/50 border-slate-700"
                     />
+                    <div className="flex items-center justify-between">
+                        <div className="text-sm text-slate-400">
+                            Showing {(codePage - 1) * pagination.limit + 1} to{" "}
+                            {Math.min(codePage * pagination.limit, pagination.total)} of {pagination.total} Recruiters
+                        </div>
+                        <div>
+                            <CustomPagination
+                                currentPage={codePage}
+                                totalPages={pagination.totalPages}
+                                onPageChange={(newPage) => setCodePage(newPage)}
+                            />
+                        </div>
+                    </div>
 
                     <DialogCreateCode isOpen={isCreateCodeOpen} onClose={() => setIsCreateCodeOpen(false)} />
                     <DialogCode isOpen={isViewCodeOpen} onClose={() => setIsViewCodeOpen(false)} code={selectedCode} />

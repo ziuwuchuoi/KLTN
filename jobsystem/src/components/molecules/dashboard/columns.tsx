@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ApplicationStatus } from "@/services/file.service";
+import { ArrowRight, Building2, MapPin } from "lucide-react";
 
 export const difficultyColors = {
     Easy: "bg-green-500/20 text-green-400 border-green-500/30",
@@ -39,7 +40,7 @@ export const getCodeProblemColumns = (handleProblemClick: (id: string) => void) 
         header: "Topics",
         cell: (problem) => (
             <div className="flex flex-wrap gap-1">
-                {problem.topicTags.slice(0, 3).map((tag) => (
+                {problem?.topicTags?.slice(0, 3).map((tag) => (
                     <Badge
                         key={tag}
                         variant="secondary"
@@ -48,7 +49,7 @@ export const getCodeProblemColumns = (handleProblemClick: (id: string) => void) 
                         {tag}
                     </Badge>
                 ))}
-                {problem.topicTags.length > 3 && (
+                {problem?.topicTags?.length > 3 && (
                     <Badge variant="secondary" className="text-xs bg-slate-700 text-slate-300 hover:text-slate-900">
                         +{problem.topicTags.length - 3}
                     </Badge>
@@ -68,7 +69,7 @@ export const getCodeProblemColumns = (handleProblemClick: (id: string) => void) 
                 }}
                 className="text-blue-400 hover:text-blue-300"
             >
-                View
+                View Details
             </Button>
         ),
         className: "w-20",
@@ -132,7 +133,7 @@ export const getCandidateColumns = (handleCandidateClick: (userId: string) => vo
                 }}
                 className="text-blue-400 hover:text-blue-300"
             >
-                View more
+                View Details
             </Button>
         ),
         className: "w-20",
@@ -190,7 +191,7 @@ export const getRecruiterColumns = (handleRecruiterClick: (userId: string) => vo
                 }}
                 className="text-blue-400 hover:text-blue-300"
             >
-                View more
+                View Details
             </Button>
         ),
         className: "w-20",
@@ -243,7 +244,7 @@ export const getRequestRecruiterColumns = (handleRequestRecruiterClick: (userId:
                 }}
                 className="text-blue-400 hover:text-blue-300"
             >
-                View more
+                View Details
             </Button>
         ),
         className: "w-24 text-right",
@@ -286,7 +287,7 @@ export const getJDColumns = (handleJDClick: (id: string) => void) => [
                 }}
                 className="text-blue-400 hover:text-blue-300"
             >
-                View more
+                View Details
             </Button>
         ),
         className: "w-20",
@@ -320,7 +321,7 @@ export const getCVColumns = (handleCVClick: (id: string) => void) => [
                 }}
                 className="text-blue-400 hover:text-blue-300"
             >
-                View more
+                View Details
             </Button>
         ),
         className: "w-20",
@@ -372,7 +373,7 @@ export const getApplicantionColumns = (handleApplicantionClick: (id: string) => 
                 }}
                 className="text-blue-400 hover:text-blue-300"
             >
-                View more
+                View Details
             </Button>
         ),
         className: "w-20",
@@ -428,7 +429,7 @@ export const getCodeColumns = (handleCodeClick: (id: string) => void) => [
                 }}
                 className="text-purple-400 hover:text-purple-300"
             >
-                View more
+                View Details
             </Button>
         ),
         className: "w-20",
@@ -485,9 +486,74 @@ export const getQuizColumns = (handleQuizClick: (id: string) => void) => [
                 }}
                 className="text-blue-400 hover:text-blue-300"
             >
-                View more
+                View Details
             </Button>
         ),
         className: "w-20",
+    },
+];
+
+export const getJobColumns = (handleJobClick: (id: string) => void, truncateText) => [
+    {
+        header: "JD Title",
+        cell: (jd) => (
+            <div className="space-y-1">
+                <div className="font-semibold text-white">{jd.title}</div>
+                <div className="flex items-center gap-2 text-sm text-slate-400">
+                    <Building2 className="w-4 h-4" />
+                    {jd.companyName}
+                </div>
+            </div>
+        ),
+    },
+    {
+        header: "Location",
+        cell: (jd) => (
+            <div className="flex items-center gap-2 text-slate-300">
+                <MapPin className="w-4 h-4" />
+                {jd.location}
+            </div>
+        ),
+        className: "w-48",
+    },
+    {
+        header: "Description",
+        cell: (jd) => <div className="text-slate-400 text-sm">{truncateText(jd.description, 120)}</div>,
+    },
+    {
+        header: "Benefits",
+        cell: (jd) => (
+            <div className="flex flex-wrap gap-1">
+                {jd.benefits.slice(0, 2).map((benefit, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs bg-slate-700 text-slate-300">
+                        {benefit}
+                    </Badge>
+                ))}
+                {jd.benefits.length > 2 && (
+                    <Badge variant="secondary" className="text-xs bg-slate-700 text-slate-300">
+                        +{jd.benefits.length - 2}
+                    </Badge>
+                )}
+            </div>
+        ),
+        className: "w-48",
+    },
+    {
+        header: "Actions",
+        cell: (jd) => (
+            <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleJobClick(jd);
+                }}
+                className="text-blue-400 hover:text-blue-300"
+            >
+                View Details
+                <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+        ),
+        className: "w-32",
     },
 ];
