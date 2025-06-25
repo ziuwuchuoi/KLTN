@@ -1,42 +1,83 @@
-import React from "react";
 import { cn } from "../utils/general.utils";
 
 interface CustomHeroSectionProps {
     title?: string;
     subtitle?: string;
     description?: string;
-    align?: "left" | "center" | "right" | "justify";
+    align?: "left" | "center" | "right";
+    compact?: boolean;
     className?: string;
 }
 
 const CustomHeroSection = ({
     title = "Quantum Leap",
     subtitle = "Assessment Center",
-    description = "Evaluate your skills, personality, and professional aptitude with our comprehensive quiz collection",
+    description,
     align = "center",
+    compact = false,
     className,
 }: CustomHeroSectionProps) => {
-    const textAlignClass = {
-        left: "text-left",
-        center: "text-center",
-        right: "text-right",
-        justify: "text-justify",
-    }[align];
+    const getFlexAlignment = (alignment: string) => {
+        switch (alignment) {
+            case "left":
+                return "justify-start text-left";
+            case "right":
+                return "justify-end text-right";
+            default:
+                return "justify-center text-center";
+        }
+    };
 
-    const containerAlignClass = {
-        left: "mx-0",
-        center: "mx-auto",
-        right: "mx-0",
-        justify: "mx-auto",
-    }[align];
+    const getDescriptionAlignment = (alignment: string) => {
+        switch (alignment) {
+            case "left":
+                return "mr-auto";
+            case "right":
+                return "ml-auto";
+            default:
+                return "mx-auto";
+        }
+    };
+
+    const flexAlignment = getFlexAlignment(align);
+    const descriptionAlignment = getDescriptionAlignment(align);
 
     return (
-        <div className={cn("max-w-6xl", containerAlignClass, textAlignClass, className)}>
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-sky-400">{title}</span>{" "}
-                {subtitle}
-            </h1>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">{description}</p>
+        <div className={cn("w-full", className)}>
+            {/* Title Section */}
+            <div className={cn("flex flex-col", flexAlignment)}>
+                <h1
+                    className={cn(
+                        "font-bold leading-tight whitespace-nowrap",
+                        compact ? "text-2xl md:text-3xl mb-2" : "text-4xl md:text-5xl lg:text-6xl mb-4"
+                    )}
+                >
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-sky-400">
+                        {title}
+                    </span>
+                    {subtitle && (
+                        <>
+                            {" "}
+                            <span className="text-white">{subtitle}</span>
+                        </>
+                    )}
+                </h1>
+
+                {/* Description Section */}
+                {description && (
+                    <div className={cn("max-w-2xl", descriptionAlignment)}>
+                        <p
+                            className={cn(
+                                "text-gray-300 leading-relaxed",
+                                compact ? "text-sm md:text-base" : "text-lg md:text-xl",
+                                align === "left" ? "text-left" : align === "right" ? "text-right" : "text-center"
+                            )}
+                        >
+                            {description}
+                        </p>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

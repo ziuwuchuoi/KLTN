@@ -64,7 +64,7 @@ export const getCodeProblemColumns = (handleProblemClick: (id: string) => void) 
                 size="sm"
                 onClick={(e) => {
                     e.stopPropagation();
-                    handleProblemClick(problem.problemId);
+                    handleProblemClick(problem._id);
                 }}
                 className="text-blue-400 hover:text-blue-300"
             >
@@ -357,9 +357,7 @@ export const getApplicantionColumns = (handleApplicantionClick: (id: string) => 
     },
     {
         header: "Applied Date",
-        cell: (app) => (
-            <div className="text-slate-400 text-sm">{new Date(app.createdAt).toLocaleDateString()}</div>
-        ),
+        cell: (app) => <div className="text-slate-400 text-sm">{new Date(app.createdAt).toLocaleDateString()}</div>,
         className: "w-28",
     },
     {
@@ -382,116 +380,114 @@ export const getApplicantionColumns = (handleApplicantionClick: (id: string) => 
 ];
 
 export const getCodeColumns = (handleCodeClick: (id: string) => void) => [
-  {
-    header: "Title",
-    cell: (code) => <div className="font-medium text-white truncate">{code.title}</div>,
-  },
-  {
-    header: "Difficulty",
-    cell: (code) => (
-      <Badge variant="outline" className={difficultyColors[code.difficulty]}>
-        {code.difficulty}
-      </Badge>
-    ),
-    className: "w-24",
-  },
-  {
-    header: "Topic Tags",
-    cell: (code) => (
-      <div className="flex flex-wrap gap-1">
-        {code.topicTags?.slice(0, 2).map((tag, index) => (
-          <Badge key={index} variant="secondary" className="bg-purple-900/20 text-purple-400 text-xs">
-            {tag}
-          </Badge>
-        ))}
-        {code.topicTags?.length > 2 && (
-          <Badge variant="secondary" className="bg-gray-900/20 text-gray-400 text-xs">
-            +{code.topicTags.length - 2}
-          </Badge>
-        )}
-      </div>
-    ),
-    className: "w-48",
-  },
-  {
-    header: "Problem ID",
-    cell: (code) => <div className="font-mono text-slate-300 text-sm">{code.problemId}</div>,
-    className: "w-24",
-  },
-  {
-    header: "Actions",
-    cell: (code) => (
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={(e) => {
-          e.stopPropagation()
-          handleCodeClick(code._id)
-        }}
-        className="text-purple-400 hover:text-purple-300"
-      >
-        View more
-      </Button>
-    ),
-    className: "w-20",
-  },
-]
+    {
+        header: "Title",
+        cell: (code) => <div className="font-medium text-white truncate">{code.title}</div>,
+    },
+    {
+        header: "Difficulty",
+        cell: (code) => (
+            <Badge variant="outline" className={difficultyColors[code.difficulty]}>
+                {code.difficulty}
+            </Badge>
+        ),
+        className: "w-24",
+    },
+    {
+        header: "Topic Tags",
+        cell: (code) => (
+            <div className="flex flex-wrap gap-1">
+                {code.topicTags?.slice(0, 2).map((tag, index) => (
+                    <Badge key={index} variant="secondary" className="bg-purple-900/20 text-purple-400 text-xs">
+                        {tag}
+                    </Badge>
+                ))}
+                {code.topicTags?.length > 2 && (
+                    <Badge variant="secondary" className="bg-gray-900/20 text-gray-400 text-xs">
+                        +{code.topicTags.length - 2}
+                    </Badge>
+                )}
+            </div>
+        ),
+        className: "w-48",
+    },
+    {
+        header: "Problem ID",
+        cell: (code) => <div className="font-mono text-slate-300 text-sm">{code.problemId}</div>,
+        className: "w-24",
+    },
+    {
+        header: "Actions",
+        cell: (code) => (
+            <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleCodeClick(code._id);
+                }}
+                className="text-purple-400 hover:text-purple-300"
+            >
+                View more
+            </Button>
+        ),
+        className: "w-20",
+    },
+];
 
 export const getQuizColumns = (handleQuizClick: (id: string) => void) => [
-  {
-    header: "Title",
-    cell: (quiz) => <div className="font-medium text-white truncate">{quiz.title}</div>,
-  },
-  {
-    header: "Categories",
-    cell: (quiz) => (
-      <div className="flex flex-wrap gap-1">
-        {quiz.categories?.slice(0, 2).map((category, index) => (
-          <Badge key={index} variant="secondary" className="bg-blue-900/20 text-blue-400 text-xs">
-            {category}
-          </Badge>
-        ))}
-        {quiz.categories?.length > 2 && (
-          <Badge variant="secondary" className="bg-gray-900/20 text-gray-400 text-xs">
-            +{quiz.categories.length - 2}
-          </Badge>
-        )}
-      </div>
-    ),
-    className: "w-48",
-  },
-  {
-    header: "Questions",
-    cell: (quiz) => <div className="font-medium text-slate-300">{quiz.questions?.length || 0} questions</div>,
-    className: "w-24",
-  },
-  {
-    header: "Duration",
-    cell: (quiz) => <div className="font-medium text-slate-300">{quiz.duration || 0} min</div>,
-    className: "w-20",
-  },
-  {
-    header: "Created",
-    cell: (quiz) => (
-      <div className="text-slate-400 text-sm">{new Date(quiz.createdAt).toLocaleDateString()}</div>
-    ),
-    className: "w-28",
-  },
-  {
-    header: "Actions",
-    cell: (quiz) => (
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={(e) => {
-          e.stopPropagation()
-          handleQuizClick(quiz._id)
-        }}
-        className="text-blue-400 hover:text-blue-300"
-      >
-        View more
-      </Button>
-    ),
-    className: "w-20",
-  },
-]
+    {
+        header: "Title",
+        cell: (quiz) => <div className="font-medium text-white truncate">{quiz.title}</div>,
+    },
+    {
+        header: "Categories",
+        cell: (quiz) => (
+            <div className="flex flex-wrap gap-1">
+                {quiz.categories?.slice(0, 2).map((category, index) => (
+                    <Badge key={index} variant="secondary" className="bg-blue-900/20 text-blue-400 text-xs">
+                        {category}
+                    </Badge>
+                ))}
+                {quiz.categories?.length > 2 && (
+                    <Badge variant="secondary" className="bg-gray-900/20 text-gray-400 text-xs">
+                        +{quiz.categories.length - 2}
+                    </Badge>
+                )}
+            </div>
+        ),
+        className: "w-48",
+    },
+    {
+        header: "Questions",
+        cell: (quiz) => <div className="font-medium text-slate-300">{quiz.questions?.length || 0} questions</div>,
+        className: "w-24",
+    },
+    {
+        header: "Duration",
+        cell: (quiz) => <div className="font-medium text-slate-300">{quiz.duration || 0} min</div>,
+        className: "w-20",
+    },
+    {
+        header: "Created",
+        cell: (quiz) => <div className="text-slate-400 text-sm">{new Date(quiz.createdAt).toLocaleDateString()}</div>,
+        className: "w-28",
+    },
+    {
+        header: "Actions",
+        cell: (quiz) => (
+            <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleQuizClick(quiz._id);
+                }}
+                className="text-blue-400 hover:text-blue-300"
+            >
+                View more
+            </Button>
+        ),
+        className: "w-20",
+    },
+];

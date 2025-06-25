@@ -83,3 +83,20 @@ export const updateQuizService = async (quizId: string, data: Partial<QuizItem>)
     const response = await axiosInstance.patch(`/quiz/update-quiz/${quizId}`, data);
     return response.data;
 };
+
+// suggestion
+
+export const getSuggestedQuizzesService = async (
+    limit = 20,
+    page = 1
+): Promise<{
+    items: Partial<QuizItem>[];
+    meta: { limit: number; page: number; total: number; totalPages: number };
+}> => {
+    const url = `/quiz/getSuggestedQuizzes?limit=${limit}&page=${page}`;
+
+    const response = await axiosInstance.get(url);
+    console.log("quiz suggest", response.data.data);
+
+    return response.data.data;
+};

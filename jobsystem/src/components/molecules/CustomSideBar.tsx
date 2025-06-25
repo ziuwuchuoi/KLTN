@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
     Sidebar,
     SidebarContent,
@@ -59,14 +59,21 @@ const menuItems: {
 ];
 
 const CustomSideBar = () => {
-    const { user, admin, role } = useAuthStore();
-
-    // const userRoles = [...(user?.roles ?? []), admin?.role];
+    const { user, logout, token, role } = useAuthStore();
+    const navigate = useNavigate();
 
     // if the item allow more than 2 roles, then change this logic
     const filteredMenuItems = menuItems.filter((item) => role === item.permissionAllowed);
 
-    const handleLogout = () => {};
+    const handleLogout = async () => {
+        try {
+            logout();
+            localStorage.removeItem("accessToken");
+            navigate(`/signin/${role}`);
+        } catch (error) {
+            console.error("Failed", error);
+        }
+    };
 
     return (
         <Sidebar>

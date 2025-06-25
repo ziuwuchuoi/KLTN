@@ -141,3 +141,19 @@ export const updateCodeProblemService = async (
     const response = await axiosInstance.patch(`/leetcode/update-problem/${problemId}`, data);
     return response.data.data;
 };
+
+// suggestion
+
+export const getSuggestedCodeProblemService = async (
+    limit = 20,
+    page = 1
+): Promise<{
+    problems: CodeProblem[];
+    pagination: { limit: number; page: number; total: number; totalPages: number };
+}> => {
+    const url = `/leetcode/suggested-problems?limit=${limit}&page=${page}`;
+
+    const response = await axiosInstance.get(url);
+    console.log("code suggest", response.data.data);
+    return response.data.data;
+}; 

@@ -33,14 +33,14 @@ const PageLiveCoding = () => {
             problem.problemId.toString().includes(searchQuery)
     );
 
-    const handleProblemClick = (problemId) => {
-        navigate(`/live-coding/${problemId}`);
+    const handleProblemClick = (problem) => {
+        navigate(`/live-coding/${problem._id}`);
     };
 
     return (
-        <div className="flex flex-col p-6 w-full">
+        <div className="flex flex-col p-6 pt-40 w-full">
             {/* Fixed Section */}
-            <div className="flex flex-row items-end w-full justify-around">
+            <div className="flex flex-row items-end w-full justify-around mb-10">
                 <CustomHeroSection title="Coding" subtitle="Center" align="center" />
             </div>
 

@@ -4,6 +4,7 @@ import {
     getListCategoriesService,
     getListQuizzesService,
     getQuizDetailService,
+    getSuggestedQuizzesService,
     QuizItem,
     submitQuizService,
     TechnicalCategoryItem,
@@ -32,7 +33,7 @@ export const useQuizQueries = (
     });
 
     const {
-        data,
+        data: technicalQuizzesData,
         isLoading: isLoadingQuizzes,
         isError: isErrorQuizzes,
     } = useQuery<{
@@ -41,6 +42,21 @@ export const useQuizQueries = (
     }>({
         queryKey: ["technical-quizzes", userId, selectedCategory, limit, page],
         queryFn: () => getListQuizzesService(userId, selectedCategory, limit, page),
+        placeholderData: (previousData) => previousData,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+    });
+
+    const {
+        data: technicalSuggestedQuizzesData,
+        isLoading: isLoadingSuggestedQuizzes,
+        isError: isErrorSuggestedQuizzes,
+    } = useQuery<{
+        items: Partial<QuizItem>[];
+        meta: { limit: number; page: number; total: number; totalPages: number };
+    }>({
+        queryKey: ["suggested-technical-quizzes", limit, page],
+        queryFn: () => getSuggestedQuizzesService(limit, page),
         placeholderData: (previousData) => previousData,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
@@ -97,8 +113,16 @@ export const useQuizQueries = (
         },
     });
 
-    const technicalQuizzes = data?.items ?? [];
-    const paginationMeta = data?.meta ?? { page: 1, limit: 20, total: 0, totalPages: 1 };
+    const technicalQuizzes = technicalQuizzesData?.items ?? [];
+    const paginationMeta = technicalQuizzesData?.meta ?? { page: 1, limit: 20, total: 0, totalPages: 1 };
+
+    const suggestedTechnicalQuizzes = technicalSuggestedQuizzesData?.items ?? [];
+    const paginationSuggestedMeta = technicalSuggestedQuizzesData?.meta ?? {
+        page: 1,
+        limit: 20,
+        total: 0,
+        totalPages: 1,
+    };
 
     return {
         technicalCategories,
@@ -109,6 +133,11 @@ export const useQuizQueries = (
         paginationMeta,
         isLoadingQuizzes,
         isErrorQuizzes,
+
+        suggestedTechnicalQuizzes,
+        paginationSuggestedMeta,
+        isLoadingSuggestedQuizzes,
+        isErrorSuggestedQuizzes,
 
         createQuiz,
         updateQuiz,

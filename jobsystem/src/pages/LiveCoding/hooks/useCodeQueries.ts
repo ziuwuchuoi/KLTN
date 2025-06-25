@@ -6,6 +6,7 @@ import {
     getCodeLanguageService,
     submitCodeProblemService,
     createCodeProblemService,
+    getSuggestedCodeProblemService,
 } from "@/services/code.service";
 import { CodeProblem, CodeProblemDetail, CodeLanguage, CodeSubmitData } from "@/services/code.service";
 
@@ -28,6 +29,21 @@ export const useCodeQueries = (
     }>({
         queryKey: ["code-problems", userId, selectedTag, selectedDifficulty, limit, page],
         queryFn: () => getListCodeProblemService(userId, selectedTag, selectedDifficulty, limit, page),
+        placeholderData: (previousData) => previousData,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+    });
+
+    const {
+        data: suggestedCodeProblemsData,
+        isLoading: isSuggestedCodeProblemsLoading,
+        error: isSuggestedCodeProblemsError,
+    } = useQuery<{
+        problems: CodeProblem[];
+        pagination: { limit: number; page: number; total: number; totalPages: number };
+    }>({
+        queryKey: ["code-problems", limit, page],
+        queryFn: () => getSuggestedCodeProblemService(limit, page),
         placeholderData: (previousData) => previousData,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
@@ -109,11 +125,23 @@ export const useCodeQueries = (
         totalPages: 1,
     };
 
+    const paginationSuggested = suggestedCodeProblemsData?.pagination ?? {
+        page: 1,
+        limit: 20,
+        total: 0,
+        totalPages: 1,
+    };
+
     return {
         codeProblems: codeProblemsData?.problems || [],
         pagination,
         isCodeProblemsLoading,
         codeProblemsError,
+
+        suggestedCodeProblems: suggestedCodeProblemsData?.problems || [],
+        paginationSuggested,
+        isSuggestedCodeProblemsLoading,
+        isSuggestedCodeProblemsError,
 
         tags: tagsData || [],
         isTagsLoading,
