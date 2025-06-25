@@ -11,11 +11,16 @@ import { CustomPagination } from "@/components/molecules/CustomPagination";
 const TabApplication = () => {
     const [selectedApplication, setSelectedApplication] = useState<ApplicationItem | null>(null);
     const [isViewApplicationOpen, setIsViewApplicationOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const limit = 20;
 
-    const { applications, isApplicationDataLoading } = useApplicationQueries();
+    const { applicationsForRecruiter, isApplicationForRecruiterDataLoading, paginationForRecruiter } =
+        useApplicationQueries(null, null, currentPage, limit);
+
+    console.log(currentPage, paginationForRecruiter);
 
     const handleApplicationClick = (applicationId: string) => {
-        const application = applications?.find((app) => app._id === applicationId);
+        const application = applicationsForRecruiter?.find((app) => app._id === applicationId);
         if (application) {
             setSelectedApplication(application);
             setIsViewApplicationOpen(true);
@@ -38,14 +43,28 @@ const TabApplication = () => {
 
             <CustomTable
                 columns={getApplicantionColumns(handleApplicationClick)}
-                data={applications || []}
-                isLoading={isApplicationDataLoading}
+                data={applicationsForRecruiter || []}
+                isLoading={isApplicationForRecruiterDataLoading}
                 loadingMessage="Loading applications..."
                 emptyMessage="No applications found"
                 className="bg-slate-800/50 border-slate-700"
             />
-
-            {/*Missing the pagination*/}
+            {paginationForRecruiter.total > 0 && (
+                <div className="flex items-center justify-between">
+                    <div className="text-sm text-slate-400">
+                        Showing {(currentPage - 1) * paginationForRecruiter.limit + 1} to{" "}
+                        {Math.min(currentPage * paginationForRecruiter.limit, paginationForRecruiter.total)} of{" "}
+                        {paginationForRecruiter.total} Applications
+                    </div>
+                    <div>
+                        <CustomPagination
+                            currentPage={currentPage}
+                            totalPages={paginationForRecruiter.totalPages}
+                            onPageChange={(newPage) => setCurrentPage(newPage)}
+                        />
+                    </div>
+                </div>
+            )}
 
             <DialogApplication
                 isOpen={isViewApplicationOpen}

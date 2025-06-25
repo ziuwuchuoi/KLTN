@@ -438,6 +438,11 @@ export const getCodeColumns = (handleCodeClick: (id: string) => void) => [
 
 export const getQuizColumns = (handleQuizClick: (id: string) => void) => [
     {
+        header: "Id",
+        cell: (quiz) => <div className="font-medium text-slate-300">{quiz._id}</div>,
+        className: "w-24",
+    },
+    {
         header: "Title",
         cell: (quiz) => <div className="font-medium text-white truncate">{quiz.title}</div>,
     },

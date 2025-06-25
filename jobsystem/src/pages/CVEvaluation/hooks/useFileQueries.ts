@@ -9,6 +9,7 @@ import {
     evaluateCVService,
     getRecommendedJobsService,
     RecommendedJDItem,
+    getListApplicationForRecruiterService,
 } from "@/services/file.service";
 import {
     getJDByIdService,
@@ -226,13 +227,28 @@ export const useApplicationQueries = (userId?: string, fileId?: string, page: nu
     const {
         data: applicationData,
         isLoading: isApplicationDataLoading,
-        error: applicationError,
+        error: isApplicationError,
     } = useQuery<{
         items: ApplicationItem[];
         meta: { limit: number; page: number; total: number; totalPages: number };
     }>({
         queryKey: ["applications", userId, fileId, page, limit],
         queryFn: () => getListApplicationService(userId, fileId, page, limit),
+        placeholderData: (previousData) => previousData,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+    });
+
+    const {
+        data: applicationForRecruiterData,
+        isLoading: isApplicationForRecruiterDataLoading,
+        error: isApplicationForRecruiterError,
+    } = useQuery<{
+        items: ApplicationItem[];
+        meta: { limit: number; page: number; total: number; totalPages: number };
+    }>({
+        queryKey: ["applications-recruiter", userId, fileId, page, limit],
+        queryFn: () => getListApplicationForRecruiterService(userId, fileId, page, limit),
         placeholderData: (previousData) => previousData,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
@@ -280,14 +296,25 @@ export const useApplicationQueries = (userId?: string, fileId?: string, page: nu
         totalPages: 1,
     };
 
+    const paginationForRecruiter = applicationForRecruiterData?.meta ?? {
+        page: 1,
+        limit: 20,
+        total: 0,
+        totalPages: 1,
+    };
+
     return {
         applications: applicationData?.items || [],
+        applicationsForRecruiter: applicationForRecruiterData?.items || [],
         useApplicationDetail,
         updateApplicationStatus,
         applyCV,
         pagination,
+        paginationForRecruiter,
         isApplicationDataLoading,
-        applicationError,
+        isApplicationError,
+        isApplicationForRecruiterDataLoading,
+        isApplicationForRecruiterError,
     };
 };
 

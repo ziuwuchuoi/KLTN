@@ -56,8 +56,6 @@ export interface CodeSubmitTestSet {
 
 export const linkTestSetService = async (data: Partial<TestSetItem>): Promise<TestSetItem> => {
     const response = await axiosInstance.post(`/testSet/linkTestSet/`, data);
-
-    console.log("respon linked", response.data.data);
     return response.data.data;
 };
 

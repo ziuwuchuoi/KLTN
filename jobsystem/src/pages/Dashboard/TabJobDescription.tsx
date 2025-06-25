@@ -64,19 +64,22 @@ const TabJobDescription = () => {
                 className="bg-slate-800/50 border-slate-700"
             />
 
-            <div className="flex items-center justify-between">
-                <div className="text-sm text-slate-400">
-                    Showing {(currentPage - 1) * pagination.limit + 1} to{" "}
-                    {Math.min(currentPage * pagination.limit, pagination.total)} of {pagination.total} Job descriptions
+            {pagination.total > 0 && (
+                <div className="flex items-center justify-between">
+                    <div className="text-sm text-slate-400">
+                        Showing {(currentPage - 1) * pagination.limit + 1} to{" "}
+                        {Math.min(currentPage * pagination.limit, pagination.total)} of {pagination.total} Job
+                        descriptions
+                    </div>
+                    <div>
+                        <CustomPagination
+                            currentPage={currentPage}
+                            totalPages={pagination.totalPages}
+                            onPageChange={(newPage) => setCurrentPage(newPage)}
+                        />
+                    </div>
                 </div>
-                <div>
-                    <CustomPagination
-                        currentPage={currentPage}
-                        totalPages={pagination.totalPages}
-                        onPageChange={(newPage) => setCurrentPage(newPage)}
-                    />
-                </div>
-            </div>
+            )}
 
             <DialogCreateJD isOpen={isCreateJDOpen} onClose={handleCloseCreateJD} />
             <DialogJD isOpen={isViewJDOpen} onClose={handleCloseViewJD} jd={selectedJD} />

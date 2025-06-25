@@ -30,7 +30,6 @@ export const sigupRecruiterService = async ({
         companyName,
         companyWebsite,
     });
-    console.log("respon signup", response.data);
     return response.data;
 };
 

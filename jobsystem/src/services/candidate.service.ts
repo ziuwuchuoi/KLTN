@@ -29,7 +29,6 @@ export const getListCandidateService = async (
     meta: { limit: number; page: number; total: number; totalPages: number };
 }> => {
     const response = await axiosInstance.get(`/users/candidates?limit=${limit}&page=${page}`);
-    console.log("response.data.data candi", response.data.data);
     return response.data.data;
 };
 

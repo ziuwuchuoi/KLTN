@@ -96,9 +96,7 @@ export const getListCodeProblemService = async (
                         ? `${base}&creatorUserId=${creatorUserId}`
                         : base;
 
-    console.log("url code", url);
     const response = await axiosInstance.get(url);
-    console.log("code data", response.data.data);
     return response.data.data;
 };
 
@@ -139,6 +137,7 @@ export const updateCodeProblemService = async (
     data: Partial<CodeProblemDetail>
 ): Promise<CodeProblemDetail> => {
     const response = await axiosInstance.patch(`/leetcode/update-problem/${problemId}`, data);
+    console.log("update code", response.data.data);
     return response.data.data;
 };
 
@@ -154,6 +153,5 @@ export const getSuggestedCodeProblemService = async (
     const url = `/leetcode/suggested-problems?limit=${limit}&page=${page}`;
 
     const response = await axiosInstance.get(url);
-    console.log("code suggest", response.data.data);
     return response.data.data;
-}; 
+};

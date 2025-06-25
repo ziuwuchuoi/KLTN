@@ -7,6 +7,7 @@ import {
     submitCodeProblemService,
     createCodeProblemService,
     getSuggestedCodeProblemService,
+    updateCodeProblemService,
 } from "@/services/code.service";
 import { CodeProblem, CodeProblemDetail, CodeLanguage, CodeSubmitData } from "@/services/code.service";
 
@@ -106,12 +107,13 @@ export const useCodeQueries = (
 
     const updateCodeProblem = useMutation({
         mutationFn: ({ problemId, data }: { problemId: string; data: Partial<CodeProblemDetail> }) =>
-            updateCodeProblem(problemId, data),
+            updateCodeProblemService(problemId, data),
         onSuccess: (_, { problemId }) => {
             // Invalidate the detail view of the updated quiz
             queryClient.invalidateQueries({
                 queryKey: ["code-problem-detail", problemId],
             });
+            queryClient.invalidateQueries({ queryKey: ["code-problems"], exact: false });
         },
         onError: (err) => {
             console.error("Error updating code:", err);

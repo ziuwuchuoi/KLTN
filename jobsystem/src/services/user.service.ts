@@ -12,7 +12,6 @@ export interface GrantRecruiterResponse {
 // candidate and recruiter
 export const getUserProfileService = async (): Promise<RecruiterUser | CandidateUser > => {
     const response = await axiosInstance.get("/users/getUserProfile");
-    console.log("pro5", response.data.data);
     return response.data.data;
 };
 
@@ -23,9 +22,6 @@ export const getAdminProfileService = async (): Promise<AdminUser> => {
 };
 
 export const grantRecruiterRoleService = async (email: string): Promise<GrantRecruiterResponse> => {
-    console.log("email", email);
     const response = await axiosInstance.put(`/users/grant-recruiter/${email}`);
-    console.log("response", response);
-
     return response.data.data;
 };

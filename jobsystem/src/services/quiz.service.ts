@@ -48,10 +48,7 @@ export const getListQuizzesService = async (
                 ? `${base}&category=${category}`
                 : base;
 
-    console.log("url quiz", url);
     const response = await axiosInstance.get(url);
-    console.log("quiz data", response.data.data);
-
     return response.data.data;
 };
 
@@ -81,6 +78,7 @@ export const createQuizService = async (data: Partial<QuizItem>): Promise<Partia
 
 export const updateQuizService = async (quizId: string, data: Partial<QuizItem>): Promise<Partial<QuizItem>> => {
     const response = await axiosInstance.patch(`/quiz/update-quiz/${quizId}`, data);
+    console.log("update quiz", response.data);
     return response.data;
 };
 
@@ -96,7 +94,5 @@ export const getSuggestedQuizzesService = async (
     const url = `/quiz/getSuggestedQuizzes?limit=${limit}&page=${page}`;
 
     const response = await axiosInstance.get(url);
-    console.log("quiz suggest", response.data.data);
-
     return response.data.data;
 };

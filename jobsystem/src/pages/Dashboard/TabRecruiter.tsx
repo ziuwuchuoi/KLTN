@@ -94,20 +94,22 @@ const TabRecruiter = () => {
                         className="bg-slate-800/50 border-slate-700"
                     />
 
-                    <div className="flex items-center justify-between">
-                        <div className="text-sm text-slate-400">
-                            Showing {(activePage - 1) * paginationRecruiters.limit + 1} to{" "}
-                            {Math.min(activePage * paginationRecruiters.limit, paginationRecruiters.total)} of{" "}
-                            {paginationRecruiters.total} Recruiters
+                    {paginationRecruiters.total > 0 && (
+                        <div className="flex items-center justify-between">
+                            <div className="text-sm text-slate-400">
+                                Showing {(activePage - 1) * paginationRecruiters.limit + 1} to{" "}
+                                {Math.min(activePage * paginationRecruiters.limit, paginationRecruiters.total)} of{" "}
+                                {paginationRecruiters.total} Recruiters
+                            </div>
+                            <div>
+                                <CustomPagination
+                                    currentPage={activePage}
+                                    totalPages={paginationRecruiters.totalPages}
+                                    onPageChange={(newPage) => setActivePage(newPage)}
+                                />
+                            </div>
                         </div>
-                        <div>
-                            <CustomPagination
-                                currentPage={activePage}
-                                totalPages={paginationRecruiters.totalPages}
-                                onPageChange={(newPage) => setActivePage(newPage)}
-                            />
-                        </div>
-                    </div>
+                    )}
                 </TabsContent>
 
                 <TabsContent value="requests">
@@ -120,23 +122,25 @@ const TabRecruiter = () => {
                         className="bg-slate-800/50 border-slate-700"
                     />
 
-                    <div className="flex items-center justify-between">
-                        <div className="text-sm text-slate-400">
-                            Showing {(requestPage - 1) * paginationRequestedRecruiters.limit + 1} to{" "}
-                            {Math.min(
-                                requestPage * paginationRequestedRecruiters.limit,
-                                paginationRequestedRecruiters.total
-                            )}
-                            of {paginationRequestedRecruiters.total} Requested recruiters
+                    {paginationRequestedRecruiters.total > 0 && (
+                        <div className="flex items-center justify-between">
+                            <div className="text-sm text-slate-400">
+                                Showing {(requestPage - 1) * paginationRequestedRecruiters.limit + 1} to{" "}
+                                {Math.min(
+                                    requestPage * paginationRequestedRecruiters.limit,
+                                    paginationRequestedRecruiters.total
+                                )}
+                                of {paginationRequestedRecruiters.total} Requested recruiters
+                            </div>
+                            <div>
+                                <CustomPagination
+                                    currentPage={requestPage}
+                                    totalPages={paginationRequestedRecruiters.totalPages}
+                                    onPageChange={(newPage) => setRequestPage(newPage)}
+                                />
+                            </div>
                         </div>
-                        <div>
-                            <CustomPagination
-                                currentPage={requestPage}
-                                totalPages={paginationRequestedRecruiters.totalPages}
-                                onPageChange={(newPage) => setRequestPage(newPage)}
-                            />
-                        </div>
-                    </div>
+                    )}
                 </TabsContent>
             </Tabs>
 

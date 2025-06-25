@@ -102,7 +102,6 @@ export const useQuizQueries = (
     const updateQuiz = useMutation({
         mutationFn: ({ quizId, data }: { quizId: string; data: Partial<QuizItem> }) => updateQuizService(quizId, data),
         onSuccess: (_, { quizId }) => {
-            // Invalidate the detail view of the updated quiz
             queryClient.invalidateQueries({
                 queryKey: ["technical-quiz-detail", quizId],
             });
@@ -110,6 +109,7 @@ export const useQuizQueries = (
         },
         onError: (err) => {
             console.error("Error updating quiz:", err);
+            
         },
     });
 

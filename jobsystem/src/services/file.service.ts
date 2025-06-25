@@ -267,6 +267,25 @@ export const getListApplicationService = async (
     return response.data.data;
 };
 
+export const getListApplicationForRecruiterService = async (
+    candidateId: string, // sort in candidate
+    jdId: string, // sort in recruiter
+    limit = 20,
+    page = 1
+): Promise<{
+    items: ApplicationItem[];
+    meta: { limit: number; page: number; total: number; totalPages: number };
+}> => {
+    const url = candidateId
+        ? `/cvs/list-applications-for-recruiter?candidateId=${candidateId}&limit=${limit}&page=${page}`
+        : jdId
+          ? `/cvs/list-applications-for-recruiter?jdId=${jdId}&limit=${limit}&page=${page}`
+          : `/cvs/list-applications-for-recruiter?limit=${limit}&page=${page}`;
+
+    const response = await axiosInstance.get(url);
+    return response.data.data;
+};
+
 export const getApplicationByIdService = async (apId: string): Promise<ApplicationDetail> => {
     const response = await axiosInstance.get(`/cvs/application/${apId}`);
     return response.data.data;
@@ -314,7 +333,6 @@ export const getEvaluatedCVByIdService = async (evaluationId: string): Promise<E
 
 export const evaluateCVService = async (cvId: string, jdId: string): Promise<EvaluatedCVDetail> => {
     const response = await axiosInstance.post(`/cvs/reviewCV/${cvId}/${jdId}`);
-    console.log("eva", response.data.data);
     return response.data.data;
 };
 

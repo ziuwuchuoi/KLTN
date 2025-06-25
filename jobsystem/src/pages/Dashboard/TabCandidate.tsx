@@ -48,19 +48,21 @@ const TabCandidate = () => {
                 className="bg-slate-800/50 border-slate-700"
             />
 
-            <div className="flex items-center justify-between">
-                <div className="text-sm text-slate-400">
-                    Showing {(currentPage - 1) * pagination.limit + 1} to{" "}
-                    {Math.min(currentPage * pagination.limit, pagination.total)} of {pagination.total} Candidates
+            {pagination.total > 0 && (
+                <div className="flex items-center justify-between">
+                    <div className="text-sm text-slate-400">
+                        Showing {(currentPage - 1) * pagination.limit + 1} to{" "}
+                        {Math.min(currentPage * pagination.limit, pagination.total)} of {pagination.total} Candidates
+                    </div>
+                    <div>
+                        <CustomPagination
+                            currentPage={currentPage}
+                            totalPages={pagination.totalPages}
+                            onPageChange={(newPage) => setCurrentPage(newPage)}
+                        />
+                    </div>
                 </div>
-                <div>
-                    <CustomPagination
-                        currentPage={currentPage}
-                        totalPages={pagination.totalPages}
-                        onPageChange={(newPage) => setCurrentPage(newPage)}
-                    />
-                </div>
-            </div>
+            )}
 
             <DialogCandidate isOpen={isDialogOpen} onClose={handleCloseDialog} candidate={selectedCandidate} />
         </div>

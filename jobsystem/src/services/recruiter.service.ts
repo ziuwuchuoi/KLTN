@@ -27,7 +27,6 @@ export const getListRecruiterService = async (
     meta: { limit: number; page: number; total: number; totalPages: number };
 }> => {
     const response = await axiosInstance.get(`/users/recruiters?limit=${limit}&page=${page}`);
-    console.log("recruiters", response.data.data);
     return response.data.data;
 };
 
