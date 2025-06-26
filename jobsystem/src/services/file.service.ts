@@ -283,19 +283,24 @@ export const getListApplicationForRecruiterService = async (
           : `/cvs/list-applications-for-recruiter?limit=${limit}&page=${page}`;
 
     const response = await axiosInstance.get(url);
+
     return response.data.data;
 };
 
 export const getApplicationByIdService = async (apId: string): Promise<ApplicationDetail> => {
     const response = await axiosInstance.get(`/cvs/application/${apId}`);
-    return response.data.data;
+    return response.data.data[0];
 };
 
 export const updateApplicationStatusService = async (
     apId: string,
     status: ApplicationStatus
-): Promise<ApplicationDetail> => {
-    const response = await axiosInstance.post(`/cvs/application/${apId}/status`, status);
+): Promise<Partial<ApplicationItem>> => {
+    console.log(apId, status);
+    const response = await axiosInstance.patch(`/cvs/application/${apId}/status`, {
+        status,
+    });
+    console.log("update app", response.data.data);
     return response.data.data;
 };
 

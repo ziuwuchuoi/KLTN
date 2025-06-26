@@ -34,13 +34,12 @@ const TabTestset = () => {
     const [isCreateCodeOpen, setIsCreateCodeOpen] = useState(false);
     const [isViewCodeOpen, setIsViewCodeOpen] = useState(false);
 
-    const { codeProblems, isCodeProblemsLoading, pagination, useCodeProblemDetail } = useCodeQueries(
+    const { codeProblems, isCodeProblemsLoading, pagination } = useCodeQueries(
         user?._id,
         null,
         null,
         codePage
     );
-    const codeProblemDetailHook = useCodeProblemDetail;
 
     const handleQuizClick = (quizId: string) => {
         const quiz = technicalQuizzes?.find((q) => q._id === quizId);
@@ -56,15 +55,19 @@ const TabTestset = () => {
 
     const handleCodeClick = async (codeId: string) => {
         try {
-            const codeDetail = await getCodeProblemDetailService(codeId);
-            if (codeDetail) {
-                setSelectedCodeProblem(codeDetail);
-                setIsViewCodeOpen(true);
+            const code = codeProblems?.find((c) => c._id === codeId);
+            if (code) {
+                const codeDetail = await getCodeProblemDetailService(codeId);
+                if (codeDetail) {
+                    setSelectedCodeProblem(codeDetail);
+                    setIsViewCodeOpen(true);
+                }
             }
         } catch (error) {
             console.error("Failed to fetch code problem detail:", error);
         }
     };
+
     const handleCreateCode = () => {
         setIsCreateCodeOpen(true);
     };

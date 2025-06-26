@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { ApplicationItem } from "@/services/file.service";
+import type { ApplicationDetail, ApplicationItem } from "@/services/file.service";
 import { useApplicationQueries } from "../CVEvaluation/hooks/useFileQueries";
 import { CustomTable } from "@/components/molecules/dashboard/CustomTable";
 import { getApplicantionColumns } from "@/components/molecules/dashboard/columns";
@@ -15,16 +15,34 @@ const TabApplication = () => {
     const limit = 20;
 
     const { applicationsForRecruiter, isApplicationForRecruiterDataLoading, paginationForRecruiter } =
-        useApplicationQueries(null, null, currentPage, limit);
+        useApplicationQueries(null, null, limit, currentPage);
 
-    console.log(currentPage, paginationForRecruiter);
+    console.log("appRec", applicationsForRecruiter);
 
-    const handleApplicationClick = (applicationId: string) => {
-        const application = applicationsForRecruiter?.find((app) => app._id === applicationId);
-        if (application) {
-            setSelectedApplication(application);
-            setIsViewApplicationOpen(true);
+    const handleApplicationClick = async (applicationId: string) => {
+        try {
+            const application = applicationsForRecruiter?.find((app) => app._id === applicationId);
+            if (application) {
+                // Pass the ApplicationItem instead of fetching ApplicationDetail here
+                setSelectedApplication(application);
+                setIsViewApplicationOpen(true);
+            }
+        } catch (error) {
+            console.error("Failed to fetch application:", error);
         }
+    };
+
+    const handleApplicationUpdate = (updatedApplication: ApplicationDetail) => {
+        // Update the selected application with the new data
+        if (selectedApplication && updatedApplication._id === selectedApplication._id) {
+            const updatedItem: ApplicationItem = {
+                ...selectedApplication,
+                status: updatedApplication.status,
+                updatedAt: updatedApplication.updatedAt,
+            };
+            setSelectedApplication(updatedItem);
+        }
+        console.log("Application updated:", updatedApplication);
     };
 
     const handleCloseViewApplication = () => {
@@ -49,6 +67,7 @@ const TabApplication = () => {
                 emptyMessage="No applications found"
                 className="bg-slate-800/50 border-slate-700"
             />
+
             {paginationForRecruiter.total > 0 && (
                 <div className="flex items-center justify-between">
                     <div className="text-sm text-slate-400">
@@ -70,6 +89,7 @@ const TabApplication = () => {
                 isOpen={isViewApplicationOpen}
                 onClose={handleCloseViewApplication}
                 application={selectedApplication}
+                onUpdate={handleApplicationUpdate}
             />
         </div>
     );
