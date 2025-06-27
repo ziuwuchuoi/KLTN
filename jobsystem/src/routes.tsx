@@ -15,8 +15,12 @@ import PageQuiz from "./pages/Quizz/PageQuiz";
 import PageTechnicalQuiz from "./pages/Quizz/PageTechnicalQuiz";
 import PageQuizDetail from "./pages/Quizz/PageQuizDetail";
 import PageLiveCoding from "./pages/LiveCoding/PageLiveCoding";
+import PageProblemCodingDetail from "./pages/LiveCoding/PageProblemCodingDetail";
 import PageJobs from "./pages/Job/PageJob";
 import PageJobDetail from "./pages/Job/PageJobDetail";
+import PageTestSetOverview from "./pages/TestSet/PageTestsetOverview";
+import PageTestSetTaking from "./pages/TestSet/PageTestsetTaking";
+import PageTestSetCompleted from "./pages/TestSet/PageTestsetCompleted";
 
 // dashboard pages (admin only)
 import PageDashboard from "./pages/Dashboard/PageDashboard";
@@ -24,16 +28,17 @@ import TabAnalysis from "./pages/Dashboard/TabAnalysis";
 import TabCandidate from "./pages/Dashboard/TabCandidate";
 import TabRecruiter from "./pages/Dashboard/TabRecruiter";
 
+// dashboard pages (recruiters)
+import TabApplication from "./pages/Dashboard/TabApplication";
+import TabJobDescription from "./pages/Dashboard/TabJobDescription";
+import TabTestset from "./pages/Dashboard/TabTestSet";
+
 // permission wrapper
 import PermissionCheckWrapper from "./PermissionCheckWrapper";
 import PageUnauthorized from "./pages/Landing/PageUnauthorized";
-import TabApplication from "./pages/Dashboard/TabApplication";
-import TabJobDescription from "./pages/Dashboard/TabJobDescription";
-import PageProblemCodingDetail from "./pages/LiveCoding/PageProblemCodingDetail";
 
 // profile
 import PageProfile from "./pages/Profile/PageProfile";
-import TabTestset from "./pages/Dashboard/TabTestSet";
 
 const AppRoutes = () => (
     <Routes>
@@ -49,22 +54,30 @@ const AppRoutes = () => (
                 <Route path="ai-interview" element={<PageAIInterview />} />
                 <Route path="cv-evaluation" element={<PageCVEvaluation />} />
 
-                {/* Quizzes */}
+                {/* Regular Quizzes */}
                 <Route path="quiz" element={<PageQuiz />} />
                 <Route path="quiz/technical" element={<PageTechnicalQuiz />} />
                 <Route path="quiz/technical/:quizId" element={<PageQuizDetail />} />
 
-                {/* Live Coding */}
+                {/* Regular Live Coding */}
                 <Route path="live-coding" element={<PageLiveCoding />} />
                 <Route path="live-coding/:codingId" element={<PageProblemCodingDetail />} />
 
-                {/* Live Coding */}
+                {/* TestSet Routes */}
+                <Route path="testset/:testSetId/:jdId/overview" element={<PageTestSetOverview />} />
+                <Route path="testset/:testSetId/:jdId/take" element={<PageTestSetTaking />} />
+                <Route path="testset/:testSetId/:jdId/completed" element={<PageTestSetCompleted />} />
+
+                {/* TestSet Quiz and Code Routes */}
+                <Route path="testset/quiz/:quizId" element={<PageQuizDetail />} />
+                <Route path="testset/code/:codingId" element={<PageProblemCodingDetail />} />
+
+                {/* Jobs */}
                 <Route path="jobs" element={<PageJobs />} />
                 <Route path="jobs/:jobId" element={<PageJobDetail />} />
 
                 {/* Landing (optional for user) */}
                 <Route path="home" element={<PageLanding />} />
-
                 <Route path="profile" element={<PageProfile />} />
             </Route>
         </Route>

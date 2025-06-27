@@ -13,9 +13,9 @@ import { useAuthStore } from "@/stores/useAuthStore";
 
 import type { CodeProblem } from "@/services/code.service";
 import { QuizItem } from "@/services/quiz.service";
-import { useTestSetQueries } from "../hooks/useTestSetQueries";
 import { CheckCircle2, Clock, Code, HelpCircle, Plus } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useTestSetQueries } from "@/pages/TestSet/hooks/useTestSetQueries";
 
 interface DialogAddTestSetProps {
     isOpen: boolean;

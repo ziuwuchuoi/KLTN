@@ -12,16 +12,16 @@ const AuthProvider = ({ children }) => {
         const urlParams = new URLSearchParams(location.search);
         const isOAuth = urlParams.get("login_oauth2") === "true";
         const token = urlParams.get("token");
-        
+
         // console.log("Auth state:", { isOAuth, token, currentUrl: location });
-        
+
         if (isOAuth) {
             const processGoogleCallback = async () => {
                 try {
                     if (!token) {
                         throw new Error("No token in URL parameters");
                     }
-                    
+
                     await handleGoogleRedirect(isOAuth, token);
                     toast.success("Login successful!");
                     // Get the redirect URL from params or default to home

@@ -8,11 +8,11 @@ import { Save, X, MapPin, Building2 } from "lucide-react";
 import CustomDialog from "@/components/molecules/CustomDialog";
 import { JDInputForm } from "@/pages/CVEvaluation/stepJD/JDInput";
 import { useJDQueries } from "@/pages/CVEvaluation/hooks/useFileQueries";
-import { useTestSetQueries } from "../hooks/useTestSetQueries";
 import { DialogAddTestSet } from "./DialogAddTestSet";
 import { SubTabJDInformation } from "../SubTabJDInformation";
 import { SubTabTestSet } from "../SubTabTestSet";
 import type { JDItem, JDDetail } from "@/services/file.service";
+import { useTestSetQueries } from "@/pages/TestSet/hooks/useTestSetQueries";
 
 interface DialogJDProps {
     isOpen: boolean;
