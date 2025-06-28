@@ -1,11 +1,11 @@
-import { Quiz } from "./hooks/useQuizQueries";
 import { cn } from "@/components/utils/general.utils";
 import QuizResult from "./QuizResult";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import { extractTextAndCode } from "@/components/utils/markdown.utils";
+import { extractTextAndCode, hasMarkdown } from "@/components/utils/markdown.utils";
 import MarkdownRenderer from "@/components/molecules/MarkdownRenderer";
+import { Quiz } from "@/services/quiz.service";
 
 type QuestionCardProps = {
     question: Quiz;
@@ -33,6 +33,8 @@ const QuestionCard = ({
         if (showResults) return;
         onSelectOption(questionNumber, optionIndex);
     };
+
+    console.log("question", question);
 
     const getOptionStyles = (index: number) => {
         if (showResults) {
@@ -83,9 +85,11 @@ const QuestionCard = ({
                     Question {questionNumber}
                 </Badge>
                 <CardTitle className="text-xl font-medium leading-tight" style={{ whiteSpace: "pre-line" }}>
-                    {/* {question.question} */}
-                    {/* {extractTextAndCode(question.question)} */}
-                    <MarkdownRenderer content={extractTextAndCode(question.question)} />
+                    {hasMarkdown(question.question) ? (
+                        <MarkdownRenderer content={extractTextAndCode(question.question)} />
+                    ) : (
+                        question.question
+                    )}
                 </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 pt-2">
@@ -114,9 +118,7 @@ const QuestionCard = ({
                                         {String.fromCharCode(65 + index)}
                                     </div>
                                 </div>
-                                <div className="pt-1">
-                                    {optionText}
-                                </div>
+                                <div className="pt-1">{hasMarkdown(optionText) ? optionText : option}</div>
                             </div>
                         </button>
                     );

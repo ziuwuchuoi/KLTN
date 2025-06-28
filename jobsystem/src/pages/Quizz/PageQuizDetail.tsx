@@ -27,9 +27,11 @@ const PageQuizDetail = () => {
     const { useQuizDetail, submitQuiz } = useQuizQueries();
     const { data: quiz, isLoading } = useQuizDetail(quizId);
 
+    console.log(quiz);
+
     const location = useLocation();
-    const navigate = useNavigate()
-    const [startTime] = useState(location.state.startTime);
+    const navigate = useNavigate();
+    const [startTime] = useState(() => location.state?.startTime || Date.now());
     const [duration, setDuration] = useState(0);
 
     const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
@@ -135,7 +137,7 @@ const PageQuizDetail = () => {
     return (
         <div className="flex flex-col p-6 w-full">
             {/* Fixed Section */}
-            <div className="flex flex-row items-end w-full mt-40 mb-5 justify-around">
+            <div className="flex flex-row items-end w-full mt-20 mb-5 justify-around">
                 <div className="grid md:grid-cols-3 gap-8">
                     {/* Sidebar with question navigation */}
                     <div className="md:col-span-1">

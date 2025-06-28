@@ -145,169 +145,152 @@ const PageTestSetTaking = () => {
     }
 
     return (
-        <div className="flex flex-col min-h-screen bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 text-white">
-            <div className="flex-1 p-6">
-                <div className="max-w-6xl mx-auto">
-                    {/* Header with Timer and Progress */}
-                    <div className="mb-6">
-                        <div className="flex items-center justify-between mb-4">
-                            <div>
-                                <CustomHeroSection
-                                    title="Technical"
-                                    subtitle="Assessment"
-                                    description="Complete all items to finish your test"
-                                    align="left"
-                                    compact={true}
-                                />
-                            </div>
-                            <div className="text-right">
-                                <div className="flex items-center gap-2 text-lg font-mono text-white mb-1">
-                                    <Clock className="h-5 w-5" />
-                                    <span className={timeRemaining < 300 ? "text-red-400" : "text-white"}>
-                                        {formatTime(timeRemaining)}
-                                    </span>
-                                </div>
-                                <p className="text-sm text-gray-400">Time remaining</p>
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-400">Progress</span>
-                                <span className="text-white">
-                                    {completedItems} of {totalItems} completed
-                                </span>
-                            </div>
-                            <Progress value={progressPercentage} className="h-2" />
-                        </div>
+        <div className="flex flex-col p-6 pt-40 w-full">
+            {/* Fixed Section */}
+            <div className="flex flex-row items-end w-full justify-around mb-10">
+                <CustomHeroSection title="Coding" subtitle="Center" align="center" />
+                <div className="text-right">
+                    <div className="flex items-center gap-2 text-lg font-mono text-white mb-1">
+                        <Clock className="h-5 w-5" />
+                        <span className={timeRemaining < 300 ? "text-red-400" : "text-white"}>
+                            {formatTime(timeRemaining)}
+                        </span>
                     </div>
-
-                    {/* Items Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                        {itemStatuses.map((item, index) => (
-                            <Card
-                                key={item.id}
-                                className={`cursor-pointer transition-all duration-200 ${
-                                    item.completed
-                                        ? "bg-green-900/20 border-green-500/30 hover:bg-green-900/30"
-                                        : "bg-slate-800/50 border-slate-700 hover:bg-slate-700 hover:border-slate-600"
-                                }`}
-                                onClick={() => handleItemClick(item)}
-                            >
-                                <CardHeader className="pb-3">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            {item.type === "quiz" ? (
-                                                <HelpCircle className="h-5 w-5 text-blue-400" />
-                                            ) : (
-                                                <Code className="h-5 w-5 text-purple-400" />
-                                            )}
-                                            <span className="text-sm font-medium text-gray-400">
-                                                {item.type === "quiz" ? "Quiz" : "Code"} #{index + 1}
-                                            </span>
-                                        </div>
-                                        {item.completed ? (
-                                            <CheckCircle2 className="h-5 w-5 text-green-400" />
-                                        ) : (
-                                            <Circle className="h-5 w-5 text-gray-500" />
-                                        )}
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="pt-0">
-                                    <h3 className="font-medium text-white mb-3 line-clamp-2">{item.title}</h3>
-
-                                    <div className="space-y-2">
-                                        {item.type === "quiz" && (
-                                            <div className="flex items-center justify-between text-sm text-gray-400">
-                                                <span>{item.questionCount} questions</span>
-                                                <span>{item.duration} min</span>
-                                            </div>
-                                        )}
-
-                                        {item.type === "code" && (
-                                            <div className="flex items-center justify-between text-sm">
-                                                <span className="text-gray-400">Problem #{item.problemId}</span>
-                                                <Badge
-                                                    variant="outline"
-                                                    className={
-                                                        item.difficulty === "Easy"
-                                                            ? "bg-green-900/20 text-green-400 border-green-500/30"
-                                                            : item.difficulty === "Medium"
-                                                              ? "bg-yellow-900/20 text-yellow-400 border-yellow-500/30"
-                                                              : "bg-red-900/20 text-red-400 border-red-500/30"
-                                                    }
-                                                >
-                                                    {item.difficulty}
-                                                </Badge>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="mt-3 pt-3 border-t border-slate-700">
-                                        <Button
-                                            variant={item.completed ? "secondary" : "default"}
-                                            size="sm"
-                                            className="w-full"
-                                            disabled={item.completed}
-                                        >
-                                            {item.completed ? "Completed" : "Start"}
-                                        </Button>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
+                    <p className="text-sm text-gray-400">Time remaining</p>
+                </div>
+                <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                        <span className="text-gray-400">Progress</span>
+                        <span className="text-white">
+                            {completedItems} of {totalItems} completed
+                        </span>
                     </div>
-
-                    {/* Final Submit Section */}
-                    {allCompleted && (
-                        <Card className="bg-green-900/20 border-green-500/30">
-                            <CardContent className="p-6">
-                                <div className="text-center">
-                                    <CheckCircle2 className="h-12 w-12 text-green-400 mx-auto mb-4" />
-                                    <h3 className="text-xl font-semibold text-white mb-2">All Items Completed!</h3>
-                                    <p className="text-gray-300 mb-6">
-                                        You have successfully completed all {totalItems} items in this test set. Click
-                                        the button below to submit your final assessment.
-                                    </p>
-                                    <Button
-                                        onClick={handleFinalSubmit}
-                                        disabled={submitFinalTestSet.isPending}
-                                        size="lg"
-                                        className="bg-green-600 hover:bg-green-700"
-                                    >
-                                        <Send className="h-5 w-5 mr-2" />
-                                        {submitFinalTestSet.isPending ? "Submitting..." : "Submit Test Set"}
-                                    </Button>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    )}
-
-                    {/* Emergency Submit (if time is running low) */}
-                    {!allCompleted && timeRemaining < 300 && (
-                        <Card className="bg-yellow-900/20 border-yellow-500/30">
-                            <CardContent className="p-4">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <h4 className="font-medium text-yellow-400 mb-1">Time Running Low</h4>
-                                        <p className="text-sm text-gray-300">
-                                            You can submit your test set early if needed
-                                        </p>
-                                    </div>
-                                    <Button
-                                        onClick={handleFinalSubmit}
-                                        disabled={submitFinalTestSet.isPending}
-                                        variant="outline"
-                                        className="border-yellow-500 text-yellow-400 hover:bg-yellow-500/10 bg-transparent"
-                                    >
-                                        Submit Early
-                                    </Button>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    )}
+                    <Progress value={progressPercentage} className="h-2" />
                 </div>
             </div>
+
+            {/* Items Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                {itemStatuses.map((item, index) => (
+                    <Card
+                        key={item.id}
+                        className={`cursor-pointer transition-all duration-200 ${
+                            item.completed
+                                ? "bg-green-900/20 border-green-500/30 hover:bg-green-900/30"
+                                : "bg-slate-800/50 border-slate-700 hover:bg-slate-700 hover:border-slate-600"
+                        }`}
+                        onClick={() => handleItemClick(item)}
+                    >
+                        <CardHeader className="pb-3">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    {item.type === "quiz" ? (
+                                        <HelpCircle className="h-5 w-5 text-blue-400" />
+                                    ) : (
+                                        <Code className="h-5 w-5 text-purple-400" />
+                                    )}
+                                    <span className="text-sm font-medium text-gray-400">
+                                        {item.type === "quiz" ? "Quiz" : "Code"} #{index + 1}
+                                    </span>
+                                </div>
+                                {item.completed ? (
+                                    <CheckCircle2 className="h-5 w-5 text-green-400" />
+                                ) : (
+                                    <Circle className="h-5 w-5 text-gray-500" />
+                                )}
+                            </div>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                            <h3 className="font-medium text-white mb-3 line-clamp-2">{item.title}</h3>
+
+                            <div className="space-y-2">
+                                {item.type === "quiz" && (
+                                    <div className="flex items-center justify-between text-sm text-gray-400">
+                                        <span>{item.questionCount} questions</span>
+                                        <span>{item.duration} min</span>
+                                    </div>
+                                )}
+
+                                {item.type === "code" && (
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span className="text-gray-400">Problem #{item.problemId}</span>
+                                        <Badge
+                                            variant="outline"
+                                            className={
+                                                item.difficulty === "Easy"
+                                                    ? "bg-green-900/20 text-green-400 border-green-500/30"
+                                                    : item.difficulty === "Medium"
+                                                      ? "bg-yellow-900/20 text-yellow-400 border-yellow-500/30"
+                                                      : "bg-red-900/20 text-red-400 border-red-500/30"
+                                            }
+                                        >
+                                            {item.difficulty}
+                                        </Badge>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="mt-3 pt-3 border-t border-slate-700">
+                                <Button
+                                    variant={item.completed ? "secondary" : "default"}
+                                    size="sm"
+                                    className="w-full"
+                                    disabled={item.completed}
+                                >
+                                    {item.completed ? "Completed" : "Start"}
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+
+            {/* Final Submit Section */}
+            {allCompleted && (
+                <Card className="bg-green-900/20 border-green-500/30">
+                    <CardContent className="p-6">
+                        <div className="text-center">
+                            <CheckCircle2 className="h-12 w-12 text-green-400 mx-auto mb-4" />
+                            <h3 className="text-xl font-semibold text-white mb-2">All Items Completed!</h3>
+                            <p className="text-gray-300 mb-6">
+                                You have successfully completed all {totalItems} items in this test set. Click the
+                                button below to submit your final assessment.
+                            </p>
+                            <Button
+                                onClick={handleFinalSubmit}
+                                disabled={submitFinalTestSet.isPending}
+                                size="lg"
+                                className="bg-green-600 hover:bg-green-700"
+                            >
+                                <Send className="h-5 w-5 mr-2" />
+                                {submitFinalTestSet.isPending ? "Submitting..." : "Submit Test Set"}
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
+
+            {/* Emergency Submit (if time is running low) */}
+            {!allCompleted && timeRemaining < 300 && (
+                <Card className="bg-yellow-900/20 border-yellow-500/30">
+                    <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h4 className="font-medium text-yellow-400 mb-1">Time Running Low</h4>
+                                <p className="text-sm text-gray-300">You can submit your test set early if needed</p>
+                            </div>
+                            <Button
+                                onClick={handleFinalSubmit}
+                                disabled={submitFinalTestSet.isPending}
+                                variant="outline"
+                                className="border-yellow-500 text-yellow-400 hover:bg-yellow-500/10 bg-transparent"
+                            >
+                                Submit Early
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
         </div>
     );
 };

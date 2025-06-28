@@ -32,6 +32,9 @@ const PageProblemCodingDetail = () => {
     const { useCodeProblemDetail, languages, submitCodeMutation } = useCodeQueries();
     const { data: problem, isLoading } = useCodeProblemDetail(problemId);
 
+    console.log("Problem Data:", problem);
+    console.log("problemId:", problemId);
+
     const [selectedLanguage, setSelectedLanguage] = useState<CodeLanguage>(languages[0]);
     const [code, setCode] = useState("");
     const [showHints, setShowHints] = useState(false);
