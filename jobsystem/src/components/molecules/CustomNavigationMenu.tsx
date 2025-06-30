@@ -20,7 +20,8 @@ const leftMenu = [
 ];
 
 export function CustomNavigationMenu() {
-    const { user, logout } = useAuthStore();
+    const { user, logout, token } = useAuthStore();
+    console.log("User in CustomNavigationMenu:", user, token);
     const navigate = useNavigate();
 
     const handleLogout = async () => {

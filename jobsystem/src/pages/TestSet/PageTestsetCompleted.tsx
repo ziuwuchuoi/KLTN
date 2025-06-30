@@ -5,7 +5,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, HelpCircle, Code, Clock, Trophy, Home } from "lucide-react";
+import { CheckCircle2, HelpCircle, Code, Clock, Trophy, Home, Star, Award, Target, TrendingUp } from "lucide-react";
 import type { TestSetSubmission } from "@/services/testset.service";
 import CustomHeroSection from "@/components/molecules/CustomHeroSection";
 
@@ -14,21 +14,37 @@ const PageTestSetCompleted = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const urlParams = new URLSearchParams(location.search);
-
     const submissionId = urlParams.get("submissionId");
 
     const [submission, setSubmission] = useState<TestSetSubmission | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        setSubmission(null);
+        // In a real app, you would fetch the submission data here
+        // For now, we'll simulate the data
+        setSubmission({
+            _id: submissionId || "",
+            testSetId: testSetId || "",
+            candidateId: "candidate-123",
+            completedQuizIds: ["quiz-1", "quiz-2"],
+            completedProblemIds: ["problem-1", "problem-2"],
+            totalQuizScore: 85,
+            totalPassedCodingProblems: 2,
+            totalCodingProblems: 2,
+            finalScore: "87.5",
+            submitted: true,
+            actualDuration: 45,
+            startedAt: new Date(),
+            endAt: new Date(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        });
         setIsLoading(false);
     }, [submissionId, testSetId]);
 
     const formatDuration = (minutes: number) => {
         const hours = Math.floor(minutes / 60);
         const mins = minutes % 60;
-
         if (hours > 0) {
             return `${hours}h ${mins}m`;
         }
@@ -36,22 +52,43 @@ const PageTestSetCompleted = () => {
     };
 
     const getScoreColor = (score: number) => {
+        if (score >= 90) return "text-emerald-400";
         if (score >= 80) return "text-green-400";
+        if (score >= 70) return "text-blue-400";
         if (score >= 60) return "text-yellow-400";
         return "text-red-400";
     };
 
     const getScoreBadgeColor = (score: number) => {
+        if (score >= 90) return "bg-emerald-900/20 text-emerald-400 border-emerald-500/30";
         if (score >= 80) return "bg-green-900/20 text-green-400 border-green-500/30";
+        if (score >= 70) return "bg-blue-900/20 text-blue-400 border-blue-500/30";
         if (score >= 60) return "bg-yellow-900/20 text-yellow-400 border-yellow-500/30";
         return "bg-red-900/20 text-red-400 border-red-500/30";
     };
 
+    const getPerformanceLevel = (score: number) => {
+        if (score >= 90) return "Outstanding";
+        if (score >= 80) return "Excellent";
+        if (score >= 70) return "Good";
+        if (score >= 60) return "Satisfactory";
+        return "Needs Improvement";
+    };
+
+    const getPerformanceIcon = (score: number) => {
+        if (score >= 90) return <Award className="h-6 w-6 text-emerald-400" />;
+        if (score >= 80) return <Trophy className="h-6 w-6 text-green-400" />;
+        if (score >= 70) return <Star className="h-6 w-6 text-blue-400" />;
+        if (score >= 60) return <Target className="h-6 w-6 text-yellow-400" />;
+        return <TrendingUp className="h-6 w-6 text-red-400" />;
+    };
+
     if (isLoading) {
         return (
-            <div className="flex flex-col min-h-screen bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 text-white">
-                <div className="flex-1 flex items-center justify-center">
-                    <div className="text-white">Loading results...</div>
+            <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-slate-900 to-gray-900 flex items-center justify-center">
+                <div className="text-center space-y-4">
+                    <div className="w-12 h-12 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
+                    <p className="text-slate-300 font-medium">Loading your results...</p>
                 </div>
             </div>
         );
@@ -59,202 +96,293 @@ const PageTestSetCompleted = () => {
 
     if (!submission) {
         return (
-            <div className="flex flex-col min-h-screen bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 text-white">
-                <div className="flex-1 flex items-center justify-center">
-                    <div className="text-red-400">No submission found</div>
+            <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-slate-900 to-gray-900 flex items-center justify-center">
+                <div className="text-center space-y-4">
+                    <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto">
+                        <span className="text-red-400 text-2xl">⚠</span>
+                    </div>
+                    <p className="text-red-400 font-medium">No submission found</p>
                 </div>
             </div>
         );
     }
 
-    const completedQuizzes = submission.completedQuizIds.split(",").filter(Boolean);
-    const completedProblems = submission.completedProblemIds.split(",").filter(Boolean);
-    const totalCompleted = completedQuizzes.length + completedProblems.length;
+    const completedQuizzes = submission.completedQuizIds.length;
+    const completedProblems = submission.completedProblemIds.length;
+    const totalCompleted = completedQuizzes + completedProblems;
     const finalScore = Number.parseFloat(submission.finalScore);
 
     return (
-        <div className="flex flex-col p-6 pt-40 w-full">
-            {/* Fixed Section */}
-            <div className="flex flex-row items-end w-full justify-around mb-10">
-                <CustomHeroSection title="Coding" subtitle="Center" align="center" />
-            </div>
-
-            {/* Results Summary */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <Card className="bg-slate-800/50 border-slate-700">
-                    <CardHeader className="pb-3">
-                        <CardTitle className="text-white text-lg flex items-center gap-2">
-                            <Trophy className="h-5 w-5 text-yellow-400" />
-                            Final Score
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-center">
-                            <div className={`text-3xl font-bold mb-2 ${getScoreColor(finalScore)}`}>{finalScore}%</div>
-                            <Badge variant="outline" className={getScoreBadgeColor(finalScore)}>
-                                {finalScore >= 80 ? "Excellent" : finalScore >= 60 ? "Good" : "Needs Improvement"}
-                            </Badge>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="bg-slate-800/50 border-slate-700">
-                    <CardHeader className="pb-3">
-                        <CardTitle className="text-white text-lg flex items-center gap-2">
-                            <CheckCircle2 className="h-5 w-5 text-green-400" />
-                            Completion
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-center">
-                            <div className="text-3xl font-bold text-green-400 mb-2">{totalCompleted}</div>
-                            <p className="text-gray-400 text-sm">Items Completed</p>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="bg-slate-800/50 border-slate-700">
-                    <CardHeader className="pb-3">
-                        <CardTitle className="text-white text-lg flex items-center gap-2">
-                            <Clock className="h-5 w-5 text-blue-400" />
-                            Duration
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-center">
-                            <div className="text-3xl font-bold text-blue-400 mb-2">
-                                {formatDuration(submission.actualDuration)}
+        <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-slate-900 to-gray-900">
+            {/* Hero Section */}
+            <div className="relative overflow-hidden">
+                <div className="relative px-6 pt-24 pb-12">
+                    <div className="max-w-7xl mx-auto text-center">
+                        <div className="mb-8">
+                            <div className="bg-green-500/20 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                                <CheckCircle2 className="h-12 w-12 text-green-400" />
                             </div>
-                            <p className="text-gray-400 text-sm">Time Taken</p>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Detailed Results */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                {/* Quiz Results */}
-                <Card className="bg-slate-800/50 border-slate-700">
-                    <CardHeader>
-                        <CardTitle className="text-white flex items-center gap-2">
-                            <HelpCircle className="h-5 w-5 text-blue-400" />
-                            Quiz Performance
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex justify-between items-center">
-                            <span className="text-gray-400">Completed Quizzes:</span>
-                            <Badge variant="secondary" className="bg-blue-900/20 text-blue-400">
-                                {completedQuizzes.length}
-                            </Badge>
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <span className="text-gray-400">Average Score:</span>
-                            <span className={`font-semibold ${getScoreColor(submission.totalQuizScore)}`}>
-                                {submission.totalQuizScore}%
-                            </span>
-                        </div>
-                        <div className="space-y-2">
-                            {completedQuizzes.map((quizId, index) => (
-                                <div key={quizId} className="flex items-center gap-2 p-2 bg-slate-700/50 rounded">
-                                    <CheckCircle2 className="h-4 w-4 text-green-400" />
-                                    <span className="text-sm text-gray-300">Quiz {index + 1} - Completed</span>
-                                </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Code Results */}
-                <Card className="bg-slate-800/50 border-slate-700">
-                    <CardHeader>
-                        <CardTitle className="text-white flex items-center gap-2">
-                            <Code className="h-5 w-5 text-purple-400" />
-                            Coding Performance
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex justify-between items-center">
-                            <span className="text-gray-400">Completed Problems:</span>
-                            <Badge variant="secondary" className="bg-purple-900/20 text-purple-400">
-                                {completedProblems.length}
-                            </Badge>
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <span className="text-gray-400">Success Rate:</span>
-                            <span className="font-semibold text-green-400">
-                                {submission.totalPassedCodingProblems}/{submission.totalCodingProblems}
-                            </span>
-                        </div>
-                        <div className="space-y-2">
-                            {completedProblems.map((problemId, index) => (
-                                <div key={problemId} className="flex items-center gap-2 p-2 bg-slate-700/50 rounded">
-                                    <CheckCircle2 className="h-4 w-4 text-green-400" />
-                                    <span className="text-sm text-gray-300">Problem {index + 1} - Solved</span>
-                                </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Next Steps */}
-            <Card className="bg-slate-800/50 border-slate-700">
-                <CardHeader>
-                    <CardTitle className="text-white">What's Next?</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <p className="text-gray-300">
-                        Your assessment has been submitted and will be reviewed by our team. Here's what happens next:
-                    </p>
-                    <div className="space-y-3">
-                        <div className="flex items-start gap-3">
-                            <div className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium mt-0.5">
-                                1
-                            </div>
-                            <div>
-                                <p className="font-medium text-white">Review Process</p>
-                                <p className="text-sm text-gray-400">
-                                    Our technical team will review your solutions and provide feedback
-                                </p>
-                            </div>
-                        </div>
-                        <div className="flex items-start gap-3">
-                            <div className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium mt-0.5">
-                                2
-                            </div>
-                            <div>
-                                <p className="font-medium text-white">Results Notification</p>
-                                <p className="text-sm text-gray-400">
-                                    You'll receive an email with detailed results within 2-3 business days
-                                </p>
-                            </div>
-                        </div>
-                        <div className="flex items-start gap-3">
-                            <div className="bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-medium mt-0.5">
-                                3
-                            </div>
-                            <div>
-                                <p className="font-medium text-white">Next Steps</p>
-                                <p className="text-sm text-gray-400">
-                                    If successful, we'll contact you to schedule the next interview round
-                                </p>
-                            </div>
+                            <CustomHeroSection
+                                title="Assessment"
+                                subtitle="Completed"
+                                description="Your technical assessment has been successfully submitted"
+                                align="center"
+                            />
                         </div>
                     </div>
-                    <div className="pt-4">
-                        <Button
-                            onClick={() => {
-                                navigate("/");
-                            }}
-                            className="bg-blue-600 hover:bg-blue-700"
-                        >
-                            <Home className="h-4 w-4 mr-2" />
-                            Return to Dashboard
-                        </Button>
+                </div>
+            </div>
+
+            {/* Main Content */}
+            <div className="px-6 pb-12">
+                <div className="max-w-7xl mx-auto space-y-8">
+                    {/* Performance Overview */}
+                    <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm">
+                        <CardContent className="p-8">
+                            <div className="text-center space-y-6">
+                                <div className="flex items-center justify-center gap-4">
+                                    {getPerformanceIcon(finalScore)}
+                                    <div>
+                                        <div className={`text-5xl font-bold mb-2 ${getScoreColor(finalScore)}`}>
+                                            {finalScore}%
+                                        </div>
+                                        <Badge
+                                            variant="outline"
+                                            className={`${getScoreBadgeColor(finalScore)} text-lg px-4 py-2`}
+                                        >
+                                            {getPerformanceLevel(finalScore)}
+                                        </Badge>
+                                    </div>
+                                </div>
+                                <p className="text-slate-300 text-lg max-w-2xl mx-auto">
+                                    You've demonstrated strong technical skills across multiple domains. Your
+                                    performance will be reviewed by our technical team.
+                                </p>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Detailed Metrics */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="text-white text-lg flex items-center gap-2">
+                                    <div className="p-2 bg-green-500/20 rounded-lg">
+                                        <CheckCircle2 className="h-5 w-5 text-green-400" />
+                                    </div>
+                                    Completion
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-center">
+                                    <div className="text-3xl font-bold text-green-400 mb-2">{totalCompleted}</div>
+                                    <p className="text-slate-400 text-sm">Items Completed</p>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="text-white text-lg flex items-center gap-2">
+                                    <div className="p-2 bg-blue-500/20 rounded-lg">
+                                        <HelpCircle className="h-5 w-5 text-blue-400" />
+                                    </div>
+                                    Quiz Score
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-center">
+                                    <div
+                                        className={`text-3xl font-bold mb-2 ${getScoreColor(submission.totalQuizScore)}`}
+                                    >
+                                        {submission.totalQuizScore}%
+                                    </div>
+                                    <p className="text-slate-400 text-sm">{completedQuizzes} Quizzes</p>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="text-white text-lg flex items-center gap-2">
+                                    <div className="p-2 bg-purple-500/20 rounded-lg">
+                                        <Code className="h-5 w-5 text-purple-400" />
+                                    </div>
+                                    Coding
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-center">
+                                    <div className="text-3xl font-bold text-purple-400 mb-2">
+                                        {submission.totalPassedCodingProblems}/{submission.totalCodingProblems}
+                                    </div>
+                                    <p className="text-slate-400 text-sm">Problems Solved</p>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="text-white text-lg flex items-center gap-2">
+                                    <div className="p-2 bg-orange-500/20 rounded-lg">
+                                        <Clock className="h-5 w-5 text-orange-400" />
+                                    </div>
+                                    Duration
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-center">
+                                    <div className="text-3xl font-bold text-orange-400 mb-2">
+                                        {formatDuration(submission.actualDuration)}
+                                    </div>
+                                    <p className="text-slate-400 text-sm">Time Taken</p>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
-                </CardContent>
-            </Card>
+
+                    {/* Detailed Breakdown */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* Quiz Performance */}
+                        <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm">
+                            <CardHeader>
+                                <CardTitle className="text-white flex items-center gap-2">
+                                    <div className="p-2 bg-blue-500/20 rounded-lg">
+                                        <HelpCircle className="h-5 w-5 text-blue-400" />
+                                    </div>
+                                    Quiz Performance
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="flex justify-between items-center p-4 bg-slate-700/50 rounded-lg">
+                                    <span className="text-slate-300">Completed Quizzes</span>
+                                    <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
+                                        {completedQuizzes}
+                                    </Badge>
+                                </div>
+                                <div className="flex justify-between items-center p-4 bg-slate-700/50 rounded-lg">
+                                    <span className="text-slate-300">Average Score</span>
+                                    <span
+                                        className={`font-semibold text-lg ${getScoreColor(submission.totalQuizScore)}`}
+                                    >
+                                        {submission.totalQuizScore}%
+                                    </span>
+                                </div>
+                                <div className="space-y-2">
+                                    {submission.completedQuizIds.map((quizId, index) => (
+                                        <div
+                                            key={quizId}
+                                            className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg"
+                                        >
+                                            <CheckCircle2 className="h-4 w-4 text-green-400" />
+                                            <span className="text-slate-300 text-sm">Quiz {index + 1} - Completed</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Coding Performance */}
+                        <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm">
+                            <CardHeader>
+                                <CardTitle className="text-white flex items-center gap-2">
+                                    <div className="p-2 bg-purple-500/20 rounded-lg">
+                                        <Code className="h-5 w-5 text-purple-400" />
+                                    </div>
+                                    Coding Performance
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="flex justify-between items-center p-4 bg-slate-700/50 rounded-lg">
+                                    <span className="text-slate-300">Completed Problems</span>
+                                    <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
+                                        {completedProblems}
+                                    </Badge>
+                                </div>
+                                <div className="flex justify-between items-center p-4 bg-slate-700/50 rounded-lg">
+                                    <span className="text-slate-300">Success Rate</span>
+                                    <span className="font-semibold text-lg text-green-400">
+                                        {submission.totalPassedCodingProblems}/{submission.totalCodingProblems}
+                                    </span>
+                                </div>
+                                <div className="space-y-2">
+                                    {submission.completedProblemIds.map((problemId, index) => (
+                                        <div
+                                            key={problemId}
+                                            className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg"
+                                        >
+                                            <CheckCircle2 className="h-4 w-4 text-green-400" />
+                                            <span className="text-slate-300 text-sm">Problem {index + 1} - Solved</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Next Steps */}
+                    <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm">
+                        <CardHeader>
+                            <CardTitle className="text-white text-xl">What Happens Next?</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <p className="text-slate-300 text-lg">
+                                Thank you for completing your technical assessment! Here's what you can expect:
+                            </p>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="text-center space-y-3">
+                                    <div className="bg-blue-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto">
+                                        <span className="text-blue-400 text-2xl font-bold">1</span>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-white mb-2">Review Process</h3>
+                                        <p className="text-slate-400 text-sm">
+                                            Our technical team will thoroughly review your solutions and provide
+                                            detailed feedback
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="text-center space-y-3">
+                                    <div className="bg-yellow-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto">
+                                        <span className="text-yellow-400 text-2xl font-bold">2</span>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-white mb-2">Results Notification</h3>
+                                        <p className="text-slate-400 text-sm">
+                                            You'll receive comprehensive results and feedback within 2-3 business days
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="text-center space-y-3">
+                                    <div className="bg-green-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto">
+                                        <span className="text-green-400 text-2xl font-bold">3</span>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-white mb-2">Next Interview</h3>
+                                        <p className="text-slate-400 text-sm">
+                                            If successful, we'll schedule your next interview round with our team
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="text-center pt-6">
+                                <Button
+                                    onClick={() => navigate("/")}
+                                    size="lg"
+                                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold px-8 py-3 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-blue-500/25"
+                                >
+                                    <Home className="h-5 w-5 mr-2" />
+                                    Return to Dashboard
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
         </div>
     );
 };

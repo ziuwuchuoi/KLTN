@@ -24,6 +24,12 @@ import { CodeEditor } from "@/components/molecules/code/CodeEditor";
 import type { CodeLanguage, CodeSubmitResult } from "@/services/code.service";
 import { difficultyColors } from "@/components/molecules/dashboard/columns";
 import { useTestSetQueries } from "../TestSet/hooks/useTestSetQueries";
+import type { TestSetSubmission } from "@/services/testset.service";
+
+interface StoredSubmission extends TestSetSubmission {
+    startTime: number;
+    duration: number;
+}
 
 const PageProblemCodingDetail = () => {
     const { codingId: problemId } = useParams();
@@ -31,6 +37,7 @@ const PageProblemCodingDetail = () => {
     const navigate = useNavigate();
     const searchParams = new URLSearchParams(location.search);
     const testSetResultId = searchParams.get("submissionId");
+    const returnUrl = searchParams.get("returnUrl");
     const isTestsetCode = location.pathname.startsWith("/testset/code/");
 
     const { useCodeProblemDetail, languages, submitCodeMutation } = useCodeQueries();
@@ -42,6 +49,7 @@ const PageProblemCodingDetail = () => {
     const [showHints, setShowHints] = useState(false);
     const [submissionResult, setSubmissionResult] = useState<CodeSubmitResult | null>(null);
     const [showResults, setShowResults] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
     useEffect(() => {
         if (languages.length > 0 && !selectedLanguage) {
@@ -82,6 +90,24 @@ const PageProblemCodingDetail = () => {
         }
     };
 
+    const updateLocalStorage = (problemId: string) => {
+        if (testSetResultId) {
+            const stored = localStorage.getItem(`testset_submission_${testSetResultId}`);
+            if (stored) {
+                const submission: StoredSubmission = JSON.parse(stored);
+
+                // Add problem ID to completed problems if not already present
+                if (!submission.completedProblemIds.includes(problemId)) {
+                    const updatedSubmission = {
+                        ...submission,
+                        completedProblemIds: [...submission.completedProblemIds, problemId],
+                    };
+                    localStorage.setItem(`testset_submission_${testSetResultId}`, JSON.stringify(updatedSubmission));
+                }
+            }
+        }
+    };
+
     const handleSubmit = async () => {
         if (!problem || !selectedLanguage) return;
 
@@ -94,6 +120,18 @@ const PageProblemCodingDetail = () => {
                     problemId: problem.problemId,
                     testSetResultId: testSetResultId,
                 });
+
+                // Update localStorage
+                updateLocalStorage(problem._id);
+
+                setIsSubmitted(true);
+
+                // Navigate back to taking page after a short delay
+                setTimeout(() => {
+                    if (returnUrl) {
+                        navigate(returnUrl);
+                    }
+                }, 2000);
             } else {
                 // Use normal mutation
                 const result = await submitCodeMutation.mutateAsync({
@@ -151,14 +189,6 @@ const PageProblemCodingDetail = () => {
                         <Card className="flex-1 bg-slate-800/50 border-slate-700 flex flex-col">
                             <CardHeader className="pb-2">
                                 <div className="flex items-center gap-4">
-                                    {/* <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => navigate("/live-coding")}
-                                        className="text-slate-300 hover:text-white w-6 h-6"
-                                    >
-                                        <ArrowLeft className="w-4 h-4 mr-2 text-white" />
-                                    </Button> */}
                                     <div className="flex items-center gap-2 text-white">
                                         <span>#{problem.problemId}</span>
                                         <h1 className="text-xl font-semibold">{problem.title}</h1>
@@ -254,11 +284,13 @@ const PageProblemCodingDetail = () => {
                                         <Button
                                             size="sm"
                                             onClick={handleSubmit}
-                                            disabled={submitCodeMutation.isPending}
+                                            disabled={submitCodeMutation.isPending || submitCodeTestSet.isPending}
                                             className="bg-green-600 hover:bg-green-700 px-3"
                                         >
                                             <Upload className="w-4 h-4 mr-2" />
-                                            {submitCodeMutation.isPending ? "Submitting..." : "Submit"}
+                                            {submitCodeMutation.isPending || submitCodeTestSet.isPending
+                                                ? "Submitting..."
+                                                : "Submit"}
                                         </Button>
                                     </div>
                                     <Select value={selectedLanguage.id.toString()} onValueChange={handleLanguageChange}>
@@ -283,6 +315,16 @@ const PageProblemCodingDetail = () => {
                                         language={selectedLanguage.name.toLowerCase()}
                                     />
                                 </div>
+
+                                {/* Success message for testset code */}
+                                {isSubmitted && isTestsetCode && (
+                                    <div className="p-4 bg-green-900/20 border-t border-green-500/30">
+                                        <div className="text-center">
+                                            <div className="text-green-400 font-semibold mb-2">Code Submitted!</div>
+                                            <div className="text-green-300 text-sm">Returning to assessment...</div>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Submission Results */}
                                 {submissionResult && showResults && (
@@ -371,79 +413,51 @@ const PageProblemCodingDetail = () => {
                                                                 <div className="flex items-center gap-4 text-xs text-slate-400">
                                                                     <div className="flex items-center gap-1">
                                                                         <Clock className="w-3 h-3" />
-                                                                        {result.time}s
+                                                                        {result.time}ms
                                                                     </div>
                                                                     <div className="flex items-center gap-1">
                                                                         <MemoryStick className="w-3 h-3" />
-                                                                        {(result.memory / 1024).toFixed(1)}KB
+                                                                        {result.memory}KB
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </CardHeader>
-                                                        <CardContent className="pt-0">
-                                                            <div className="space-y-2 text-sm">
-                                                                {/* Input */}
+                                                        {/* <CardContent className="pt-0">
+                                                            <div className="grid grid-cols-1 gap-3 text-sm">
                                                                 <div>
-                                                                    <span className="text-slate-400">Input: </span>
-                                                                    <code className="bg-slate-800 px-2 py-1 rounded text-slate-300">
-                                                                        {result.testCase.params
-                                                                            .map((p) => p.value)
-                                                                            .join(", ")}
-                                                                    </code>
+                                                                    <div className="text-slate-400 mb-1">Input:</div>
+                                                                    <div className="bg-slate-800 p-2 rounded font-mono text-xs">
+                                                                        {result.stdin || "No input"}
+                                                                    </div>
                                                                 </div>
-
-                                                                {/* Expected */}
                                                                 <div>
-                                                                    <span className="text-slate-400">Expected: </span>
-                                                                    <code className="bg-slate-800 px-2 py-1 rounded text-green-400">
-                                                                        {result.testCase.expected}
-                                                                    </code>
+                                                                    <div className="text-slate-400 mb-1">
+                                                                        Expected Output:
+                                                                    </div>
+                                                                    <div className="bg-slate-800 p-2 rounded font-mono text-xs">
+                                                                        {result.expected_output}
+                                                                    </div>
                                                                 </div>
-
-                                                                {/* Output */}
                                                                 <div>
-                                                                    <span className="text-slate-400">Output: </span>
-                                                                    <code
-                                                                        className={`bg-slate-800 px-2 py-1 rounded ${result.passed ? "text-green-400" : "text-red-400"}`}
+                                                                    <div className="text-slate-400 mb-1">
+                                                                        Your Output:
+                                                                    </div>
+                                                                    <div
+                                                                        className={`bg-slate-800 p-2 rounded font-mono text-xs ${!result.passed ? "border border-red-500/30" : ""}`}
                                                                     >
-                                                                        {result.stdout || "undefined"}
-                                                                    </code>
+                                                                        {result.stdout || "No output"}
+                                                                    </div>
                                                                 </div>
-
-                                                                {/* Error messages */}
                                                                 {result.stderr && (
                                                                     <div>
-                                                                        <span className="text-slate-400">Error: </span>
-                                                                        <code className="bg-red-900/20 px-2 py-1 rounded text-red-400">
+                                                                        <div className="text-red-400 mb-1">Error:</div>
+                                                                        <div className="bg-red-900/20 border border-red-500/30 p-2 rounded font-mono text-xs text-red-300">
                                                                             {result.stderr}
-                                                                        </code>
-                                                                    </div>
-                                                                )}
-
-                                                                {result.compile_output && (
-                                                                    <div>
-                                                                        <span className="text-slate-400">
-                                                                            Compile Output:{" "}
-                                                                        </span>
-                                                                        <code className="bg-yellow-900/20 px-2 py-1 rounded text-yellow-400">
-                                                                            {result.compile_output}
-                                                                        </code>
-                                                                    </div>
-                                                                )}
-
-                                                                {/* Explanation */}
-                                                                {result.testCase.explanation && (
-                                                                    <div className="mt-2 p-2 bg-blue-900/20 rounded border border-blue-500/30">
-                                                                        <span className="text-blue-400 text-xs font-medium">
-                                                                            Explanation:{" "}
-                                                                        </span>
-                                                                        <span className="text-blue-300 text-xs">
-                                                                            {result.testCase.explanation}
-                                                                        </span>
+                                                                        </div>
                                                                     </div>
                                                                 )}
                                                             </div>
-                                                        </CardContent>
+                                                        </CardContent> */}
                                                     </Card>
                                                 ))}
                                             </div>

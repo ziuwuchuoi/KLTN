@@ -86,7 +86,11 @@ export function JDInputForm({ jdData, onJDDataChange, onSubmit }: JDInputFormPro
 
     const isBasicInfoValid = () => {
         return (
-            jdData.title?.trim() && jdData.position?.trim() && jdData.companyName?.trim() && jdData.location?.trim() && jdData.description?.trim()
+            jdData.title?.trim() &&
+            jdData.position?.trim() &&
+            jdData.companyName?.trim() &&
+            jdData.location?.trim() &&
+            jdData.description?.trim()
         );
     };
 
@@ -295,9 +299,9 @@ export function JDInputForm({ jdData, onJDDataChange, onSubmit }: JDInputFormPro
                                     label="Benefits"
                                     items={jdData.benefits || []}
                                     placeholder="e.g. Health insurance, Remote work, Flexible hours"
-                                    onAdd={() => addArrayItem("benefits", true)}
-                                    onRemove={(index) => removeArrayItem("benefits", index, true)}
-                                    onChange={(index, value) => updateArrayItem("benefits", index, value, true)}
+                                    onAdd={() => addArrayItem("benefits", false)}
+                                    onRemove={(index) => removeArrayItem("benefits", index, false)}
+                                    onChange={(index, value) => updateArrayItem("benefits", index, value, false)}
                                 />
                             </div>
                         )}

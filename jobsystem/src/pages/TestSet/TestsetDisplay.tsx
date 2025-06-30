@@ -3,8 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { HelpCircle, Code } from "lucide-react";
-import { QuizItem } from "@/services/quiz.service";
-import { CodeProblem } from "@/services/code.service";
+import type { QuizItem } from "@/services/quiz.service";
+import type { CodeProblem } from "@/services/code.service";
 import TestsetQuizCard from "./TestsetQuizCard";
 import TestsetCodeCard from "./TestsetCodeCard";
 
@@ -30,24 +30,26 @@ const TestSetItemsDisplay = ({
     const totalQuizzes = quizzes.length;
     const totalProblems = problems.length;
 
-    const containerClass = layout === "grid" ? "grid grid-cols-1 lg:grid-cols-2 gap-6" : "space-y-6";
+    const containerClass = layout === "grid" ? "grid grid-cols-1 gap-8" : "space-y-8";
 
     return (
         <div className={`${containerClass} ${className}`}>
             {/* Quiz Problems */}
-            <Card className="bg-slate-800/50 border-slate-700">
-                <CardHeader>
-                    <CardTitle className="text-white flex items-center gap-2">
-                        <HelpCircle className="h-5 w-5 text-blue-400" />
+            <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm">
+                <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center gap-3 text-white">
+                        <div className="p-2 bg-blue-500/20 rounded-lg">
+                            <HelpCircle className="h-5 w-5 text-blue-400" />
+                        </div>
                         Quiz Problems
-                        <Badge variant="secondary" className="bg-blue-900/20 text-blue-400">
+                        <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30 ml-auto">
                             {totalQuizzes}
                         </Badge>
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     {totalQuizzes > 0 ? (
-                        <div className="space-y-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                             {quizzes.map((quiz, index) => (
                                 <TestsetQuizCard
                                     key={quiz._id || index}
@@ -59,28 +61,32 @@ const TestSetItemsDisplay = ({
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center py-4 text-gray-400">
-                            <HelpCircle className="h-8 w-8 mx-auto mb-2 text-gray-500" />
-                            <p className="text-sm">No quiz problems</p>
+                        <div className="text-center py-12 text-gray-400">
+                            <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <HelpCircle className="h-8 w-8 text-blue-400/50" />
+                            </div>
+                            <p className="text-sm font-medium">No quiz problems available</p>
                         </div>
                     )}
                 </CardContent>
             </Card>
 
             {/* Code Problems */}
-            <Card className="bg-slate-800/50 border-slate-700">
-                <CardHeader>
-                    <CardTitle className="text-white flex items-center gap-2">
-                        <Code className="h-5 w-5 text-purple-400" />
+            <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm">
+                <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center gap-3 text-white">
+                        <div className="p-2 bg-purple-500/20 rounded-lg">
+                            <Code className="h-5 w-5 text-purple-400" />
+                        </div>
                         Code Problems
-                        <Badge variant="secondary" className="bg-purple-900/20 text-purple-400">
+                        <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30 ml-auto">
                             {totalProblems}
                         </Badge>
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     {totalProblems > 0 ? (
-                        <div className="space-y-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                             {problems.map((problem, index) => (
                                 <TestsetCodeCard
                                     key={problem._id || index}
@@ -92,9 +98,11 @@ const TestSetItemsDisplay = ({
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center py-4 text-gray-400">
-                            <Code className="h-8 w-8 mx-auto mb-2 text-gray-500" />
-                            <p className="text-sm">No code problems</p>
+                        <div className="text-center py-12 text-gray-400">
+                            <div className="w-16 h-16 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Code className="h-8 w-8 text-purple-400/50" />
+                            </div>
+                            <p className="text-sm font-medium">No code problems available</p>
                         </div>
                     )}
                 </CardContent>

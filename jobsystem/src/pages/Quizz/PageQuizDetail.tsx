@@ -7,6 +7,7 @@ import { useQuizQueries } from "./hooks/useQuizQueries";
 import { cn } from "@/components/utils/general.utils";
 import { ArrowLeft } from "lucide-react";
 import { useTestSetQueries } from "../TestSet/hooks/useTestSetQueries";
+import type { TestSetSubmission } from "@/services/testset.service";
 
 export type QuizResult = {
     actualDuration: number;
@@ -23,12 +24,18 @@ export type QuizResult = {
     total: number;
 };
 
+interface StoredSubmission extends TestSetSubmission {
+    startTime: number;
+    duration: number;
+}
+
 const PageQuizDetail = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { quizId } = useParams();
     const searchParams = new URLSearchParams(location.search);
     const testSetResultId = searchParams.get("submissionId");
+    const returnUrl = searchParams.get("returnUrl");
     const { useQuizDetail, submitQuiz } = useQuizQueries();
     const { data: quiz, isLoading } = useQuizDetail(quizId);
     const isTestsetQuiz = location.pathname.startsWith("/testset/quiz/");
@@ -71,6 +78,24 @@ const PageQuizDetail = () => {
         }
     }, [resultQuestion]);
 
+    const updateLocalStorage = (quizId: string) => {
+        if (testSetResultId) {
+            const stored = localStorage.getItem(`testset_submission_${testSetResultId}`);
+            if (stored) {
+                const submission: StoredSubmission = JSON.parse(stored);
+
+                // Add quiz ID to completed quizzes if not already present
+                if (!submission.completedQuizIds.includes(quizId)) {
+                    const updatedSubmission = {
+                        ...submission,
+                        completedQuizIds: [...submission.completedQuizIds, quizId],
+                    };
+                    localStorage.setItem(`testset_submission_${testSetResultId}`, JSON.stringify(updatedSubmission));
+                }
+            }
+        }
+    };
+
     const handleSubmitQuiz = async () => {
         if (answeredQuestions.length < quiz.questions.length) {
             return;
@@ -92,7 +117,18 @@ const PageQuizDetail = () => {
                     startTime: startTime,
                     testSetResultId: testSetResultId,
                 });
+
+                // Update localStorage
+                updateLocalStorage(quiz._id);
+
                 setIsSubmitted(true);
+
+                // Navigate back to taking page after a short delay
+                setTimeout(() => {
+                    if (returnUrl) {
+                        navigate(returnUrl);
+                    }
+                }, 2000);
             } else {
                 // Use normal mutation
                 const response = await submitQuiz.mutateAsync({
@@ -204,6 +240,14 @@ const PageQuizDetail = () => {
                                             Answer all questions to submit
                                         </div>
                                     )}
+                                </div>
+                            )}
+
+                            {/* Success message for testset quiz */}
+                            {isSubmitted && isTestsetQuiz && (
+                                <div className="mt-8 p-4 bg-green-900/20 border border-green-500/30 rounded-lg text-center">
+                                    <div className="text-green-400 font-semibold mb-2">Quiz Completed!</div>
+                                    <div className="text-green-300 text-sm">Returning to assessment...</div>
                                 </div>
                             )}
                         </div>

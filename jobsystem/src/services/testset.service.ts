@@ -26,8 +26,8 @@ export interface TestSetSubmission {
     _id: string;
     testSetId: string;
     candidateId: string;
-    completedQuizIds: string;
-    completedProblemIds: string; // id in string type
+    completedQuizIds: string[];
+    completedProblemIds: string[]; // id in string type
     totalQuizScore: number;
     totalPassedCodingProblems: number;
     totalCodingProblems: number;
