@@ -85,7 +85,7 @@ export const updateQuizService = async (quizId: string, data: Partial<QuizItem>)
 // suggestion
 
 export const getSuggestedQuizzesService = async (
-    limit = 20,
+    limit = 4,
     page = 1
 ): Promise<{
     items: Partial<QuizItem>[];
