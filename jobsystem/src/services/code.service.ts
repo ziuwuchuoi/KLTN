@@ -144,7 +144,7 @@ export const updateCodeProblemService = async (
 // suggestion
 
 export const getSuggestedCodeProblemService = async (
-    limit = 20,
+    limit = 4,
     page = 1
 ): Promise<{
     problems: CodeProblem[];

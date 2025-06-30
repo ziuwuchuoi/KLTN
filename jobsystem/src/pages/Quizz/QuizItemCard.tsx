@@ -89,7 +89,7 @@ export const QuizItemCard = ({
                         </div>
                         <div className="flex items-center gap-1">
                             <Clock className="text-gray-50 w-3 h-3" />
-                            <span>{item.duration} min</span>
+                            <span>{Math.round(item.duration / 60)} min</span>
                         </div>
                     </div>
 
@@ -119,7 +119,7 @@ export const QuizItemCard = ({
                             <strong>Questions:</strong> {item.questions.length}
                         </p>
                         <p>
-                            <strong>Duration:</strong> {item.duration} minutes
+                            <strong>Duration:</strong> {Math.round(item.duration / 60)} minutes
                         </p>
                         <p>
                             <strong>Categories:</strong> {item.categories.join(", ")}
