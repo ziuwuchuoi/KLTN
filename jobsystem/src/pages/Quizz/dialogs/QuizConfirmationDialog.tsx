@@ -29,7 +29,7 @@ const QuizConfirmationDialog: React.FC<QuizConfirmationDialogProps> = ({ open, o
                     <strong>Total Questions:</strong> {quizInfo.totalQuestions}
                 </p>
                 <p>
-                    <strong>Time Limit:</strong> {quizInfo.timeLimit} minutes
+                    <strong>Time Limit:</strong> {Math.round(quizInfo.timeLimit / 60)} minutes
                 </p>
                 <p className="text-gray-400 text-xs">
                     Make sure you’re ready. The timer will start once you begin the quiz.
