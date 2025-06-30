@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,17 +23,19 @@ import { useCodeQueries } from "./hooks/useCodeQueries";
 import { CodeEditor } from "@/components/molecules/code/CodeEditor";
 import type { CodeLanguage, CodeSubmitResult } from "@/services/code.service";
 import { difficultyColors } from "@/components/molecules/dashboard/columns";
+import { useTestSetQueries } from "../TestSet/hooks/useTestSetQueries";
 
 const PageProblemCodingDetail = () => {
-    const params = useParams();
+    const { codingId: problemId } = useParams();
+    const location = useLocation();
     const navigate = useNavigate();
-    const problemId = params.codingId as string;
+    const searchParams = new URLSearchParams(location.search);
+    const testSetResultId = searchParams.get("submissionId");
+    const isTestsetCode = location.pathname.startsWith("/testset/code/");
 
     const { useCodeProblemDetail, languages, submitCodeMutation } = useCodeQueries();
     const { data: problem, isLoading } = useCodeProblemDetail(problemId);
-
-    console.log("Problem Data:", problem);
-    console.log("problemId:", problemId);
+    const { submitCodeTestSet } = useTestSetQueries();
 
     const [selectedLanguage, setSelectedLanguage] = useState<CodeLanguage>(languages[0]);
     const [code, setCode] = useState("");
@@ -84,13 +86,24 @@ const PageProblemCodingDetail = () => {
         if (!problem || !selectedLanguage) return;
 
         try {
-            const result = await submitCodeMutation.mutateAsync({
-                sourceCode: code,
-                languageId: selectedLanguage.id,
-                problemId: problem.problemId,
-            });
-            setSubmissionResult(result);
-            setShowResults(true);
+            if (isTestsetCode) {
+                // Use testset mutation
+                await submitCodeTestSet.mutateAsync({
+                    sourceCode: code,
+                    languageId: selectedLanguage.id,
+                    problemId: problem.problemId,
+                    testSetResultId: testSetResultId,
+                });
+            } else {
+                // Use normal mutation
+                const result = await submitCodeMutation.mutateAsync({
+                    sourceCode: code,
+                    languageId: selectedLanguage.id,
+                    problemId: problem.problemId,
+                });
+                setSubmissionResult(result);
+                setShowResults(true);
+            }
         } catch (error) {
             console.error("Submission failed:", error);
         }

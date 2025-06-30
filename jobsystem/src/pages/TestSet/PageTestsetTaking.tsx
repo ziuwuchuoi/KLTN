@@ -60,7 +60,7 @@ const PageTestSetTaking = () => {
                 })) || [];
 
             setItemStatuses([...quizItems, ...codeItems]);
-            setTimeRemaining(testSetDetail.duration * 60); // Convert minutes to seconds
+            setTimeRemaining(testSetDetail.duration * 60);
             setStartTime(new Date());
         }
     }, [testSetDetail, submissionId]);

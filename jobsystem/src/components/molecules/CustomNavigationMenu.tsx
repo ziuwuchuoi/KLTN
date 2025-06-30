@@ -1,96 +1,26 @@
 import * as React from "react";
 import { Link, useNavigate } from "react-router-dom";
-
 import { cn } from "@/components/utils/general.utils";
 import {
     NavigationMenu,
-    NavigationMenuContent,
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
     NavigationMenuTrigger,
+    NavigationMenuContent,
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { useAuthStore } from "@/stores/useAuthStore";
 
-const features = [
-    {
-        title: "CV Evaluation",
-        description: "Get instant feedback on your CV with AI-powered analysis.",
-        icon: (
-            <svg className="h-12 w-12 text-blue-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-            </svg>
-        ),
-        href: "/cv-evaluation",
-    },
-    {
-        title: "AI Interview Simulation (Coming Soon)",
-        description: "Practice real-world interview scenarios with AI-generated questions.",
-        icon: (
-            <svg className="h-12 w-12 text-green-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <circle cx="12" cy="12" r="10" strokeWidth="2" />
-            </svg>
-        ),
-        href: "/ai-interview",
-    },
-    {
-        title: "Quiz",
-        description:
-            "Test and expand your knowledge with AI-generated quizzes designed to challenge your understanding.",
-        icon: (
-            <svg className="h-12 w-12 text-yellow-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-            </svg>
-        ),
-        href: "/quiz",
-    },
-    {
-        title: "Live Coding Test",
-        description: "Write, run, and debug code in real-time coding environments.",
-        icon: (
-            <svg className="h-12 w-12 text-red-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 18l6-6m0 0l-6-6m6 6H2" />
-            </svg>
-        ),
-        href: "/live-coding",
-    },
-];
-
-const userMenu = [
-    {
-        title: "Profile",
-        icon: (
-            <svg className="h-12 w-12 text-blue-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-            </svg>
-        ),
-        href: "/profile",
-    },
-    {
-        title: "Settings",
-        icon: (
-            <svg className="h-12 w-12 text-blue-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-            </svg>
-        ),
-        href: "/setting",
-    },
-    {
-        title: "Sign Out",
-        icon: (
-            <svg className="h-12 w-12 text-blue-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-            </svg>
-        ),
-    },
+const leftMenu = [
+    { title: "Jobs", href: "/jobs" },
+    { title: "CV Evaluation", href: "/cv-evaluation" },
+    { title: "Quiz", href: "/quiz" },
+    { title: "Code", href: "/live-coding" },
 ];
 
 export function CustomNavigationMenu() {
-    const { user, logout, token, role } = useAuthStore();
-    console.log("token", token);
-    console.log("user", user);
-    console.log("role", role);
+    const { user, logout } = useAuthStore();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -103,60 +33,52 @@ export function CustomNavigationMenu() {
         }
     };
 
+    const userMenu = [
+        { title: "Profile", href: "/profile" },
+        { title: "Settings", href: "/setting" },
+        { title: "Sign Out", onClick: handleLogout },
+    ];
+
     return (
         <div className="flex justify-between w-full">
-            {/* Features Menu */}
+            {/* Left: Top-level links */}
             <NavigationMenu>
                 <NavigationMenuList>
-                    {/* Features Dropdown */}
-                    <NavigationMenuItem>
-                        <NavigationMenuTrigger>Features</NavigationMenuTrigger>
-                        <NavigationMenuContent className="bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 text-white">
-                            <ul className="grid w-[200px] gap-2 p-2 md:w-[300px] md:grid-cols-1 lg:w-[400px] ">
-                                {features.map((feature) => (
-                                    <ListItem
-                                        key={feature.title}
-                                        title={feature.title}
-                                        href={feature.href}
-                                        className="h-[80px]"
-                                    >
-                                        {feature.description}
-                                    </ListItem>
-                                ))}
-                            </ul>
-                        </NavigationMenuContent>
-                    </NavigationMenuItem>
-
-                    {/* Pricing, Contact, Sign In */}
-                    <NavigationMenuItem>
-                        <Link to="/pricing" className={navigationMenuTriggerStyle()}>
-                            Pricing
-                        </Link>
-                    </NavigationMenuItem>
-                    <NavigationMenuItem>
-                        <Link to="/contact" className={navigationMenuTriggerStyle()}>
-                            Contact
-                        </Link>
-                    </NavigationMenuItem>
+                    {leftMenu.map(({ title, href }) => (
+                        <NavigationMenuItem key={title}>
+                            <Link to={href} className={navigationMenuTriggerStyle()}>
+                                {title}
+                            </Link>
+                        </NavigationMenuItem>
+                    ))}
                 </NavigationMenuList>
             </NavigationMenu>
 
-            {/* User Menu - Separate Navigation Menu */}
+            {/* Right: User menu */}
             <NavigationMenu>
                 <NavigationMenuList>
                     {user ? (
                         <NavigationMenuItem>
                             <NavigationMenuTrigger>{user.name || "Account"}</NavigationMenuTrigger>
                             <NavigationMenuContent className="bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 text-white">
-                                <ul className="grid w-[50px] gap-2 p-2 md:w-[50px] lg:w-[150px] ">
-                                    {userMenu.map((menuItem) => (
-                                        <ListItem
-                                            key={menuItem.title}
-                                            title={menuItem.title}
-                                            href={menuItem.href}
-                                            onClick={menuItem.title === "Sign Out" ? handleLogout : undefined}
-                                            className="h-[40px]"
-                                        ></ListItem>
+                                <ul className="grid gap-2 p-2 w-[150px]">
+                                    {userMenu.map(({ title, href, onClick }) => (
+                                        <li key={title}>
+                                            <NavigationMenuLink asChild>
+                                                <a
+                                                    href={href}
+                                                    onClick={(e) => {
+                                                        if (onClick) {
+                                                            e.preventDefault();
+                                                            onClick();
+                                                        }
+                                                    }}
+                                                    className="block select-none rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors"
+                                                >
+                                                    {title}
+                                                </a>
+                                            </NavigationMenuLink>
+                                        </li>
                                     ))}
                                 </ul>
                             </NavigationMenuContent>

@@ -77,12 +77,17 @@ export const startTestSetService = async (testSetId: string): Promise<TestSetSub
 };
 
 export const submitQuizTestSetService = async (data: QuizSubmitTestSet): Promise<TestSetSubmission> => {
+    console.log("submitQuizTestSetService data:", data);
     const response = await axiosInstance.post(`/testSet/submitQuizTestSet`, data);
+    console.log("submitQuizTestSetService response:", response.data);
+
     return response.data.data;
 };
 
 export const submitCodeTestSetService = async (data: CodeSubmitTestSet): Promise<TestSetSubmission> => {
+    console.log("submitCodeTestSetService data:", data);
     const response = await axiosInstance.post(`/testSet/submitProblemTestSet`, data);
+    console.log("submitCodeTestSetService response:", response.data);
     return response.data.data;
 };
 

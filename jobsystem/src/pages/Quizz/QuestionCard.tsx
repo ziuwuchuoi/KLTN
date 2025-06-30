@@ -34,8 +34,6 @@ const QuestionCard = ({
         onSelectOption(questionNumber, optionIndex);
     };
 
-    console.log("question", question);
-
     const getOptionStyles = (index: number) => {
         if (showResults) {
             const isCorrect = index === correctAnswer;

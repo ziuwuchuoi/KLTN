@@ -78,7 +78,7 @@ export const useQuizQueries = (
         }: {
             quizId: string;
             answers: SubmitQuizPayload["answers"];
-            startTime: string;
+            startTime: Date;
         }) => submitQuizService(quizId, { answers, startTime }),
         onSuccess: (res) => {
             console.log("Quiz submitted successfully:", res);
@@ -109,7 +109,6 @@ export const useQuizQueries = (
         },
         onError: (err) => {
             console.error("Error updating quiz:", err);
-            
         },
     });
 

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useQuizQueries } from "./hooks/useQuizQueries";
 import { cn } from "@/components/utils/general.utils";
 import { ArrowLeft } from "lucide-react";
+import { useTestSetQueries } from "../TestSet/hooks/useTestSetQueries";
 
 export type QuizResult = {
     actualDuration: number;
@@ -23,21 +24,23 @@ export type QuizResult = {
 };
 
 const PageQuizDetail = () => {
-    const { quizId } = useParams();
-    const { useQuizDetail, submitQuiz } = useQuizQueries();
-    const { data: quiz, isLoading } = useQuizDetail(quizId);
-
-    console.log(quiz);
-
     const location = useLocation();
     const navigate = useNavigate();
-    const [startTime] = useState(() => location.state?.startTime || Date.now());
+    const { quizId } = useParams();
+    const searchParams = new URLSearchParams(location.search);
+    const testSetResultId = searchParams.get("submissionId");
+    const { useQuizDetail, submitQuiz } = useQuizQueries();
+    const { data: quiz, isLoading } = useQuizDetail(quizId);
+    const isTestsetQuiz = location.pathname.startsWith("/testset/quiz/");
+
+    const [startTime] = useState(new Date());
     const [duration, setDuration] = useState(0);
 
     const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
     const [userAnswers, setUserAnswers] = useState<{ [key: number]: number }>({});
     const [currentQuestionId, setCurrentQuestionId] = useState<number>(1);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const { submitQuizTestSet } = useTestSetQueries();
 
     const [resultQuestion, setResultQuestion] = useState<QuizResult>(null);
     const questionsContainerRef = useRef<HTMLDivElement>(null);
@@ -78,16 +81,28 @@ const PageQuizDetail = () => {
             chosenOption: userAnswers[index + 1],
         }));
 
+        console.log("isTestsetQuiz && testSetResultId:", isTestsetQuiz, testSetResultId);
+
         try {
-            const response = await submitQuiz.mutateAsync({
-                quizId: quiz._id,
-                answers: formattedAnswers,
-                startTime: startTime,
-            });
-
-            setResultQuestion(response.data);
-
-            setIsSubmitted(true);
+            if (isTestsetQuiz && testSetResultId) {
+                // Use testset mutation
+                await submitQuizTestSet.mutateAsync({
+                    quizId: quiz._id,
+                    answers: formattedAnswers,
+                    startTime: startTime,
+                    testSetResultId: testSetResultId,
+                });
+                setIsSubmitted(true);
+            } else {
+                // Use normal mutation
+                const response = await submitQuiz.mutateAsync({
+                    quizId: quiz._id,
+                    answers: formattedAnswers,
+                    startTime: startTime,
+                });
+                setResultQuestion(response.data);
+                setIsSubmitted(true);
+            }
         } catch (error) {
             console.error("Submit quiz failed:", error);
         }
