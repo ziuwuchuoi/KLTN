@@ -270,7 +270,7 @@ export const getJDColumns = (handleJDClick: (id: string) => void) => [
         header: "Visibility",
         cell: (jd) => (
             <Badge variant="outline" className={`bg-blue-500/20 text-blue-400 border-blue-500/30`}>
-                {jd.visibility?.includes("public") ? "Public" : "Private"}
+                {jd.visibility == "public" ? "Public" : "Private"}
             </Badge>
         ),
         className: "w-28",

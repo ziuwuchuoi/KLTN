@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,14 +10,36 @@ import { useTestSetQueries } from "./hooks/useTestSetQueries";
 import CustomHeroSection from "@/components/molecules/CustomHeroSection";
 import TestSetItemsDisplay from "./TestsetDisplay";
 import type { TestSetSubmission } from "@/services/testset.service";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const PageTestSetOverview = () => {
+    const { user, isAuthenticated, role, token } = useAuthStore();
+
     const { testSetId, jdId } = useParams<{ testSetId: string; jdId: string }>();
     const navigate = useNavigate();
     const [isStarting, setIsStarting] = useState(false);
 
     const { useTestSetByJD, startTestSet } = useTestSetQueries();
     const { data: testSetDetail, isLoading, error } = useTestSetByJD(jdId!);
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            if (!token || !isAuthenticated || !user) {
+                // User is not authenticated, redirect to sign in with current URL as redirect
+                const currentUrl = encodeURIComponent(window.location.pathname);
+                navigate(`/signin/candidate?redirect=${currentUrl}`);
+                return;
+            }
+
+            if (role !== "candidate") {
+                // User is authenticated but not a candidate
+                navigate("/unauthorized");
+                return;
+            }
+        };
+
+        checkAuth();
+    }, [token, role, navigate, isAuthenticated, user]);
 
     const handleStartTestSet = async () => {
         if (!testSetId) return;

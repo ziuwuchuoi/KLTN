@@ -19,6 +19,12 @@ const PageSignin = () => {
     const [step, setStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
 
+    // Get redirect URL from query parameters
+    const searchParams = new URLSearchParams(location.search);
+    console.log("Search Params:", searchParams.toString());
+    console.log("Redirect URL:", searchParams.get("redirect"));
+    const redirectUrl = searchParams.get("redirect");
+
     const validRoles = ["candidate", "admin", "recruiter"];
 
     if (!validRoles.includes(role)) {
@@ -30,7 +36,12 @@ const PageSignin = () => {
         try {
             await loginAdmin(name, password);
             toast.success("Admin login successful");
-            navigate("/dashboard"); 
+
+            if (redirectUrl) {
+                navigate(decodeURIComponent(redirectUrl));
+            } else {
+                navigate("/dashboard");
+            }
         } catch (err) {
             toast.error("Failed to login as admin.");
         } finally {
@@ -66,7 +77,11 @@ const PageSignin = () => {
                 data: { email, otp },
             });
             toast.success("Login successful!");
-            navigate("/"); // or wherever you want
+            if (redirectUrl) {
+                navigate(decodeURIComponent(redirectUrl));
+            } else {
+                navigate("/");
+            }
         } catch (err) {
             toast.error("Invalid or expired OTP. Please try again.");
         } finally {
@@ -77,7 +92,7 @@ const PageSignin = () => {
     const handleGoogleLogin = async () => {
         setIsLoading(true);
         try {
-            await googleLogin(role);
+            await googleLogin(role, redirectUrl);
         } catch {
             toast.error("Google login failed.");
         } finally {

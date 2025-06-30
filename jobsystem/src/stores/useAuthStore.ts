@@ -42,7 +42,7 @@ type AuthState = {
 
     setError: (error: string | null) => void;
     login: (params: LoginParams) => Promise<void>;
-    googleLogin: (role: string) => Promise<void>;
+    googleLogin: (role: string, redirectUrl?: string) => Promise<void>;
     handleGoogleRedirect: (isOAuth: boolean, token: string) => Promise<void>;
     loginAdmin: (email: string, password: string) => Promise<void>;
     signupRecruiter: (params: SignupRecruiterParams) => Promise<void>;
@@ -129,9 +129,11 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
 
-            googleLogin: async (role: string) => {
+            googleLogin: async (role: string, redirectUrl?: string) => {
                 try {
                     set({ isBlurScreenLoading: true });
+
+                    console.log("Google login called with:", { role, redirectUrl });
 
                     const response = await loginService({
                         role,
@@ -140,9 +142,16 @@ export const useAuthStore = create<AuthState>()(
                     });
 
                     const authUrl = response?.data?.data?.authUrl;
-
                     if (authUrl) {
                         localStorage.setItem("oauth_role", role);
+
+                        // Store redirect URL if provided
+                        if (redirectUrl) {
+                            console.log("Storing redirect URL in localStorage:", redirectUrl);
+                            localStorage.setItem("oauth_redirect", redirectUrl);
+                        }
+
+                        console.log("Redirecting to Google OAuth URL:", authUrl);
                         window.location.href = authUrl;
                         return;
                     } else {
@@ -158,16 +167,21 @@ export const useAuthStore = create<AuthState>()(
 
             handleGoogleRedirect: async (isOAuth: boolean, token: string) => {
                 try {
+                    console.log("Handling Google redirect:", { isOAuth, token });
+
                     if (isOAuth && token) {
                         set({ token: token, error: null });
 
                         const storedRole = localStorage.getItem("oauth_role");
+                        console.log("Stored OAuth role:", storedRole);
+
                         if (storedRole) {
                             get().setRole(storedRole);
                             localStorage.removeItem("oauth_role");
                         }
 
                         await get().fetchUserProfile();
+                        console.log("Google redirect handled successfully");
                     } else {
                         toast.error("Authentication failed - no token received");
                     }
