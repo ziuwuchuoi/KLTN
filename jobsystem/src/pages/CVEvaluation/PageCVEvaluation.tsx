@@ -292,7 +292,7 @@ const PageEvaluateCV = () => {
             </div>
 
             {/* Second Screen - Results Section (Starts from second viewport) */}
-            {mockEvaluatedCV && (
+            {evaluationResult && (
                 <div ref={resultsRef} className="min-h-screen">
                     <div className="w-[90%] mx-auto px-6 py-16">
                         <div className="text-center mb-12 pt-16">
@@ -307,7 +307,7 @@ const PageEvaluateCV = () => {
                             </p>
                         </div>
 
-                        <EvaluationResults result={mockEvaluatedCV} />
+                        <EvaluationResults result={evaluationResult} />
                     </div>
                 </div>
             )}
