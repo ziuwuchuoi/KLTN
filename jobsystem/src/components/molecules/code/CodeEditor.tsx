@@ -29,6 +29,12 @@ export function CodeEditor({ value, onChange, language }: CodeEditorProps) {
         }
     };
 
+    //Note: Prevent paste
+    const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+        e.preventDefault();
+        alert("Paste feature is not allowed!");
+    };
+
     const lineCount = value.split("\n").length;
     const lineNumberWidth = Math.max(2, lineCount.toString().length) * 8 + 24;
 
@@ -71,6 +77,7 @@ export function CodeEditor({ value, onChange, language }: CodeEditorProps) {
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     onKeyDown={handleKeyDown}
+                    onPaste={handlePaste}
                     className="w-full h-full bg-transparent text-white font-mono text-sm resize-none outline-none leading-6 py-0.5"
                     style={{
                         paddingLeft: lineNumberWidth + 16,
