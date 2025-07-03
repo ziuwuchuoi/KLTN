@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from "@/components/ui/use-toast";
+import { ShowToast } from "@/components/utils/general.utils";
 import type React from "react";
 import { useRef } from "react";
 
@@ -11,7 +13,7 @@ interface CodeEditorProps {
 
 export function CodeEditor({ value, onChange, language }: CodeEditorProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
-
+    const { toast } = useToast();
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Tab") {
             e.preventDefault();
@@ -32,7 +34,7 @@ export function CodeEditor({ value, onChange, language }: CodeEditorProps) {
     //Note: Prevent paste
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
         e.preventDefault();
-        alert("Paste feature is not allowed!");
+        ShowToast(toast, "error", "Paste feature is not allowed!");
     };
 
     const lineCount = value.split("\n").length;
