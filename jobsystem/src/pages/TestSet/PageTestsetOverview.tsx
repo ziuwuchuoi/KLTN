@@ -23,19 +23,35 @@ const PageTestSetOverview = () => {
     const { data: testSetDetail, isLoading, error } = useTestSetByJD(jdId!);
 
     useEffect(() => {
+        console.log("=== PageTestSetOverview useEffect ===");
+        console.log("Auth state:", { token: !!token, isAuthenticated, role, user: !!user });
+        console.log("Current URL:", window.location.pathname + window.location.search);
+
         const checkAuth = async () => {
             if (!token || !isAuthenticated || !user) {
+                console.log("❌ User not authenticated, redirecting to signin");
+
                 // User is not authenticated, redirect to sign in with current URL as redirect
-                const currentUrl = encodeURIComponent(window.location.pathname);
-                navigate(`/signin/candidate?redirect=${currentUrl}`);
+                const currentUrl = window.location.pathname + window.location.search;
+                const encodedUrl = encodeURIComponent(currentUrl);
+                const signinUrl = `/signin/candidate?redirect=${encodedUrl}`;
+
+                console.log("Current URL:", currentUrl);
+                console.log("Encoded URL:", encodedUrl);
+                console.log("Signin URL:", signinUrl);
+
+                navigate(signinUrl);
                 return;
             }
 
             if (role !== "candidate") {
+                console.log("❌ User role is not candidate:", role);
                 // User is authenticated but not a candidate
                 navigate("/unauthorized");
                 return;
             }
+
+            console.log("✅ User authenticated and authorized");
         };
 
         checkAuth();

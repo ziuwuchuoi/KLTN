@@ -108,7 +108,6 @@ export interface ApplicationDetail {
 export interface AtsCheckParams {
     formatting_tips: string[];
     issues: string[];
-    missing_entities: [];
     missing_keywords: string[];
     recommendations: string[];
 }
@@ -124,23 +123,33 @@ export interface SummaryParams {
     similarity_score: number;
 }
 
+export interface RadarChartData {
+    candidate_scores: number[];
+    jd_requirements: number[];
+    labels: string[];
+}
+
 export interface AIReviewParams {
+    development_roadmap: string[];
+    radar_chart_data: RadarChartData;
     strengths: string[];
     weaknesses: string[];
     suggestions: string[];
 }
 
+export interface ReviewCVResponse {
+    ai_review: AIReviewParams;
+    ats_check: AtsCheckParams;
+    skills_analysis: SkillAnalysisParams;
+    summary: SummaryParams;
+}
+
 export interface EvaluatedCVDetail {
     _id: string;
+    candidateId: string;
     cvId: string;
     jdId: string;
-    candidateId: string;
-    reviewCVResponse: {
-        ai_review: string;
-        ats_check: AtsCheckParams;
-        skills_analysis: SkillAnalysisParams;
-        summary: SummaryParams;
-    };
+    reviewCVResponse: ReviewCVResponse;
     createdAt: Date;
     updatedAt: Date;
 }

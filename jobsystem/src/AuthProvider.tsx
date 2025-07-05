@@ -15,8 +15,6 @@ const AuthProvider = ({ children }) => {
         const isOAuth = urlParams.get("login_oauth2") === "true";
         const token = urlParams.get("token");
 
-        console.log("urlParams", urlParams);
-
         if (isOAuth) {
             const processGoogleCallback = async () => {
                 try {
@@ -27,23 +25,26 @@ const AuthProvider = ({ children }) => {
                     await handleGoogleRedirect(isOAuth, token);
                     toast.success("Login successful!");
 
-                    // Get the redirect URL from params or default to home
-                    const redirect = urlParams.get("redirect");
-                    console.log("Redirect URL:", redirect);
-                    if (redirect) {
-                        // Decode the redirect URL and navigate to it
-                        navigate(decodeURIComponent(redirect));
+                    // Check for stored redirect URL first, then fallback to URL params
+                    const storedRedirectUrl = localStorage.getItem("auth_redirect_url");
+                    const urlRedirect = urlParams.get("redirect");
+
+                    if (storedRedirectUrl && storedRedirectUrl !== "/") {
+                        localStorage.removeItem("auth_redirect_url");
+                        navigate(storedRedirectUrl);
+                    } else if (urlRedirect && urlRedirect !== "/") {
+                        navigate(decodeURIComponent(urlRedirect));
                     } else {
                         navigate("/");
                     }
                 } catch (error) {
-                    console.error("Google login failed:", error);
                     toast.error(error.message || "Login failed");
 
-                    // If there was a redirect URL, preserve it when going back to signin
-                    const redirect = urlParams.get("redirect");
-                    if (redirect) {
-                        navigate(`/signin/candidate?redirect=${redirect}`);
+                    const storedRedirectUrl = localStorage.getItem("auth_redirect_url");
+
+                    if (storedRedirectUrl && storedRedirectUrl !== "/") {
+                        const encodedUrl = encodeURIComponent(storedRedirectUrl);
+                        navigate(`/signin/candidate?redirect=${encodedUrl}`);
                     } else {
                         navigate("/signin/candidate");
                     }
@@ -51,8 +52,10 @@ const AuthProvider = ({ children }) => {
             };
 
             processGoogleCallback();
+        } else {
+            console.log("ℹNot an OAuth callback, continuing normally");
         }
-    }, [location.search, navigate, handleGoogleRedirect]);
+    }, [location, navigate, handleGoogleRedirect]);
 
     return children;
 };

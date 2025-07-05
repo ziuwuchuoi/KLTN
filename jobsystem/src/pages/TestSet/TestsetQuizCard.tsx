@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import type { QuizItem } from "@/services/quiz.service";
-import { Clock, HelpCircle, Tag } from "lucide-react";
+import { Clock, HelpCircle, Tag, CheckCircle } from "lucide-react";
 
 interface QuizItemCardProps {
     quiz: Partial<QuizItem>;
@@ -10,9 +10,17 @@ interface QuizItemCardProps {
     onClick?: () => void;
     className?: string;
     showClickable?: boolean;
+    isCompleted?: boolean;
 }
 
-const TestsetQuizCard = ({ quiz, index, onClick, className = "", showClickable = false }: QuizItemCardProps) => {
+const TestsetQuizCard = ({
+    quiz,
+    index,
+    onClick,
+    className = "",
+    showClickable = false,
+    isCompleted = false,
+}: QuizItemCardProps) => {
     return (
         <div
             className={`group relative overflow-hidden rounded-xl bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-slate-700/50 backdrop-blur-sm transition-all duration-300 ${
@@ -37,6 +45,12 @@ const TestsetQuizCard = ({ quiz, index, onClick, className = "", showClickable =
                             Quiz #{index + 1}
                         </span>
                     </div>
+                    {/* Completion Status */}
+                    {isCompleted && (
+                        <div className="flex items-center justify-center w-6 h-6 bg-green-500/20 rounded-full">
+                            <CheckCircle className="w-4 h-4 text-green-400" />
+                        </div>
+                    )}
                 </div>
 
                 {/* Title */}
@@ -44,8 +58,8 @@ const TestsetQuizCard = ({ quiz, index, onClick, className = "", showClickable =
                     {quiz.title}
                 </h4>
 
-                {/* Stats */}
-                <div className="flex items-center gap-4 text-xs text-slate-400">
+                {/* Stats Row */}
+                <div className="flex items-center justify-between text-xs text-slate-400">
                     <div className="flex items-center gap-1">
                         <HelpCircle className="h-3 w-3" />
                         <span>{quiz.questions?.length || 0} questions</span>
@@ -74,6 +88,14 @@ const TestsetQuizCard = ({ quiz, index, onClick, className = "", showClickable =
                                 +{quiz.categories.length - 2}
                             </Badge>
                         )}
+                    </div>
+                )}
+
+                {/* Completion Status Text */}
+                {isCompleted && (
+                    <div className="flex items-center gap-1 text-xs text-green-400 font-medium">
+                        <CheckCircle className="w-3 h-3" />
+                        <span>Completed</span>
                     </div>
                 )}
             </div>
