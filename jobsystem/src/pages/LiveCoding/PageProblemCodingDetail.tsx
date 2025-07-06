@@ -15,6 +15,8 @@ import type { CodeLanguage, CodeSubmitResult } from "@/services/code.service";
 import { difficultyColors } from "@/components/molecules/dashboard/columns";
 import { useTestSetQueries } from "../TestSet/hooks/useTestSetQueries";
 import type { TestSetSubmission } from "@/services/testset.service";
+import { useToast } from "@/components/ui/use-toast";
+import { ShowToast } from "@/components/utils/general.utils";
 import { TestResultsDrawer } from "@/components/molecules/code/TestResultDrawer";
 
 interface StoredSubmission extends TestSetSubmission {
@@ -34,6 +36,7 @@ const PageProblemCodingDetail = () => {
     const { useCodeProblemDetail, languages, submitCodeMutation, testCodeMutation } = useCodeQueries();
     const { data: problem, isLoading } = useCodeProblemDetail(problemId);
     const { submitCodeTestSet } = useTestSetQueries();
+    const { toast } = useToast();
 
     const [selectedLanguage, setSelectedLanguage] = useState<CodeLanguage>(languages[0]);
     const [code, setCode] = useState("");
@@ -45,6 +48,18 @@ const PageProblemCodingDetail = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isTesting, setIsTesting] = useState(false);
+
+    useEffect(() => {
+        const handleCopy = (event: ClipboardEvent) => {
+            event.preventDefault();
+            ShowToast(toast, "error", "Copy feature is not allowed!");
+        };
+
+        document.addEventListener('copy', handleCopy);
+        return () => {
+            document.removeEventListener('copy', handleCopy);
+        };
+    }, []);
 
     useEffect(() => {
         if (languages.length > 0 && !selectedLanguage) {

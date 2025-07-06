@@ -4,10 +4,11 @@ import QuizNavigation from "./QuizNavigation";
 import QuestionCard from "./QuestionCard";
 import { Button } from "@/components/ui/button";
 import { useQuizQueries } from "./hooks/useQuizQueries";
-import { cn } from "@/components/utils/general.utils";
+import { cn, ShowToast } from "@/components/utils/general.utils";
 import { ArrowLeft } from "lucide-react";
 import { useTestSetQueries } from "../TestSet/hooks/useTestSetQueries";
 import type { TestSetSubmission } from "@/services/testset.service";
+import { useToast } from "@/components/ui/use-toast";
 
 export type QuizResult = {
     actualDuration: number;
@@ -38,6 +39,7 @@ const PageQuizDetail = () => {
     const returnUrl = searchParams.get("returnUrl");
     const { useQuizDetail, submitQuiz } = useQuizQueries();
     const { data: quiz, isLoading } = useQuizDetail(quizId);
+    const { toast } = useToast();
     const isTestsetQuiz = location.pathname.startsWith("/testset/quiz/");
 
     const [startTime] = useState(new Date());
@@ -51,6 +53,18 @@ const PageQuizDetail = () => {
 
     const [resultQuestion, setResultQuestion] = useState<QuizResult>(null);
     const questionsContainerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleCopy = (event: ClipboardEvent) => {
+            event.preventDefault();
+            ShowToast(toast, "error", "Copy feature is not allowed!");
+        };
+
+        document.addEventListener('copy', handleCopy);
+        return () => {
+            document.removeEventListener('copy', handleCopy);
+        };
+    }, []);
 
     useEffect(() => {
         const interval = setInterval(() => {
