@@ -18,6 +18,7 @@ import {
     AlertCircle,
     ChevronDown,
     ChevronUp,
+    Loader2,
 } from "lucide-react";
 import { useCodeQueries } from "./hooks/useCodeQueries";
 import { CodeEditor } from "@/components/molecules/code/CodeEditor";
@@ -27,6 +28,7 @@ import { useTestSetQueries } from "../TestSet/hooks/useTestSetQueries";
 import type { TestSetSubmission } from "@/services/testset.service";
 import { useToast } from "@/components/ui/use-toast";
 import { ShowToast } from "@/components/utils/general.utils";
+import { TestResultsDrawer } from "@/components/molecules/code/TestResultDrawer";
 
 interface StoredSubmission extends TestSetSubmission {
     startTime: number;
@@ -53,6 +55,7 @@ const PageProblemCodingDetail = () => {
     const [submissionResult, setSubmissionResult] = useState<CodeSubmitResult | null>(null);
     const [showResults, setShowResults] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         const handleCopy = (event: ClipboardEvent) => {
@@ -109,15 +112,27 @@ const PageProblemCodingDetail = () => {
         if (testSetResultId) {
             const stored = localStorage.getItem(`testset_submission_${testSetResultId}`);
             if (stored) {
-                const submission: StoredSubmission = JSON.parse(stored);
+                try {
+                    const submission: StoredSubmission = JSON.parse(stored);
 
-                // Add problem ID to completed problems if not already present
-                if (!submission.completedProblemIds.includes(problemId)) {
-                    const updatedSubmission = {
-                        ...submission,
-                        completedProblemIds: [...submission.completedProblemIds, problemId],
-                    };
-                    localStorage.setItem(`testset_submission_${testSetResultId}`, JSON.stringify(updatedSubmission));
+                    if (!submission.completedProblemIds.includes(problemId)) {
+                        const updatedSubmission = {
+                            ...submission,
+                            completedProblemIds: [...submission.completedProblemIds, problemId],
+                        };
+                        localStorage.setItem(
+                            `testset_submission_${testSetResultId}`,
+                            JSON.stringify(updatedSubmission)
+                        );
+
+                        window.dispatchEvent(
+                            new CustomEvent("localStorageUpdate", {
+                                detail: { submissionId: testSetResultId },
+                            })
+                        );
+                    }
+                } catch (error) {
+                    console.error("Error updating localStorage:", error);
                 }
             }
         }
@@ -126,9 +141,10 @@ const PageProblemCodingDetail = () => {
     const handleSubmit = async () => {
         if (!problem || !selectedLanguage) return;
 
+        setIsSubmitting(true);
+
         try {
             if (isTestsetCode) {
-                // Use testset mutation
                 await submitCodeTestSet.mutateAsync({
                     sourceCode: code,
                     languageId: selectedLanguage.id,
@@ -136,29 +152,28 @@ const PageProblemCodingDetail = () => {
                     testSetResultId: testSetResultId,
                 });
 
-                // Update localStorage
                 updateLocalStorage(problem._id);
-
                 setIsSubmitted(true);
 
-                // Navigate back to taking page after a short delay
                 setTimeout(() => {
                     if (returnUrl) {
                         navigate(returnUrl);
                     }
                 }, 2000);
             } else {
-                // Use normal mutation
                 const result = await submitCodeMutation.mutateAsync({
                     sourceCode: code,
                     languageId: selectedLanguage.id,
                     problemId: problem.problemId,
                 });
+
                 setSubmissionResult(result);
                 setShowResults(true);
             }
         } catch (error) {
             console.error("Submission failed:", error);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -166,13 +181,23 @@ const PageProblemCodingDetail = () => {
         console.log("Running code with test cases...");
     };
 
+    const handleBackNavigation = () => {
+        if (isTestsetCode && returnUrl) {
+            navigate(returnUrl);
+        } else if (isTestsetCode) {
+            navigate(-1);
+        } else {
+            navigate("/live-coding");
+        }
+    };
+
     if (isLoading) {
         return (
-            <div className="flex flex-col w-full pt-20">
-                <div className="min-h-screen flex items-center justify-center">
-                    <div className="animate-pulse text-center">
-                        <div className="h-8 bg-slate-700 rounded w-64 mb-4 mx-auto"></div>
-                        <div className="h-4 bg-slate-700 rounded w-48 mx-auto"></div>
+            <div className="flex flex-col w-full h-screen bg-slate-900">
+                <div className="flex-1 flex items-center justify-center">
+                    <div className="text-center">
+                        <Loader2 className="w-8 h-8 animate-spin text-purple-400 mx-auto mb-4" />
+                        <div className="text-slate-300">Loading problem...</div>
                     </div>
                 </div>
             </div>
@@ -181,13 +206,13 @@ const PageProblemCodingDetail = () => {
 
     if (!problem) {
         return (
-            <div className="flex flex-col w-full pt-20">
-                <div className="min-h-screen flex items-center justify-center">
+            <div className="flex flex-col w-full h-screen bg-slate-900">
+                <div className="flex-1 flex items-center justify-center">
                     <div className="text-center">
-                        <h1 className="text-2xl font-bold mb-4">Problem not found</h1>
-                        <Button onClick={() => navigate("/live-coding")} variant="outline">
+                        <h1 className="text-2xl font-bold mb-4 text-white">Problem not found</h1>
+                        <Button onClick={handleBackNavigation} variant="outline">
                             <ArrowLeft className="w-4 h-4 mr-2" />
-                            Back to Problems
+                            {isTestsetCode ? "Back to Test Set" : "Back to Problems"}
                         </Button>
                     </div>
                 </div>
@@ -198,7 +223,29 @@ const PageProblemCodingDetail = () => {
     return (
         <div className="flex flex-col w-full">
             {/* Main Content - Full Height */}
-            <div className="pt-20 h-screen flex">
+            <div className="pt-10 h-screen flex flex-col">
+                <div className="flex-shrink-0">
+                    <div className="px-6 pt-10 pb-3 mx-auto flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={handleBackNavigation}
+                                className="text-slate-400 hover:text-slate-900 text-sm font-semibold"
+                            >
+                                <ArrowLeft className="w-4 h-4 mr-2" />
+                                Back to {isTestsetCode ? "Test Set" : "Problems"}
+                            </Button>
+                        </div>
+                        {isSubmitted && (
+                            <div className="text-green-400 text-sm font-medium flex items-center gap-2">
+                                <CheckCircle className="w-4 h-4" />
+                                Solution Submitted Successfully
+                            </div>
+                        )}
+                    </div>
+                </div>
+
                 <div className="flex-1 grid lg:grid-cols-2 gap-6 px-6 pb-6 h-full">
                     <div className="flex flex-col h-full">
                         <Card className="flex-1 bg-slate-800/50 border-slate-700 flex flex-col">
@@ -340,149 +387,18 @@ const PageProblemCodingDetail = () => {
                                         </div>
                                     </div>
                                 )}
-
-                                {/* Submission Results */}
-                                {submissionResult && showResults && (
-                                    <div className="border-t border-slate-700">
-                                        <div className="flex items-center justify-between p-4 bg-slate-800/50 border-b border-slate-700">
-                                            <div className="flex items-center gap-2">
-                                                {submissionResult.success ? (
-                                                    <CheckCircle className="w-5 h-5 text-green-400" />
-                                                ) : (
-                                                    <XCircle className="w-5 h-5 text-red-400" />
-                                                )}
-                                                <span className="font-semibold">
-                                                    {submissionResult.success ? "Accepted" : "Failed"}
-                                                </span>
-                                                <span className="text-slate-400">
-                                                    ({submissionResult.passedTests}/{submissionResult.totalTests} test
-                                                    cases passed)
-                                                </span>
-                                            </div>
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => setShowResults(!showResults)}
-                                            >
-                                                {showResults ? (
-                                                    <ChevronDown className="w-4 h-4" />
-                                                ) : (
-                                                    <ChevronUp className="w-4 h-4" />
-                                                )}
-                                            </Button>
-                                        </div>
-
-                                        <div className="p-4 space-y-4 overflow-y-auto">
-                                            {/* Overall Stats */}
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div className="bg-slate-900/50 p-3 rounded-lg">
-                                                    <div className="flex items-center gap-2 text-sm text-slate-400 mb-1">
-                                                        <CheckCircle className="w-4 h-4" />
-                                                        Test Cases
-                                                    </div>
-                                                    <div className="text-lg font-semibold">
-                                                        {submissionResult.passedTests}/{submissionResult.totalTests}
-                                                    </div>
-                                                </div>
-                                                <div className="bg-slate-900/50 p-3 rounded-lg">
-                                                    <div className="flex items-center gap-2 text-sm text-slate-400 mb-1">
-                                                        <AlertCircle className="w-4 h-4" />
-                                                        Status
-                                                    </div>
-                                                    <div
-                                                        className={`text-lg font-semibold ${submissionResult.success ? "text-green-400" : "text-red-400"}`}
-                                                    >
-                                                        {submissionResult.success ? "Accepted" : "Failed"}
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Test Results */}
-                                            <div className="space-y-3">
-                                                <h4 className="font-semibold text-white">Test Results</h4>
-                                                {submissionResult.testResults.map((result, index) => (
-                                                    <Card
-                                                        key={index}
-                                                        className={`bg-slate-900/50 border-slate-700 ${result.passed ? "border-green-500/30" : "border-red-500/30"}`}
-                                                    >
-                                                        <CardHeader className="pb-2">
-                                                            <div className="flex items-center justify-between">
-                                                                <div className="flex items-center gap-2">
-                                                                    {result.passed ? (
-                                                                        <CheckCircle className="w-4 h-4 text-green-400" />
-                                                                    ) : (
-                                                                        <XCircle className="w-4 h-4 text-red-400" />
-                                                                    )}
-                                                                    <span className="font-medium">
-                                                                        Test Case {index + 1}
-                                                                    </span>
-                                                                    <Badge
-                                                                        variant={
-                                                                            result.passed ? "default" : "destructive"
-                                                                        }
-                                                                        className="text-xs"
-                                                                    >
-                                                                        {result.status.description}
-                                                                    </Badge>
-                                                                </div>
-                                                                <div className="flex items-center gap-4 text-xs text-slate-400">
-                                                                    <div className="flex items-center gap-1">
-                                                                        <Clock className="w-3 h-3" />
-                                                                        {result.time}ms
-                                                                    </div>
-                                                                    <div className="flex items-center gap-1">
-                                                                        <MemoryStick className="w-3 h-3" />
-                                                                        {result.memory}KB
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </CardHeader>
-                                                        {/* <CardContent className="pt-0">
-                                                            <div className="grid grid-cols-1 gap-3 text-sm">
-                                                                <div>
-                                                                    <div className="text-slate-400 mb-1">Input:</div>
-                                                                    <div className="bg-slate-800 p-2 rounded font-mono text-xs">
-                                                                        {result.stdin || "No input"}
-                                                                    </div>
-                                                                </div>
-                                                                <div>
-                                                                    <div className="text-slate-400 mb-1">
-                                                                        Expected Output:
-                                                                    </div>
-                                                                    <div className="bg-slate-800 p-2 rounded font-mono text-xs">
-                                                                        {result.expected_output}
-                                                                    </div>
-                                                                </div>
-                                                                <div>
-                                                                    <div className="text-slate-400 mb-1">
-                                                                        Your Output:
-                                                                    </div>
-                                                                    <div
-                                                                        className={`bg-slate-800 p-2 rounded font-mono text-xs ${!result.passed ? "border border-red-500/30" : ""}`}
-                                                                    >
-                                                                        {result.stdout || "No output"}
-                                                                    </div>
-                                                                </div>
-                                                                {result.stderr && (
-                                                                    <div>
-                                                                        <div className="text-red-400 mb-1">Error:</div>
-                                                                        <div className="bg-red-900/20 border border-red-500/30 p-2 rounded font-mono text-xs text-red-300">
-                                                                            {result.stderr}
-                                                                        </div>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        </CardContent> */}
-                                                    </Card>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
                             </CardContent>
                         </Card>
                     </div>
                 </div>
+                {/* Test Results Drawer */}
+                {submissionResult && (
+                    <TestResultsDrawer
+                        result={submissionResult}
+                        isVisible={showResults}
+                        onToggle={() => setShowResults(!showResults)}
+                    />
+                )}
             </div>
         </div>
     );

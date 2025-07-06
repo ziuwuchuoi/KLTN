@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, LoadingButton } from "@/components/ui/button";
@@ -6,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { Info } from "lucide-react";
 
 const PageSignin = () => {
     const { role } = useParams();
@@ -19,11 +22,35 @@ const PageSignin = () => {
     const [step, setStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Get redirect URL from query parameters
-    const searchParams = new URLSearchParams(location.search);
-    console.log("Search Params:", searchParams.toString());
-    console.log("Redirect URL:", searchParams.get("redirect"));
+    const searchParams = new URLSearchParams(window.location.search);
     const redirectUrl = searchParams.get("redirect");
+
+    const isOAuthCallback = window.location.search.includes("login_oauth2=true");
+
+    useEffect(() => {
+        // Only save redirect URL if it's NOT an OAuth callback
+        if (redirectUrl && !isOAuthCallback) {
+            const decodedUrl = decodeURIComponent(redirectUrl);
+
+            // Check if there's already a stored redirect URL (from before OAuth)
+            const existingRedirectUrl = localStorage.getItem("auth_redirect_url");
+
+            // Only overwrite if there's no existing URL or if the new URL is more specific
+            if (!existingRedirectUrl || existingRedirectUrl === "/" || decodedUrl !== "/") {
+                localStorage.setItem("auth_redirect_url", decodedUrl);
+            } else {
+                console.log("Preserved existing redirect URL:", existingRedirectUrl);
+            }
+
+            // Verify what's actually saved
+            const savedUrl = localStorage.getItem("auth_redirect_url");
+            console.log("Verification - URL in localStorage:", savedUrl);
+        } else if (isOAuthCallback) {
+            console.log("OAuth callback detected - NOT overwriting localStorage");
+        } else {
+            console.log("No redirect URL found in search params");
+        }
+    }, [redirectUrl, isOAuthCallback]);
 
     const validRoles = ["candidate", "admin", "recruiter"];
 
@@ -31,17 +58,27 @@ const PageSignin = () => {
         return <div className="text-center text-red-500 pt-10">Invalid role!</div>;
     }
 
+    const handleSuccessfulLogin = () => {
+        const storedRedirectUrl = localStorage.getItem("auth_redirect_url");
+
+        if (storedRedirectUrl && storedRedirectUrl !== "/") {
+            localStorage.removeItem("auth_redirect_url");
+            navigate(storedRedirectUrl);
+        } else {
+            if (role === "admin") {
+                navigate("/dashboard");
+            } else {
+                navigate("/");
+            }
+        }
+    };
+
     const handleAdminLogin = async () => {
         setIsLoading(true);
         try {
             await loginAdmin(name, password);
             toast.success("Admin login successful");
-
-            if (redirectUrl) {
-                navigate(decodeURIComponent(redirectUrl));
-            } else {
-                navigate("/dashboard");
-            }
+            handleSuccessfulLogin();
         } catch (err) {
             toast.error("Failed to login as admin.");
         } finally {
@@ -50,6 +87,8 @@ const PageSignin = () => {
     };
 
     const handleSendOtp = async () => {
+        console.log("=== Send OTP ===");
+        console.log("Email:", email);
         setIsLoading(true);
         try {
             await login({
@@ -59,7 +98,7 @@ const PageSignin = () => {
                 data: { email },
             });
             toast.success("OTP sent to your email.");
-            setStep(2); // move to OTP verification UI
+            setStep(2);
         } catch (err) {
             toast.error("Failed to send OTP.");
         } finally {
@@ -77,11 +116,7 @@ const PageSignin = () => {
                 data: { email, otp },
             });
             toast.success("Login successful!");
-            if (redirectUrl) {
-                navigate(decodeURIComponent(redirectUrl));
-            } else {
-                navigate("/");
-            }
+            handleSuccessfulLogin();
         } catch (err) {
             toast.error("Invalid or expired OTP. Please try again.");
         } finally {
@@ -92,8 +127,8 @@ const PageSignin = () => {
     const handleGoogleLogin = async () => {
         setIsLoading(true);
         try {
-            await googleLogin(role, redirectUrl);
-        } catch {
+            await googleLogin(role);
+        } catch (err) {
             toast.error("Google login failed.");
         } finally {
             setIsLoading(false);
@@ -104,68 +139,76 @@ const PageSignin = () => {
         <div className="flex min-h-screen items-center justify-center p-6 bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900">
             <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
                 <div className="text-xl font-bold text-center capitalize">Sign in as {role}</div>
+
+                {redirectUrl && role === "candidate" && !isOAuthCallback && (
+                    <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-2">
+                        <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                        <div className="text-sm text-blue-800">
+                            <p className="font-medium">Assessment Access Required</p>
+                            <p className="text-blue-600">Please sign in to continue with your assessment.</p>
+                        </div>
+                    </div>
+                )}
+
                 {role === "admin" ? (
-                    <>
-                        <div className="mt-6 space-y-4">
-                            <div>
-                                <Label>Name</Label>
-                                <Input
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    placeholder="Enter your name"
-                                    required
-                                    disabled={step === 2}
-                                />
-                            </div>
-
-                            <div>
-                                <Label>Password</Label>
-                                <Input
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="Enter your password"
-                                />
-                            </div>
-
-                            <LoadingButton className="w-full mt-2" isLoading={isLoading} onClick={handleAdminLogin}>
-                                Sign In
-                            </LoadingButton>
+                    <div className="mt-6 space-y-4">
+                        <div>
+                            <Label>Name</Label>
+                            <Input
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="Enter your name"
+                                required
+                                disabled={step === 2}
+                            />
                         </div>
-                    </>
+
+                        <div>
+                            <Label>Password</Label>
+                            <Input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Enter your password"
+                            />
+                        </div>
+
+                        <LoadingButton className="w-full mt-2" isLoading={isLoading} onClick={handleAdminLogin}>
+                            Sign In
+                        </LoadingButton>
+                    </div>
                 ) : (
-                    <>
-                        <div className="mt-6 space-y-4">
+                    <div className="mt-6 space-y-4">
+                        <div>
+                            <Label>Email</Label>
+                            <Input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Enter your email"
+                                required
+                                disabled={step === 2}
+                            />
+                        </div>
+
+                        {step === 2 && (
                             <div>
-                                <Label>Email</Label>
+                                <Label>OTP</Label>
                                 <Input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="Enter your email"
-                                    required
-                                    disabled={step === 2}
+                                    value={otp}
+                                    onChange={(e) => setOtp(e.target.value)}
+                                    placeholder="Enter the OTP"
                                 />
                             </div>
+                        )}
 
-                            {step === 2 && (
-                                <div>
-                                    <Label>OTP</Label>
-                                    <Input
-                                        value={otp}
-                                        onChange={(e) => setOtp(e.target.value)}
-                                        placeholder="Enter the OTP"
-                                    />
-                                </div>
-                            )}
-
-                            <LoadingButton
-                                className="w-full mt-2"
-                                isLoading={isLoading}
-                                onClick={step === 1 ? handleSendOtp : handleVerifyOtp}
-                            >
-                                {step === 1 ? "Send OTP" : "Verify & Sign in"}
-                            </LoadingButton>
-                        </div>
+                        <LoadingButton
+                            className="w-full mt-2"
+                            isLoading={isLoading}
+                            onClick={step === 1 ? handleSendOtp : handleVerifyOtp}
+                        >
+                            {step === 1 ? "Send OTP" : "Verify & Sign in"}
+                        </LoadingButton>
 
                         <div className="relative my-6">
                             <div className="absolute inset-0 flex items-center">
@@ -178,21 +221,22 @@ const PageSignin = () => {
 
                         <Button
                             variant="outline"
-                            className="w-full flex items-center justify-center gap-2"
+                            className="w-full flex items-center justify-center gap-2 bg-transparent"
                             onClick={handleGoogleLogin}
+                            disabled={isLoading}
                         >
                             <FcGoogle className="text-lg" /> Sign in with Google
                         </Button>
 
                         {role === "recruiter" && (
                             <div className="text-center text-sm text-muted-foreground pt-6">
-                                Don’t have an account?
+                                Don't have an account?
                                 <Button variant="link" className="px-1" onClick={() => navigate("/signup/recruiter")}>
                                     Create one
                                 </Button>
                             </div>
                         )}
-                    </>
+                    </div>
                 )}
             </div>
         </div>

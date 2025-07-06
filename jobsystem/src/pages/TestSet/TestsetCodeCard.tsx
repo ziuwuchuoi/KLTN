@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import type { CodeProblem } from "@/services/code.service";
-import { Code, Hash, Tag } from "lucide-react";
+import { Code, Hash, Tag, CheckCircle } from "lucide-react";
 
 interface CodeItemCardProps {
     problem: Partial<CodeProblem>;
@@ -10,9 +10,17 @@ interface CodeItemCardProps {
     onClick?: () => void;
     className?: string;
     showClickable?: boolean;
+    isCompleted?: boolean;
 }
 
-const TestsetCodeCard = ({ problem, index, onClick, className = "", showClickable = false }: CodeItemCardProps) => {
+const TestsetCodeCard = ({
+    problem,
+    index,
+    onClick,
+    className = "",
+    showClickable = false,
+    isCompleted = false,
+}: CodeItemCardProps) => {
     const getDifficultyColor = (difficulty?: string) => {
         switch (difficulty) {
             case "Easy":
@@ -60,14 +68,15 @@ const TestsetCodeCard = ({ problem, index, onClick, className = "", showClickabl
                             <Code className="h-4 w-4 text-purple-400" />
                         </div>
                         <span className="text-xs font-medium text-purple-400 bg-purple-500/10 px-2 py-1 rounded-full">
-                            Problem #{index + 1}
+                            Code #{index + 1}
                         </span>
                     </div>
-                    <Badge
-                        className={`bg-gradient-to-r ${getDifficultyColor(problem.difficulty)} border text-xs font-semibold px-2 py-1`}
-                    >
-                        {problem.difficulty}
-                    </Badge>
+                    {/* Completion Status */}
+                    {isCompleted && (
+                        <div className="flex items-center justify-center w-6 h-6 bg-green-500/20 rounded-full">
+                            <CheckCircle className="w-4 h-4 text-green-400" />
+                        </div>
+                    )}
                 </div>
 
                 {/* Title */}
@@ -75,10 +84,17 @@ const TestsetCodeCard = ({ problem, index, onClick, className = "", showClickabl
                     {problem.title}
                 </h4>
 
-                {/* Problem ID */}
-                <div className="flex items-center gap-1 text-xs text-slate-400">
-                    <Hash className="h-3 w-3" />
-                    <span>Problem {problem.problemId}</span>
+                {/* Stats Row */}
+                <div className="flex items-center justify-between text-xs text-slate-400">
+                    <div className="flex items-center gap-1">
+                        <Hash className="h-3 w-3" />
+                        <span>Problem #{problem.problemId}</span>
+                    </div>
+                    <Badge
+                        className={`bg-gradient-to-r ${getDifficultyColor(problem.difficulty)} border text-xs font-semibold px-2 py-1`}
+                    >
+                        {problem.difficulty}
+                    </Badge>
                 </div>
 
                 {/* Topic Tags */}
@@ -99,6 +115,14 @@ const TestsetCodeCard = ({ problem, index, onClick, className = "", showClickabl
                                 +{problem.topicTags.length - 2}
                             </Badge>
                         )}
+                    </div>
+                )}
+
+                {/* Completion Status Text */}
+                {isCompleted && (
+                    <div className="flex items-center gap-1 text-xs text-green-400 font-medium">
+                        <CheckCircle className="w-3 h-3" />
+                        <span>Completed</span>
                     </div>
                 )}
             </div>

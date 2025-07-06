@@ -33,35 +33,130 @@ const defaultJD: Partial<JDDetail> = {
 
 const mockEvaluatedCV: EvaluatedCVDetail = {
     _id: "cv_eval_123456",
-    cvId: "cv_78910",
-    jdId: "jd_45678",
-    candidateId: "user_12345",
+    candidateId: "680e51fe748f15b33661d27a",
+    cvId: "683f3eec31d65769c952b27b",
+    jdId: "6862b9dd5a4edebd41979ef5",
     reviewCVResponse: {
-        ai_review:
-            "The CV demonstrates a strong alignment with the job requirements, particularly in technical skills and experience. Some minor improvements could enhance clarity and ATS compatibility.",
+        ai_review: {
+            development_roadmap: [
+                "Learn and implement RESTful API design in the next 6 months",
+                "Participate in online communities and forums to gain more experience and insights from other Backend Developers",
+                "Take online courses or certifications to improve skills in specific areas such as computer vision and machine learning",
+            ],
+            radar_chart_data: {
+                candidate_scores: [6, 8, 8, 8, 9],
+                jd_requirements: [7, 8, 9, 6, 8],
+                labels: ["Expirience", "Education", "Hard skills", "Soft skills", "Projects"],
+            },
+            strengths: [
+                "Strong background in building scalable and high-performance server-side applications",
+                "Experience with multiple technologies such as Node.js, Express, TypeScript, and MongoDB",
+                "Good understanding of computer vision and machine learning concepts through projects like Docinsight Application",
+            ],
+            suggestions: [
+                "Focus on building RESTful API projects to improve skills in this area",
+                "Consider taking online courses or certifications to gain more experience as a Backend Developer",
+                "Practice English language skills to improve overall communication and collaboration",
+            ],
+            weaknesses: [
+                "Limited experience with RESTful and GraphQL API design, which is required in the JD",
+                "No direct experience as a Backend Developer, the position being applied for",
+                "TOEIC certifications are not directly related to programming or backend development",
+            ],
+        },
         ats_check: {
             formatting_tips: [
-                "Use consistent font styles and sizes.",
-                "Avoid using tables and images.",
-                "Use standard section headings (e.g., 'Experience', 'Education').",
+                "Use readable fonts like Arial or Times New Roman, size 10-12.",
+                "Avoid tables or images. Use bullet points for experience and skills.",
+                "Structure CV with sections: 'Career Objective', 'Work Experience', 'Skills', 'Education'.",
             ],
-            issues: ["Some sections use non-standard headings.", "Uncommon file format might not be ATS-friendly."],
-            missing_entities: [],
-            missing_keywords: ["REST APIs", "Agile", "Unit Testing"],
-            recommendations: [
-                "Replace custom section titles with standardized ones.",
-                "Ensure your resume is saved in PDF format compatible with ATS.",
-                "Add keywords that match the job description.",
+            issues: ["No issues found"],
+            missing_keywords: [
+                "api design",
+                "design",
+                "commerce",
+                "developer experience",
+                "field project",
+                "year backend",
+                "developer associate",
+                "experience backend",
+                "strong",
+                "education bachelor",
+                "build scalable",
+                "certification aws",
+                "certify",
+                "english good",
+                "graphql",
+                "science information",
+                "backend development",
+                "application certification",
+                "good reading",
+                "design education",
+                "basic communication",
+                "relate field",
+                "good",
+                "technology relate",
+                "communication skill",
+                "build backend",
+                "basic",
+                "science",
+                "restful graphql",
+                "communication",
+                "high performance",
+                "platform summary",
+                "performance server",
+                "backend developer",
+                "bachelor",
+                "high",
+                "language english",
+                "english",
+                "summary experience",
+                "background build",
+                "reading basic",
+                "degree",
+                "development experience",
+                "degree computer",
+                "year",
+                "language",
+                "background",
+                "certify developer",
+                "associate",
+                "scalable high",
+                "graphql api",
+                "bachelor degree",
+                "server application",
+                "position backend",
+                "field",
+                "developer strong",
+                "development",
+                "scalable",
+                "experience year",
+                "backend",
+                "commerce platform",
+                "platform",
+                "aws certify",
+                "summary",
+                "experience restful",
+                "relate",
+                "backend commerce",
+                "experience experience",
+                "project build",
+                "aws",
+                "restful",
+                "associate language",
+                "strong background",
+                "computer science",
             ],
+            recommendations: ["No recommendations found"],
         },
         skills_analysis: {
-            match_percent: 82,
-            matched_skills: ["JavaScript", "React", "Node.js", "MongoDB"],
-            missing_skills: ["TypeScript", "GraphQL", "Jest"],
+            match_percent: 50,
+            matched_skills: ["MongoDB", "Node.js", "Docker"],
+            missing_skills: ["Nestjs", "Redis", "Aws"],
         },
         summary: {
-            overall_score: 85,
-            similarity_score: 78,
+            overall_score: 40,
+            similarity_score: 67.2,
         },
     },
     createdAt: new Date("2025-06-23T10:00:00Z"),
@@ -292,7 +387,7 @@ const PageEvaluateCV = () => {
             </div>
 
             {/* Second Screen - Results Section (Starts from second viewport) */}
-            {evaluationResult && (
+            {mockEvaluatedCV && (
                 <div ref={resultsRef} className="min-h-screen">
                     <div className="w-[90%] mx-auto px-6 py-16">
                         <div className="text-center mb-12 pt-16">
@@ -307,7 +402,7 @@ const PageEvaluateCV = () => {
                             </p>
                         </div>
 
-                        <EvaluationResults result={evaluationResult} />
+                        <EvaluationResults result={mockEvaluatedCV} />
                     </div>
                 </div>
             )}
