@@ -53,7 +53,7 @@ const AuthProvider = ({ children }) => {
 
             processGoogleCallback();
         } else {
-            console.log("ℹNot an OAuth callback, continuing normally");
+            console.log("Not an OAuth callback, continuing normally");
         }
     }, [location, navigate, handleGoogleRedirect]);
 

@@ -106,26 +106,26 @@ export function EvaluationResults({ result }: EvaluationResultsProps) {
                 <CardHeader>
                     <CardTitle className="text-xl flex items-center gap-3 text-white">
                         <TrendingUp className="w-6 h-6 text-blue-400" />
-                        Skills Radar Analysis
+                        Radar Analysis
                     </CardTitle>
                     {/* Explanation Section */}
                 </CardHeader>
                 <CardContent className="p-8">
                     <div className="flex flex-col lg:flex-row items-center gap-8">
-                        <div className="flex-1">
+                        <div className="flex-1 flex-col flex justify-betweenh-full">
                             <RadarChart data={ai_review.radar_chart_data} size={400} />
-                            <div className="bg-slate-800/30 rounded-lg p-4 border border-slate-600/30">
+                            <div className="bg-slate-800/30 rounded-lg p-4 border border-slate-600/30 h-fit">
                                 <div className="flex items-start gap-3">
                                     <div className="space-y-3 text-sm">
                                         <div>
-                                            <span className="font-semibold text-emerald-400">Candidate Scores:</span>
+                                            <span className="font-semibold text-cyan-400">Candidate Scores:</span>
                                             <span className="text-slate-300 ml-2">
                                                 Reflect the candidate's demonstrated proficiency in each dimension—such
                                                 as Experience, Education, and Hard Skills—as extracted from their CV.
                                             </span>
                                         </div>
                                         <div>
-                                            <span className="font-semibold text-red-400">JD Requirements:</span>
+                                            <span className="font-semibold text-amber-400">JD Requirements:</span>
                                             <span className="text-slate-300 ml-2">
                                                 Indicate the expected competency levels for each corresponding area, as
                                                 defined by the job description.
@@ -143,14 +143,14 @@ export function EvaluationResults({ result }: EvaluationResultsProps) {
                                             <span className="text-sm font-medium text-slate-300">{label}</span>
                                             <div className="flex gap-4">
                                                 <div className="flex items-center gap-2">
-                                                    <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
-                                                    <span className="text-xs text-emerald-400 font-semibold">
+                                                    <div className="w-3 h-3 bg-cyan-500 rounded-full"></div>
+                                                    <span className="text-xs text-cyan-400 font-semibold">
                                                         {ai_review.radar_chart_data.candidate_scores[index]}/10
                                                     </span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                                                    <span className="text-xs text-red-400 font-semibold">
+                                                    <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
+                                                    <span className="text-xs text-amber-400 font-semibold">
                                                         {ai_review.radar_chart_data.jd_requirements[index]}/10
                                                     </span>
                                                 </div>
@@ -164,7 +164,7 @@ export function EvaluationResults({ result }: EvaluationResultsProps) {
                                                         (ai_review.radar_chart_data.candidate_scores[index] / 10) * 100
                                                     }
                                                     className="h-2 bg-slate-700 flex-1"
-                                                    indicatorClassname="bg-emerald-500"
+                                                    indicatorClassname="bg-cyan-500"
                                                 />
                                             </div>
                                             <div className="flex items-center gap-2">
@@ -174,7 +174,7 @@ export function EvaluationResults({ result }: EvaluationResultsProps) {
                                                         (ai_review.radar_chart_data.jd_requirements[index] / 10) * 100
                                                     }
                                                     className="h-2 bg-slate-700 flex-1"
-                                                    indicatorClassname="bg-red-500"
+                                                    indicatorClassname="bg-amber-500"
                                                 />
                                             </div>
                                         </div>

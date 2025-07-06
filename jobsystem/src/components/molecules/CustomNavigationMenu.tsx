@@ -14,9 +14,9 @@ import { useAuthStore } from "@/stores/useAuthStore";
 
 const leftMenu = [
     { title: "Jobs", href: "/jobs" },
-    { title: "CV Evaluation", href: "/cv-evaluation" },
+    { title: "CV Evaluation", href: "/evaluate-cv" },
     { title: "Quiz", href: "/quiz" },
-    { title: "Code", href: "/live-coding" },
+    { title: "Code", href: "/code" },
 ];
 
 export function CustomNavigationMenu() {

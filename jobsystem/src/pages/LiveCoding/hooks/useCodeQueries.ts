@@ -8,6 +8,7 @@ import {
     createCodeProblemService,
     getSuggestedCodeProblemService,
     updateCodeProblemService,
+    testCodeProblemService,
 } from "@/services/code.service";
 import { CodeProblem, CodeProblemDetail, CodeLanguage, CodeSubmitData } from "@/services/code.service";
 
@@ -94,6 +95,21 @@ export const useCodeQueries = (
         },
     });
 
+    const testCodeMutation = useMutation({
+        mutationFn: ({ sourceCode, languageId, problemId }: CodeSubmitData) =>
+            testCodeProblemService({
+                sourceCode,
+                languageId,
+                problemId,
+            }),
+        onSuccess: (res) => {
+            console.log("Code submitted successfully:", res);
+        },
+        onError: (err) => {
+            console.error("Error submitting code:", err);
+        },
+    });
+
     const createCodeProblem = useMutation({
         mutationFn: (data: Partial<CodeProblemDetail>) => createCodeProblemService(data),
         onSuccess: () => {
@@ -157,6 +173,7 @@ export const useCodeQueries = (
 
         createCodeProblem,
         updateCodeProblem,
+        testCodeMutation,
         submitCodeMutation,
     };
 };

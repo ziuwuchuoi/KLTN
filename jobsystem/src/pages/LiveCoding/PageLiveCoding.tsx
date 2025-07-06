@@ -54,7 +54,7 @@ const mockSuggestedProblems = [
     },
 ];
 
-const PageLiveCoding = () => {
+const PageCodeProblems = () => {
     const navigate = useNavigate();
     const [selectedTags, setSelectedTags] = useState([]);
     const [selectedDifficulty, setSelectedDifficulty] = useState("All");
@@ -86,7 +86,7 @@ const PageLiveCoding = () => {
     }, [codeProblems, searchQuery]);
 
     const handleProblemClick = (problem) => {
-        navigate(`/live-coding/${problem._id}`);
+        navigate(`/code/${problem._id}`);
     };
 
     const clearFilters = () => {
@@ -331,4 +331,4 @@ const PageLiveCoding = () => {
     );
 };
 
-export default PageLiveCoding;
+export default PageCodeProblems;

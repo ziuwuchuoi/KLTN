@@ -1,25 +1,14 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-    ArrowLeft,
-    Play,
-    Upload,
-    Lightbulb,
-    CheckCircle,
-    XCircle,
-    Clock,
-    MemoryStick,
-    AlertCircle,
-    ChevronDown,
-    ChevronUp,
-    Loader2,
-} from "lucide-react";
+import { ArrowLeft, Play, Upload, Lightbulb, CheckCircle, Loader2 } from "lucide-react";
 import { useCodeQueries } from "./hooks/useCodeQueries";
 import { CodeEditor } from "@/components/molecules/code/CodeEditor";
 import type { CodeLanguage, CodeSubmitResult } from "@/services/code.service";
@@ -42,7 +31,7 @@ const PageProblemCodingDetail = () => {
     const returnUrl = searchParams.get("returnUrl");
     const isTestsetCode = location.pathname.startsWith("/testset/code/");
 
-    const { useCodeProblemDetail, languages, submitCodeMutation } = useCodeQueries();
+    const { useCodeProblemDetail, languages, submitCodeMutation, testCodeMutation } = useCodeQueries();
     const { data: problem, isLoading } = useCodeProblemDetail(problemId);
     const { submitCodeTestSet } = useTestSetQueries();
 
@@ -50,9 +39,12 @@ const PageProblemCodingDetail = () => {
     const [code, setCode] = useState("");
     const [showHints, setShowHints] = useState(false);
     const [submissionResult, setSubmissionResult] = useState<CodeSubmitResult | null>(null);
+    const [testResult, setTestResult] = useState<CodeSubmitResult | null>(null);
     const [showResults, setShowResults] = useState(false);
+    const [showTestResults, setShowTestResults] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isTesting, setIsTesting] = useState(false);
 
     useEffect(() => {
         if (languages.length > 0 && !selectedLanguage) {
@@ -65,7 +57,6 @@ const PageProblemCodingDetail = () => {
             const matchingSnippet = problem.codeSnippets.find((snippet) =>
                 selectedLanguage.name.toLowerCase().includes(snippet.language.toLowerCase())
             );
-
             if (matchingSnippet) {
                 setCode(matchingSnippet.code);
             }
@@ -75,15 +66,12 @@ const PageProblemCodingDetail = () => {
     const handleLanguageChange = (languageId: string) => {
         const langId = Number.parseInt(languageId);
         const newLanguage = languages.find((lang) => lang.id === langId);
-
         if (newLanguage) {
             setSelectedLanguage(newLanguage);
-
             if (problem && problem.codeSnippets.length > 0) {
                 const matchingSnippet = problem.codeSnippets.find((snippet) =>
                     newLanguage.name.toLowerCase().includes(snippet.language.toLowerCase())
                 );
-
                 if (matchingSnippet) {
                     setCode(matchingSnippet.code);
                 } else {
@@ -99,7 +87,6 @@ const PageProblemCodingDetail = () => {
             if (stored) {
                 try {
                     const submission: StoredSubmission = JSON.parse(stored);
-
                     if (!submission.completedProblemIds.includes(problemId)) {
                         const updatedSubmission = {
                             ...submission,
@@ -109,7 +96,6 @@ const PageProblemCodingDetail = () => {
                             `testset_submission_${testSetResultId}`,
                             JSON.stringify(updatedSubmission)
                         );
-
                         window.dispatchEvent(
                             new CustomEvent("localStorageUpdate", {
                                 detail: { submissionId: testSetResultId },
@@ -123,11 +109,47 @@ const PageProblemCodingDetail = () => {
         }
     };
 
+    const handleTestCode = async () => {
+        if (!problem || !selectedLanguage) {
+            console.error("Problem or language not selected");
+            return;
+        }
+
+        if (!code.trim()) {
+            console.error("No code to test");
+            return;
+        }
+
+        setIsTesting(true);
+        setShowTestResults(false);
+        setTestResult(null);
+
+        try {
+            const result = await testCodeMutation.mutateAsync({
+                sourceCode: code,
+                languageId: selectedLanguage.id,
+                problemId: problem.problemId,
+            });
+
+            setTestResult(result);
+            setShowTestResults(true);
+
+            setTimeout(() => {
+                const resultsElement = document.getElementById("test-results");
+                if (resultsElement) {
+                    resultsElement.scrollIntoView({ behavior: "smooth" });
+                }
+            }, 100);
+        } catch (error) {
+            console.error("Test failed:", error);
+        } finally {
+            setIsTesting(false);
+        }
+    };
+
     const handleSubmit = async () => {
         if (!problem || !selectedLanguage) return;
-
         setIsSubmitting(true);
-
         try {
             if (isTestsetCode) {
                 await submitCodeTestSet.mutateAsync({
@@ -136,10 +158,8 @@ const PageProblemCodingDetail = () => {
                     problemId: problem.problemId,
                     testSetResultId: testSetResultId,
                 });
-
                 updateLocalStorage(problem._id);
                 setIsSubmitted(true);
-
                 setTimeout(() => {
                     if (returnUrl) {
                         navigate(returnUrl);
@@ -151,7 +171,6 @@ const PageProblemCodingDetail = () => {
                     languageId: selectedLanguage.id,
                     problemId: problem.problemId,
                 });
-
                 setSubmissionResult(result);
                 setShowResults(true);
             }
@@ -163,7 +182,7 @@ const PageProblemCodingDetail = () => {
     };
 
     const handleRunCode = () => {
-        console.log("Running code with test cases...");
+        handleTestCode();
     };
 
     const handleBackNavigation = () => {
@@ -172,7 +191,7 @@ const PageProblemCodingDetail = () => {
         } else if (isTestsetCode) {
             navigate(-1);
         } else {
-            navigate("/live-coding");
+            navigate("/code");
         }
     };
 
@@ -230,7 +249,6 @@ const PageProblemCodingDetail = () => {
                         )}
                     </div>
                 </div>
-
                 <div className="flex-1 grid lg:grid-cols-2 gap-6 px-6 pb-6 h-full">
                     <div className="flex flex-col h-full">
                         <Card className="flex-1 bg-slate-800/50 border-slate-700 flex flex-col">
@@ -249,7 +267,6 @@ const PageProblemCodingDetail = () => {
                                         <TabsTrigger value="description">Description</TabsTrigger>
                                         <TabsTrigger value="submissions">Submissions</TabsTrigger>
                                     </TabsList>
-
                                     <TabsContent value="description" className="mt-4 flex-1">
                                         <ScrollArea className="h-[calc(100vh-280px)]">
                                             <div className="space-y-6 pr-4">
@@ -302,7 +319,6 @@ const PageProblemCodingDetail = () => {
                                             </div>
                                         </ScrollArea>
                                     </TabsContent>
-
                                     <TabsContent value="submissions">
                                         <div className="text-center py-8 text-slate-400">
                                             Submission history would go here
@@ -312,7 +328,6 @@ const PageProblemCodingDetail = () => {
                             </CardHeader>
                         </Card>
                     </div>
-
                     {/* Right Panel - Code Editor */}
                     <div className="flex flex-col h-full">
                         <Card className="flex-1 bg-slate-800/50 border-slate-700 flex flex-col">
@@ -323,10 +338,15 @@ const PageProblemCodingDetail = () => {
                                             variant="accent"
                                             size="sm"
                                             onClick={handleRunCode}
+                                            disabled={isTesting || testCodeMutation.isPending}
                                             className="border-slate-700 mr-3 px-3"
                                         >
-                                            <Play className="w-4 h-4 mr-2" />
-                                            Run
+                                            {isTesting || testCodeMutation.isPending ? (
+                                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                            ) : (
+                                                <Play className="w-4 h-4 mr-2" />
+                                            )}
+                                            {isTesting || testCodeMutation.isPending ? "Testing..." : "Run"}
                                         </Button>
                                         <Button
                                             size="sm"
@@ -355,14 +375,13 @@ const PageProblemCodingDetail = () => {
                                 </div>
                             </CardHeader>
                             <CardContent className="flex-1 p-0 flex flex-col max-h-screen">
-                                <div className={`flex-1 ${showResults ? "h-1/2" : "h-full"}`}>
+                                <div className={`flex-1 ${showResults || showTestResults ? "h-1/2" : "h-full"}`}>
                                     <CodeEditor
                                         value={code}
                                         onChange={setCode}
                                         language={selectedLanguage.name.toLowerCase()}
                                     />
                                 </div>
-
                                 {/* Success message for testset code */}
                                 {isSubmitted && isTestsetCode && (
                                     <div className="p-4 bg-green-900/20 border-t border-green-500/30">
@@ -382,6 +401,14 @@ const PageProblemCodingDetail = () => {
                         result={submissionResult}
                         isVisible={showResults}
                         onToggle={() => setShowResults(!showResults)}
+                    />
+                )}
+                {/* Test Results Drawer for Run Code */}
+                {testResult && (
+                    <TestResultsDrawer
+                        result={testResult}
+                        isVisible={showTestResults}
+                        onToggle={() => setShowTestResults(!showTestResults)}
                     />
                 )}
             </div>

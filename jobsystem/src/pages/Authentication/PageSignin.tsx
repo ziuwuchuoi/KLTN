@@ -28,23 +28,18 @@ const PageSignin = () => {
     const isOAuthCallback = window.location.search.includes("login_oauth2=true");
 
     useEffect(() => {
-        // Only save redirect URL if it's NOT an OAuth callback
         if (redirectUrl && !isOAuthCallback) {
             const decodedUrl = decodeURIComponent(redirectUrl);
 
-            // Check if there's already a stored redirect URL (from before OAuth)
             const existingRedirectUrl = localStorage.getItem("auth_redirect_url");
 
-            // Only overwrite if there's no existing URL or if the new URL is more specific
             if (!existingRedirectUrl || existingRedirectUrl === "/" || decodedUrl !== "/") {
                 localStorage.setItem("auth_redirect_url", decodedUrl);
             } else {
                 console.log("Preserved existing redirect URL:", existingRedirectUrl);
             }
 
-            // Verify what's actually saved
             const savedUrl = localStorage.getItem("auth_redirect_url");
-            console.log("Verification - URL in localStorage:", savedUrl);
         } else if (isOAuthCallback) {
             console.log("OAuth callback detected - NOT overwriting localStorage");
         } else {
@@ -128,6 +123,7 @@ const PageSignin = () => {
         setIsLoading(true);
         try {
             await googleLogin(role);
+            console.log("Date now:", new Date());
         } catch (err) {
             toast.error("Google login failed.");
         } finally {

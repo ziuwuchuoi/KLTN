@@ -14,7 +14,7 @@ import PageCVEvaluation from "./pages/CVEvaluation/PageCVEvaluation";
 import PageQuiz from "./pages/Quizz/PageQuiz";
 import PageTechnicalQuiz from "./pages/Quizz/PageTechnicalQuiz";
 import PageQuizDetail from "./pages/Quizz/PageQuizDetail";
-import PageLiveCoding from "./pages/LiveCoding/PageLiveCoding";
+import PageCodeProblems from "./pages/LiveCoding/PageLiveCoding";
 import PageProblemCodingDetail from "./pages/LiveCoding/PageProblemCodingDetail";
 import PageJobs from "./pages/Job/PageJob";
 import PageJobDetail from "./pages/Job/PageJobDetail";
@@ -52,7 +52,7 @@ const AppRoutes = () => (
             <Route path="/" element={<Layout />}>
                 <Route index element={<PageLanding />} />
                 <Route path="ai-interview" element={<PageAIInterview />} />
-                <Route path="cv-evaluation" element={<PageCVEvaluation />} />
+                <Route path="evaluate-cv" element={<PageCVEvaluation />} />
 
                 {/* Regular Quizzes */}
                 <Route path="quiz" element={<PageQuiz />} />
@@ -60,8 +60,8 @@ const AppRoutes = () => (
                 <Route path="quiz/technical/:quizId" element={<PageQuizDetail />} />
 
                 {/* Regular Live Coding */}
-                <Route path="live-coding" element={<PageLiveCoding />} />
-                <Route path="live-coding/:codingId" element={<PageProblemCodingDetail />} />
+                <Route path="code" element={<PageCodeProblems />} />
+                <Route path="code/:codingId" element={<PageProblemCodingDetail />} />
 
                 {/* TestSet Routes */}
                 <Route path="testset/:testSetId/:jdId/overview" element={<PageTestSetOverview />} />
