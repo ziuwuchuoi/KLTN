@@ -226,14 +226,15 @@ export const uploadCVService = async (file: File, position: string) => {
 export const getListJDService = async (
     creatorUserId: string, // list by candidate or recruiter
     limit = 20,
-    page = 1
+    page = 1,
+    verified: boolean
 ): Promise<{
     items: JDItem[];
     meta: { limit: number; page: number; total: number; totalPages: number };
 }> => {
     const url = creatorUserId
-        ? `/cvs/list-jds?creatorUserId=${creatorUserId}&limit=${limit}&page=${page}`
-        : `/cvs/list-jds?visibility=public&verified=true&limit=${limit}&page=${page}`;
+        ? `/cvs/list-jds?creatorUserId=${creatorUserId}&verified=${verified}&limit=${limit}&page=${page}`
+        : `/cvs/list-jds?visibility=public&verified=${verified}&limit=${limit}&page=${page}`;
 
     const response = await axiosInstance.get(url);
 

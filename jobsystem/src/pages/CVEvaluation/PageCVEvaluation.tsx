@@ -176,9 +176,12 @@ const PageEvaluateCV = () => {
     const [selectedJDId, setSelectedJDId] = useState<string>("");
     const [jdData, setJDData] = useState<Partial<JDDetail>>(defaultJD);
     const [isEvaluating, setIsEvaluating] = useState(false);
-    const { evaluateCV } = useEvaluationQueries();
+    const { evaluateCV, useEvaluatedCVDetail } = useEvaluationQueries();
     const [evaluationResult, setEvaluationResult] = useState<EvaluatedCVDetail | null>(null);
     const [showResults, setShowResults] = useState(false);
+
+    // const [demoResult, setDemoResult] = useState<EvaluatedCVDetail | null>(null);
+    const { data: demoResult } = useEvaluatedCVDetail("6862d50fe6bf7a134f7c1888");
 
     const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -233,6 +236,30 @@ const PageEvaluateCV = () => {
         }
     };
 
+    const handleDemo = async () => {
+        try {
+            setIsEvaluating(true);
+            setShowResults(false);
+
+            if (demoResult) {
+                setEvaluationResult(demoResult);
+            }
+
+            // Delay before showing results and scrolling
+            setTimeout(() => {
+                setShowResults(true);
+                resultsRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                });
+            }, 2000);
+        } catch (error) {
+            console.error("Demo evaluation failed:", error);
+        } finally {
+            setIsEvaluating(false);
+        }
+    };
+
     return (
         <div className="w-full">
             {/* First Screen - Steps Section (Full Height) */}
@@ -241,11 +268,16 @@ const PageEvaluateCV = () => {
                 <div className="flex-shrink-0">
                     {/* Hero Section */}
                     <div className="flex flex-row items-end w-full justify-around pt-20 pb-8">
-                        <CustomHeroSection title="CV Evaluation" subtitle="Center" align="center" description="" />
+                        <CustomHeroSection
+                            title="CV Evaluation"
+                            subtitle="Studio"
+                            align="center"
+                            description="Get instant, AI-powered feedback on your CV. Discover strengths, identify areas for improvement, and tailor your profile to your target job."
+                        />
                     </div>
 
                     {/* Steps Progress */}
-                    <div className="flex items-center justify-center pb-8">
+                    <div className="flex items-center justify-center pb-6">
                         <div className="flex items-center">
                             {steps.map((step, index) => (
                                 <div key={step.id} className="flex items-center">
@@ -322,7 +354,8 @@ const PageEvaluateCV = () => {
                                     selectedCVId={selectedCVId}
                                     selectedJDId={selectedJDId}
                                     jdData={jdData}
-                                    onEvaluate={handleEvaluate}
+                                    // onEvaluate={handleEvaluate}
+                                    onEvaluate={handleDemo}
                                     isEvaluating={isEvaluating}
                                     canEvaluate={canEvaluate ? true : false}
                                 />
@@ -387,7 +420,7 @@ const PageEvaluateCV = () => {
             </div>
 
             {/* Second Screen - Results Section (Starts from second viewport) */}
-            {mockEvaluatedCV && (
+            {evaluationResult && (
                 <div ref={resultsRef} className="min-h-screen">
                     <div className="w-[90%] mx-auto px-6 py-16">
                         <div className="text-center mb-12 pt-16">
@@ -402,7 +435,7 @@ const PageEvaluateCV = () => {
                             </p>
                         </div>
 
-                        <EvaluationResults result={mockEvaluatedCV} />
+                        <EvaluationResults result={evaluationResult} />
                     </div>
                 </div>
             )}

@@ -116,7 +116,8 @@ export const QUERY_KEYS = {
     recruiterApplications: (userId?: string, fileId?: string, page?: number, limit?: number) =>
         ["recruiter-applications", userId, fileId, page, limit] as const,
     cvs: (userId?: string, page?: number, limit?: number) => ["cvs", userId, page, limit] as const,
-    jds: (userId?: string, page?: number, limit?: number) => ["jds", userId, page, limit] as const,
+    jds: (userId?: string, page?: number, limit?: number, verified?: boolean) =>
+        ["jds", userId, page, limit, verified] as const,
     evaluations: (userId?: string, fileId?: string, page?: number, limit?: number) =>
         ["evaluations", userId, fileId, page, limit] as const,
 };
@@ -363,7 +364,7 @@ export const useCVQueries = (userId?: string, page = 1, limit = 20) => {
     };
 };
 
-export const useJDQueries = (userId?: string, page = 1, limit = 20) => {
+export const useJDQueries = (userId?: string, page = 1, limit = 20, verified?: boolean) => {
     const queryClient = useQueryClient();
 
     const {
@@ -371,8 +372,8 @@ export const useJDQueries = (userId?: string, page = 1, limit = 20) => {
         isLoading: isJDDataLoading,
         error: jdError,
     } = useQuery<JDListResponse>({
-        queryKey: QUERY_KEYS.jds(userId, page, limit),
-        queryFn: () => getListJDService(userId, limit, page),
+        queryKey: QUERY_KEYS.jds(userId, page, limit, verified),
+        queryFn: () => getListJDService(userId, limit, page, verified),
         placeholderData: (previousData) => previousData,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,

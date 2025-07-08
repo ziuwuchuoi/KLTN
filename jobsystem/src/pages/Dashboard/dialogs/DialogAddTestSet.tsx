@@ -106,7 +106,7 @@ export function DialogAddTestSet({ isOpen, onClose, jdId }: DialogAddTestSetProp
                 <div className="flex-1 overflow-hidden">
                     <Tabs value={activeTab} className="h-full">
                         <TabsContent value="quiz" className="h-full m-0">
-                            <ScrollArea className="flex-1 mt-4">
+                            <ScrollArea className="h-full flex-1 mt-4 pb-4">
                                 <div className="p-2">
                                     {isLoadingQuizzes ? (
                                         <div className="flex items-center justify-center py-12">
@@ -200,7 +200,7 @@ export function DialogAddTestSet({ isOpen, onClose, jdId }: DialogAddTestSetProp
                         </TabsContent>
 
                         <TabsContent value="code" className="h-full m-0">
-                            <ScrollArea className="flex-1 mt-4">
+                            <ScrollArea className="h-full flex-1 mt-4 pb-4">
                                 <div className="p-2">
                                     {isCodeProblemsLoading ? (
                                         <div className="flex items-center justify-center py-12">
@@ -300,7 +300,7 @@ export function DialogAddTestSet({ isOpen, onClose, jdId }: DialogAddTestSetProp
                 </div>
 
                 {/* Action Footer */}
-                <div className="border-t border-slate-700 bg-slate-900/50 p-4">
+                <div className="pt-2">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 text-sm text-gray-400">
                             {totalSelected > 0 ? (
@@ -315,7 +315,11 @@ export function DialogAddTestSet({ isOpen, onClose, jdId }: DialogAddTestSetProp
                             )}
                         </div>
                         <div className="flex gap-3">
-                            <Button variant="outline" onClick={onClose} className="border-slate-600 hover:bg-slate-700">
+                            <Button
+                                variant="outline"
+                                onClick={onClose}
+                                className="text-white border-slate-600 hover:bg-slate-700"
+                            >
                                 Cancel
                             </Button>
                             <Button

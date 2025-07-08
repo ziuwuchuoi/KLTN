@@ -59,7 +59,7 @@ const AppRoutes = () => (
                 <Route path="quiz/technical" element={<PageTechnicalQuiz />} />
                 <Route path="quiz/technical/:quizId" element={<PageQuizDetail />} />
 
-                {/* Regular Live Coding */}
+                {/* Regular Coding Problem */}
                 <Route path="code" element={<PageCodeProblems />} />
                 <Route path="code/:codingId" element={<PageProblemCodingDetail />} />
 

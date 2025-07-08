@@ -136,7 +136,7 @@ const PageSignin = () => {
             <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
                 <div className="text-xl font-bold text-center capitalize">Sign in as {role}</div>
 
-                {redirectUrl && role === "candidate" && !isOAuthCallback && (
+                {redirectUrl?.includes("testset") && role === "candidate" && !isOAuthCallback && (
                     <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-2">
                         <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
                         <div className="text-sm text-blue-800">

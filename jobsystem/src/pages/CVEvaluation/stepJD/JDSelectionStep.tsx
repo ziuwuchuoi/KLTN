@@ -21,7 +21,8 @@ export function JDSelectionStep({ selectedJDId, onJDSelect, jdData, onJDDataChan
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
 
-    const { jds, isJDDataLoading, uploadJD } = useJDQueries(userId);
+    const { jds, isJDDataLoading, uploadJD } = useJDQueries(userId, 1, 20, false);
+    console.log("JD Data:", jds);
 
     const handleUpload = async () => {
         try {
@@ -136,7 +137,7 @@ export function JDSelectionStep({ selectedJDId, onJDSelect, jdData, onJDDataChan
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                                    {jds.map((jd) => (
+                                    {jds.slice(0, 4).map((jd) => (
                                         <FileItem
                                             key={jd._id}
                                             id={jd._id}

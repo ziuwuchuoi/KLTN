@@ -147,10 +147,10 @@ export function DialogCreateQuiz({ isOpen, onClose }: DialogCreateQuizProps) {
                                     <label className="text-sm font-medium text-slate-300">Categories</label>
                                     <div className="flex gap-2">
                                         <Select onValueChange={addCategory}>
-                                            <SelectTrigger className="bg-slate-700 border-slate-600">
+                                            <SelectTrigger className="text-white bg-slate-700 border-slate-600">
                                                 <SelectValue placeholder="Add category" />
                                             </SelectTrigger>
-                                            <SelectContent className="bg-slate-800 border-slate-700">
+                                            <SelectContent className="text-white bg-slate-800 border-slate-700">
                                                 {technicalCategories?.map((category) => (
                                                     <SelectItem key={category.id} value={category.name}>
                                                         {category.name}
@@ -275,15 +275,19 @@ export function DialogCreateQuiz({ isOpen, onClose }: DialogCreateQuizProps) {
                 </ScrollArea>
 
                 {/* Footer */}
-                <div className="border-t border-slate-700 p-4 bg-slate-800/30">
+                <div className="pt-2">
                     <div className="flex justify-end gap-3">
-                        <Button variant="outline" onClick={onClose} className="border-gray-600 hover:bg-gray-700">
+                        <Button
+                            variant="outline"
+                            onClick={onClose}
+                            className="text-white border-gray-600 hover:bg-gray-700"
+                        >
                             Cancel
                         </Button>
                         <Button
                             onClick={handleSubmit}
                             disabled={createQuiz.isPending || !quizData.title || !quizData.questions?.length}
-                            className="bg-green-600 hover:bg-green-700"
+                            className="bg-blue-600 hover:bg-blue-700"
                         >
                             {createQuiz.isPending ? "Creating..." : "Create Quiz"}
                         </Button>

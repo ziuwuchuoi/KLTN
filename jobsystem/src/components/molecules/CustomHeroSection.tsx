@@ -10,8 +10,8 @@ interface CustomHeroSectionProps {
 }
 
 const CustomHeroSection = ({
-    title = "Quantum Leap",
-    subtitle = "Assessment Center",
+    title = "Codivio",
+    subtitle = "Studio",
     description,
     align = "center",
     compact = false,
@@ -52,7 +52,7 @@ const CustomHeroSection = ({
                         compact ? "text-2xl md:text-3xl mb-2" : "text-4xl md:text-5xl lg:text-6xl mb-4"
                     )}
                 >
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-sky-400">
+                    <span className="italic bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-sky-400">
                         {title}
                     </span>
                     {subtitle && (
@@ -68,8 +68,8 @@ const CustomHeroSection = ({
                     <div className={cn("max-w-2xl", descriptionAlignment)}>
                         <p
                             className={cn(
-                                "text-gray-300 leading-relaxed",
-                                compact ? "text-sm md:text-base" : "text-lg md:text-xl",
+                                "text-gray-300 leading-relaxed italic",
+                                compact ? "text-xs md:text-sm" : "text-base md:text-lg",
                                 align === "left" ? "text-left" : align === "right" ? "text-right" : "text-center"
                             )}
                         >

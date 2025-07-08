@@ -51,7 +51,7 @@ export function QuizContent({ displayData, isLoading }: QuizContentProps) {
                                                     className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-medium flex-shrink-0 ${
                                                         question.correctAnswer === optionIndex
                                                             ? "border-green-500 bg-green-500 text-white"
-                                                            : "border-gray-500"
+                                                            : "border-gray-500 text-white"
                                                     }`}
                                                 >
                                                     {String.fromCharCode(65 + optionIndex)}

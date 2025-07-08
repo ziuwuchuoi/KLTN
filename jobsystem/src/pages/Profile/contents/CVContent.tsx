@@ -81,7 +81,6 @@ export function CVContent() {
               title={cv.fileName || cv.position}
               subtitle={cv.position}
               selected={selectedItems.includes(cv._id)}
-              onSelect={handleSelect}
               colorScheme="blue"
               date={new Date(cv.createdAt)}
               datePrefix="Uploaded"

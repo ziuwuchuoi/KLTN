@@ -187,10 +187,10 @@ export function DialogCreateCode({ isOpen, onClose }: DialogCreateCodeProps) {
                                             setCodeData((prev) => ({ ...prev, difficulty: value }))
                                         }
                                     >
-                                        <SelectTrigger className="bg-slate-700 border-slate-600">
-                                            <SelectValue />
+                                        <SelectTrigger className="text-white bg-slate-700 border-slate-600">
+                                            <SelectValue className="text-white" />
                                         </SelectTrigger>
-                                        <SelectContent className="bg-slate-800 border-slate-700">
+                                        <SelectContent className="bg-slate-800 border-slate-700 text-white">
                                             <SelectItem value="Easy">Easy</SelectItem>
                                             <SelectItem value="Medium">Medium</SelectItem>
                                             <SelectItem value="Hard">Hard</SelectItem>
@@ -202,10 +202,10 @@ export function DialogCreateCode({ isOpen, onClose }: DialogCreateCodeProps) {
                                     <label className="text-sm font-medium text-slate-300">Topic Tags</label>
                                     <div className="flex gap-2">
                                         <Select onValueChange={addTopicTag}>
-                                            <SelectTrigger className="bg-slate-700 border-slate-600">
+                                            <SelectTrigger className="text-white bg-slate-700 border-slate-600">
                                                 <SelectValue placeholder="Add topic tag" />
                                             </SelectTrigger>
-                                            <SelectContent className="bg-slate-800 border-slate-700">
+                                            <SelectContent className="text-white bg-slate-800 border-slate-700">
                                                 {tags.map((tag) => (
                                                     <SelectItem key={tag} value={tag}>
                                                         {tag}
@@ -380,10 +380,10 @@ export function DialogCreateCode({ isOpen, onClose }: DialogCreateCodeProps) {
                                                         updateCodeSnippet(index, "language", value)
                                                     }
                                                 >
-                                                    <SelectTrigger className="bg-slate-600 border-slate-500">
+                                                    <SelectTrigger className="text-white bg-slate-600 border-slate-500">
                                                         <SelectValue placeholder="Select language" />
                                                     </SelectTrigger>
-                                                    <SelectContent className="bg-slate-800 border-slate-700">
+                                                    <SelectContent className="text-white bg-slate-800 border-slate-700">
                                                         {languages.map((lang) => (
                                                             <SelectItem key={lang.id} value={lang.name}>
                                                                 {lang.name}
@@ -415,9 +415,13 @@ export function DialogCreateCode({ isOpen, onClose }: DialogCreateCodeProps) {
                 </ScrollArea>
 
                 {/* Footer */}
-                <div className="border-t border-slate-700 p-4 bg-slate-800/30">
+                <div className="pt-2">
                     <div className="flex justify-end gap-3">
-                        <Button variant="outline" onClick={onClose} className="border-gray-600 hover:bg-gray-700">
+                        <Button
+                            variant="outline"
+                            onClick={onClose}
+                            className="text-white border-gray-600 hover:bg-gray-700"
+                        >
                             Cancel
                         </Button>
                         <Button
@@ -428,7 +432,7 @@ export function DialogCreateCode({ isOpen, onClose }: DialogCreateCodeProps) {
                                 !codeData.problemId ||
                                 !codeData.content
                             }
-                            className="bg-green-600 hover:bg-green-700"
+                            className="bg-purple-600 hover:bg-purple-700"
                         >
                             {createCodeProblem.isPending ? "Creating..." : "Create Code Problem"}
                         </Button>

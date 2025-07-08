@@ -182,7 +182,7 @@ const PageTechnicalQuiz = () => {
                     <div className="flex-shrink-0 w-fit">
                         <CustomHeroSection
                             title="Technical Quiz"
-                            subtitle="Assessment Center"
+                            subtitle="Studio"
                             description="Evaluate your skills, personality, and professional aptitude with our comprehensive quiz collection"
                             align="right"
                         />

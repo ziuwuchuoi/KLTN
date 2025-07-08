@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Code, FileText, Bot, Zap, ArrowRight, Clock } from "lucide-react";
+import { PlatformVisualization } from "./Visualization";
 
 export default function PageLanding() {
     const navigate = useNavigate();
@@ -14,7 +15,8 @@ export default function PageLanding() {
             id: "evaluate-cv",
             icon: FileText,
             title: "CV Evaluation",
-            description: "AI-powered CV analysis and ranking based on job requirements to find top candidates",
+            description:
+                "Get instant feedback on your CV. Analyze strengths, spot weaknesses, and tailor it to match job requirements with AI support.",
             color: "blue",
             gradient: "from-blue-600/10 to-cyan-600/20",
             border: "border-blue-500/40",
@@ -26,7 +28,8 @@ export default function PageLanding() {
             id: "quiz-test",
             icon: Zap,
             title: "Quiz Test",
-            description: "Comprehensive knowledge assessment with algorithms, programming languages and system design",
+            description:
+                "Test your knowledge in key IT areas like algorithms, programming, and system design with auto-scored quizzes.",
             color: "green",
             gradient: "from-green-600/10 to-emerald-600/20",
             border: "border-green-500/40",
@@ -37,8 +40,9 @@ export default function PageLanding() {
         {
             id: "code",
             icon: Code,
-            title: "Live Coding Test",
-            description: "Real-time coding environment with integrated compiler and collaborative problem solving",
+            title: "Coding Problem Test",
+            description:
+                "Practice real-world coding challenges in a live environment. Improve your logic and problem-solving skills.",
             color: "purple",
             gradient: "from-purple-600/10 to-pink-600/20",
             border: "border-purple-500/40",
@@ -50,7 +54,8 @@ export default function PageLanding() {
             id: "ai-interview",
             icon: Bot,
             title: "AI Interview Simulation",
-            description: "Intelligent interview simulation with situational questions and objective evaluation",
+            description:
+                "Prepare for real interviews with AI-driven mock sessions. Get evaluated on your answers, tone, and confidence.",
             color: "orange",
             gradient: "from-orange-600/10 to-amber-600/20",
             border: "border-orange-500/40",
@@ -60,7 +65,14 @@ export default function PageLanding() {
         },
     ];
 
-    const handleFeatureClick = (feature: (typeof features)[0]) => {
+    const handleFeatureClick = (featureId: string) => {
+        const feature = features.find((f) => f.id === featureId);
+        if (feature?.available && feature.path) {
+            navigate(feature.path);
+        }
+    };
+
+    const handleCardFeatureClick = (feature: (typeof features)[0]) => {
         if (feature.available && feature.path) {
             navigate(feature.path);
         }
@@ -69,27 +81,28 @@ export default function PageLanding() {
     return (
         <main className="bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 text-white min-h-screen">
             {/* Hero Section */}
-            <section className="relative flex flex-col lg:flex-row items-center min-h-screen px-6 md:px-12">
+            <section className="relative justify-around flex flex-col lg:flex-row items-center min-h-screen px-10 md:px-20 pr-10">
                 {/* Content */}
-                <div className="lg:w-1/2 text-center lg:text-left z-10 space-y-8">
+                <div className="w-fit text-center lg:text-left z-10 space-y-8">
                     {/* Badge */}
                     <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-500/30 rounded-full px-4 py-2">
                         <CheckCircle className="w-4 h-4 text-purple-400" />
-                        <span className="text-sm font-medium text-purple-300">Next-Gen Recruitment Platform</span>
+                        <span className="text-sm font-medium text-purple-300">Next-Gen Career & Hiring Platform</span>
                     </div>
 
                     {/* Main Title */}
                     <div className="space-y-4">
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
-                                Recruiting New Generation
+                                Empowering the Next Generation
                             </span>
                             <br />
-                            <span className="text-white">IT Talent</span>
+                            {""}
+                            <span className="text-white">of IT Talent</span>
                         </h1>
                         <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                            Comprehensive platform for objective assessment, technical interviews, and efficient
-                            selection of top IT candidates through AI-powered tools.
+                            A complete platform designed for both candidates and recruiters — combining smart CV
+                            evaluation, coding challenges, and AI-driven interviews to help top tech talent shine.
                         </p>
                     </div>
 
@@ -100,30 +113,23 @@ export default function PageLanding() {
                             size="lg"
                             className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105"
                         >
-                            Start Free Assessment
+                            Start Now
                             <ArrowRight className="w-5 h-5 ml-2" />
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="lg"
-                            className="border-slate-500 text-slate-200 hover:bg-slate-800 font-semibold px-8 py-3 rounded-full transition-all duration-300 bg-transparent"
-                        >
-                            View Demo
                         </Button>
                     </div>
                 </div>
 
-                {/* Visual Element */}
-                <div className="relative lg:w-1/2 flex items-center justify-center mt-12 lg:mt-0">
-                    <div className="relative">
-                        <img
-                            src="./src/assets/moon.png"
-                            alt="Platform Visualization"
-                            className="w-full max-w-sm md:max-w-md lg:max-w-xl drop-shadow-[0_0px_60px_rgba(79,70,229,0.6)] transition-transform duration-700 hover:scale-105"
-                        />
-                        {/* Glow Effect */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-pink-600/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
-                    </div>
+                {/* Visual Element - Platform Visualization Component */}
+                <div className="relative w-fit flex items-center justify-center mt-12 lg:mt-0">
+                    <PlatformVisualization
+                        features={features.map((f) => ({
+                            id: f.id,
+                            icon: f.icon,
+                            title: f.title,
+                            available: f.available,
+                        }))}
+                        onFeatureClick={handleFeatureClick}
+                    />
                 </div>
             </section>
 
@@ -134,18 +140,21 @@ export default function PageLanding() {
                     <div className="text-center space-y-6 mb-16">
                         <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border border-emerald-500/30 rounded-full px-4 py-2">
                             <Zap className="w-4 h-4 text-emerald-400" />
-                            <span className="text-sm font-medium text-emerald-300">Comprehensive Assessment Suite</span>
+                            <span className="text-sm font-medium text-emerald-300">
+                                Empowering Talent & Hiring Teams
+                            </span>
                         </div>
                         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
-                                Powerful Tools
+                                Intelligent Tools
                             </span>
                             <br />
-                            <span className="text-white">for Modern Recruitment</span>
+                            <span className="text-white">for Growth & Recruitment</span>
                         </h2>
-                        <p className="text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed">
-                            From CV screening to technical interviews, our AI-powered platform provides everything you
-                            need to identify and select the best candidates efficiently.
+                        <p className="text-lg text-slate-400 max-w-4xl mx-auto leading-relaxed">
+                            Whether you're refining your CV or screening top candidates, our AI-powered platform
+                            supports both professionals and recruiters with smart evaluations, technical assessments,
+                            and actionable insights.
                         </p>
                     </div>
 
@@ -161,7 +170,7 @@ export default function PageLanding() {
                                             ? "cursor-pointer hover:shadow-2xl hover:shadow-purple-500/20"
                                             : "cursor-not-allowed opacity-75"
                                     }`}
-                                    onClick={() => handleFeatureClick(feature)}
+                                    onClick={() => handleCardFeatureClick(feature)}
                                 >
                                     {/* Decorative Element */}
                                     <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-white/5 to-transparent rounded-bl-full"></div>
@@ -196,16 +205,6 @@ export default function PageLanding() {
                                                 {feature.description}
                                             </p>
                                         </div>
-
-                                        {/* Action Indicator */}
-                                        {feature.available && (
-                                            <div className="pt-2">
-                                                <div className="flex items-center gap-2 text-xs text-slate-400">
-                                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                                    <span>Click to explore</span>
-                                                </div>
-                                            </div>
-                                        )}
                                     </CardContent>
                                 </Card>
                             );
@@ -218,10 +217,11 @@ export default function PageLanding() {
                             <CardContent className="p-8">
                                 <div className="space-y-4">
                                     <h3 className="text-2xl font-bold text-white">
-                                        Ready to Transform Your Hiring Process?
+                                        Ready to Transform How You Hire or Get Hired?
                                     </h3>
                                     <p className="text-slate-300">
-                                        Join thousands of companies using our platform to find exceptional IT talent.
+                                        Whether you're recruiting top IT talent or preparing to become one, our
+                                        intelligent platform helps you move forward with confidence.
                                     </p>
                                     <Button
                                         onClick={() => navigate("/evaluate-cv")}

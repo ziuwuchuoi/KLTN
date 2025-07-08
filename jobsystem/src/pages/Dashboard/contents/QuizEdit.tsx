@@ -76,7 +76,7 @@ export function QuizEdit({
                                                     className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-medium flex-shrink-0 ${
                                                         question.correctAnswer === optionIndex
                                                             ? "border-green-500 bg-green-500 text-white"
-                                                            : "border-gray-500"
+                                                            : "border-gray-500 text-white"
                                                     }`}
                                                 >
                                                     {String.fromCharCode(65 + optionIndex)}
@@ -106,8 +106,8 @@ export function QuizEdit({
                                                         }
                                                         className={
                                                             question.correctAnswer === optionIndex
-                                                                ? "bg-green-600 hover:bg-green-700"
-                                                                : "border-slate-500 hover:bg-slate-600"
+                                                                ? "bg-green-600 hover:bg-green-700 text-white"
+                                                                : "border-slate-500 hover:bg-slate-600 text-white"
                                                         }
                                                     >
                                                         {question.correctAnswer === optionIndex ? "✓" : "Set"}

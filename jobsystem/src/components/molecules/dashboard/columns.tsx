@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/components/utils/general.utils";
 import { ApplicationStatus } from "@/services/file.service";
 import { ArrowRight, Building2, MapPin } from "lucide-react";
 
@@ -255,25 +256,38 @@ export const getJDColumns = (handleJDClick: (id: string) => void) => [
     {
         header: "#",
         cell: (jd) => <div className="font-medium text-slate-300 truncate">{jd._id}</div>,
-        className: "max-w-30",
+        className: "w-24", // Slightly wider for full ObjectId chunk
     },
     {
         header: "Title",
         cell: (jd) => <div className="font-medium text-white truncate">{jd.title}</div>,
-        className: "max-w-50",
+        className: "w-40", // Balanced: long enough for most titles
     },
     {
         header: "Position",
-        cell: (jd) => <div className="font-medium text-white">{jd.position}</div>,
+        cell: (jd) => <div className="font-medium text-white truncate">{jd.position}</div>,
+        className: "w-28", // Slightly narrower
+    },
+    {
+        header: "Description",
+        cell: (jd) => <div className="font-medium text-white break-words line-clamp-1">{jd.description}</div>,
+        className: "w-[18rem]", // Wider for multi-line, about 288px
     },
     {
         header: "Visibility",
         cell: (jd) => (
-            <Badge variant="outline" className={`bg-blue-500/20 text-blue-400 border-blue-500/30`}>
-                {jd.visibility == "public" ? "Public" : "Private"}
+            <Badge
+                variant="outline"
+                className={cn(
+                    jd.visibility === "public"
+                        ? "bg-blue-500/20 text-blue-400 border-blue-500/30"
+                        : "bg-purple-500/20 text-purple-400 border-purple-500/30"
+                )}
+            >
+                {jd.visibility === "public" ? "Public" : "Private"}
             </Badge>
         ),
-        className: "w-28",
+        className: "w-24",
     },
     {
         header: "Actions",
@@ -290,7 +304,7 @@ export const getJDColumns = (handleJDClick: (id: string) => void) => [
                 View Details
             </Button>
         ),
-        className: "w-20",
+        className: "w-24",
     },
 ];
 
@@ -335,17 +349,17 @@ export const getApplicantionColumns = (handleApplicantionClick: (id: string) => 
         className: "w-12",
     },
     {
-        header: "Title",
-        cell: (app) => <div className="font-medium text-white truncate">{app.title}</div>,
-    },
-    {
-        header: "Description",
-        cell: (app) => <div className="font-medium text-white truncate">{app.description}</div>,
-        className: "w-24",
+        header: "Job Title",
+        cell: (app) => <div className="font-medium text-white truncate">{app.jd.title}</div>,
     },
     {
         header: "Position",
-        cell: (app) => <div className="font-medium text-white">{app.position}</div>,
+        cell: (app) => <div className="font-medium text-white truncate">{app.jd.position}</div>,
+        className: "w-24",
+    },
+    {
+        header: "File Name",
+        cell: (app) => <div className="font-medium text-white">{app.cv.fileName}</div>,
     },
     {
         header: "Status",
@@ -382,6 +396,11 @@ export const getApplicantionColumns = (handleApplicantionClick: (id: string) => 
 
 export const getCodeColumns = (handleCodeClick: (id: string) => void) => [
     {
+        header: "Problem ID",
+        cell: (code) => <div className="font-mono text-slate-300 text-sm">{code.problemId}</div>,
+        className: "w-24",
+    },
+    {
         header: "Title",
         cell: (code) => <div className="font-medium text-white truncate">{code.title}</div>,
     },
@@ -410,13 +429,9 @@ export const getCodeColumns = (handleCodeClick: (id: string) => void) => [
                 )}
             </div>
         ),
-        className: "w-48",
+        className: "w-64",
     },
-    {
-        header: "Problem ID",
-        cell: (code) => <div className="font-mono text-slate-300 text-sm">{code.problemId}</div>,
-        className: "w-24",
-    },
+
     {
         header: "Actions",
         cell: (code) => (
@@ -462,17 +477,17 @@ export const getQuizColumns = (handleQuizClick: (id: string) => void) => [
                 )}
             </div>
         ),
-        className: "w-48",
+        className: "w-56",
     },
     {
         header: "Questions",
         cell: (quiz) => <div className="font-medium text-slate-300">{quiz.questions?.length || 0} questions</div>,
-        className: "w-24",
+        className: "w-32",
     },
     {
         header: "Duration",
         cell: (quiz) => <div className="font-medium text-slate-300">{quiz.duration || 0} min</div>,
-        className: "w-20",
+        className: "w-32",
     },
     {
         header: "Created",

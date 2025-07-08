@@ -114,7 +114,12 @@ const PageCodeProblems = () => {
         <div className="flex flex-col p-6 pt-40 w-full">
             {/* Fixed Section */}
             <div className="flex flex-row items-end w-full justify-around mb-10">
-                <CustomHeroSection title="Coding" subtitle="Center" align="center" />
+                <CustomHeroSection
+                    title="Code Problem"
+                    subtitle="Studio"
+                    align="center"
+                    description="Sharpen your coding skills with real-world problems in an interactive, compiler-integrated environment. Practice, solve, and grow."
+                />
             </div>
 
             {/* Problems Section */}

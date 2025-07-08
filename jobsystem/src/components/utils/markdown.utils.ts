@@ -3,6 +3,7 @@ export const hasMarkdown = (text: string) => {
     return /[`*_#>\-[\]()]/.test(text);
 };
 
+
 export function extractTextAndCode(html: string): string {
     const dom = new DOMParser().parseFromString(html, "text/html");
     const resultParts: string[] = [];

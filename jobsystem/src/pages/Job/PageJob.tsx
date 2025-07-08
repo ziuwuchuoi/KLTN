@@ -57,7 +57,12 @@ const PageJDs = () => {
             <div className="flex flex-col items-center justify-center px-6">
                 <div className="flex flex-col items-center justify-center w-full max-w-7xl mt-40">
                     {/* Hero Title */}
-                    <CustomHeroSection />
+                    <CustomHeroSection
+                        title="Job Seeking"
+                        subtitle="Studio"
+                        align="center"
+                        description="Explore curated job opportunities that match your skills and interests. Find the right role and take the next step in your career."
+                    />
                     {/* Search Section */}
                     <div className="w-full mt-5">
                         <Card className="bg-slate-800/50 border-slate-700">

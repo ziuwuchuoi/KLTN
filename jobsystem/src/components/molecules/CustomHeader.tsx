@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { CustomNavigationMenu } from "./CustomNavigationMenu";
+import { useNavigate } from "react-router-dom";
 
 export default function CustomHeader() {
     const [scrolled, setScrolled] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleScroll = () => {
-            setScrolled(window.scrollY > 10); 
+            setScrolled(window.scrollY > 10);
         };
 
         window.addEventListener("scroll", handleScroll);
@@ -24,8 +26,13 @@ export default function CustomHeader() {
                 {/* <TbGhost className="size-6 lg:size-8 xl:size-10 animate-spin text-white dark:text-white" /> */}
             </div>
 
-            {/* Middle - Website Name (Absolute Center) */}
-            <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-white">Quantum Leap</h1>
+            {/* Middle - Website Name (Absolute Studio) */}
+            <h1
+                onClick={() => navigate("/")}
+                className="cursor-pointer absolute left-1/2 transform -translate-x-1/2 text-3xl font-bold text-white"
+            >
+                Codivio
+            </h1>
 
             {/* Right - Navigation Menu */}
             <div className="ml-auto mr-5 hidden md:flex space-x-6 text-white">
