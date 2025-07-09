@@ -13,46 +13,7 @@ import { CustomTable } from "@/components/molecules/dashboard/CustomTable";
 import CustomHeroSection from "@/components/molecules/CustomHeroSection";
 import { CustomPagination } from "@/components/molecules/CustomPagination";
 import { getCodeProblemColumns } from "@/components/molecules/dashboard/columns";
-
-// Mock suggested problems data
-const mockSuggestedProblems = [
-    {
-        _id: "suggested_1",
-        problemId: 1,
-        title: "Two Sum",
-        difficulty: "Easy",
-        topicTags: ["Array", "Hash Table"],
-        acceptanceRate: 49.2,
-        submissions: 8234567,
-    },
-    {
-        _id: "suggested_2",
-        problemId: 15,
-        title: "3Sum",
-        difficulty: "Medium",
-        topicTags: ["Array", "Two Pointers", "Sorting"],
-        acceptanceRate: 32.1,
-        submissions: 2456789,
-    },
-    {
-        _id: "suggested_3",
-        problemId: 206,
-        title: "Reverse Linked List",
-        difficulty: "Easy",
-        topicTags: ["Linked List", "Recursion"],
-        acceptanceRate: 71.8,
-        submissions: 3567890,
-    },
-    {
-        _id: "suggested_4",
-        problemId: 121,
-        title: "Best Time to Buy and Sell Stock",
-        difficulty: "Easy",
-        topicTags: ["Array", "Dynamic Programming"],
-        acceptanceRate: 54.3,
-        submissions: 4123456,
-    },
-];
+import { previousDay } from "date-fns";
 
 const PageCodeProblems = () => {
     const navigate = useNavigate();
@@ -108,6 +69,15 @@ const PageCodeProblems = () => {
         setSelectedDifficulty("All");
     };
 
+    const handleFilterChange = (value: string) => {
+        setSelectedDifficulty(value);
+        setCurrentPage(1);
+    };
+    const handleTagChange = (tags: string[]) => {
+        setSelectedTags(tags);
+        setCurrentPage(1);
+    };
+
     const hasActiveFilters = searchQuery || selectedTags.length > 0 || selectedDifficulty !== "All";
 
     return (
@@ -146,7 +116,7 @@ const PageCodeProblems = () => {
                         )}
                     </div>
 
-                    <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
+                    <Select value={selectedDifficulty} onValueChange={handleFilterChange}>
                         <SelectTrigger className="w-full sm:w-[180px] bg-slate-800 border-slate-700">
                             <SelectValue placeholder="Difficulty" />
                         </SelectTrigger>
@@ -162,7 +132,7 @@ const PageCodeProblems = () => {
                         <CustomTopicFilter
                             availableTags={tags}
                             selectedTags={selectedTags}
-                            onTagsChange={setSelectedTags}
+                            onTagsChange={handleTagChange}
                             isLoading={isTagsLoading}
                         />
                     </div>

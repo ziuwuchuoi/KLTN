@@ -36,7 +36,6 @@ export function CustomNavigationMenu() {
 
     const userMenu = [
         { title: "Profile", href: "/profile" },
-        { title: "Settings", href: "/setting" },
         { title: "Sign Out", onClick: handleLogout },
     ];
 
@@ -61,7 +60,7 @@ export function CustomNavigationMenu() {
                     {user ? (
                         <NavigationMenuItem>
                             <NavigationMenuTrigger>{user.name || "Account"}</NavigationMenuTrigger>
-                            <NavigationMenuContent className="bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 text-white">
+                            <NavigationMenuContent className="bg-gradient-to-b from-zinc-950 via-slate-900 to-gray-900 ">
                                 <ul className="grid gap-2 p-2 w-[150px]">
                                     {userMenu.map(({ title, href, onClick }) => (
                                         <li key={title}>
@@ -74,7 +73,7 @@ export function CustomNavigationMenu() {
                                                             onClick();
                                                         }
                                                     }}
-                                                    className="block select-none rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors"
+                                                    className="block select-none rounded-md px-3 py-2 text-sm hover:bg-accent transition-colors text-white hover:text-black"
                                                 >
                                                     {title}
                                                 </a>

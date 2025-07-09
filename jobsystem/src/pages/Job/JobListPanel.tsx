@@ -57,7 +57,7 @@ export function JobListPanel({
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="flex-1 p-0 flex flex-col">
+            <CardContent className="flex-1 p-0 flex flex-col text-white">
                 <ScrollArea className="h-[calc(100vh-310px)]">
                     <div className="space-y-2 p-4">
                         {isLoading ? (
