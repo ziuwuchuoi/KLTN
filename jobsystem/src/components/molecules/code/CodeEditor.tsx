@@ -1,6 +1,6 @@
 "use client";
 
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { ShowToast } from "@/components/utils/general.utils";
 import type React from "react";
 import { useRef } from "react";
@@ -14,7 +14,6 @@ interface CodeEditorProps {
 
 export function CodeEditor({ value, onChange, language, readOnly = false }: CodeEditorProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
-    const { toast } = useToast();
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (readOnly) return;
 

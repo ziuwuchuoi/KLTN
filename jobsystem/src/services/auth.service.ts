@@ -15,6 +15,8 @@ export const loginAdminService = async (name: string, password: string) => {
         name,
         password,
     });
+
+    console.log("Admin login response:", response.data);
     return response.data.data;
 };
 

@@ -181,7 +181,7 @@ const PageEvaluateCV = () => {
     const [showResults, setShowResults] = useState(false);
 
     // const [demoResult, setDemoResult] = useState<EvaluatedCVDetail | null>(null);
-    const { data: demoResult } = useEvaluatedCVDetail("64b0f1a5c1b2fa00123a0005");
+    const { data: demoResult } = useEvaluatedCVDetail("686e488a65091b838ee518b5");
 
     const resultsRef = useRef<HTMLDivElement>(null);
 

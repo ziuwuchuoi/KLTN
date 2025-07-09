@@ -8,7 +8,7 @@ import { cn, ShowToast } from "@/components/utils/general.utils";
 import { ArrowLeft } from "lucide-react";
 import { useTestSetQueries } from "../TestSet/hooks/useTestSetQueries";
 import type { TestSetSubmission } from "@/services/testset.service";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 export type QuizResult = {
     actualDuration: number;
@@ -39,7 +39,6 @@ const PageQuizDetail = () => {
     const returnUrl = searchParams.get("returnUrl");
     const { useQuizDetail, submitQuiz } = useQuizQueries();
     const { data: quiz, isLoading } = useQuizDetail(quizId);
-    const { toast } = useToast();
     const isTestsetQuiz = location.pathname.startsWith("/testset/quiz/");
 
     const [startTime] = useState(new Date());
@@ -60,9 +59,9 @@ const PageQuizDetail = () => {
             ShowToast(toast, "error", "Copy feature is not allowed!");
         };
 
-        document.addEventListener('copy', handleCopy);
+        document.addEventListener("copy", handleCopy);
         return () => {
-            document.removeEventListener('copy', handleCopy);
+            document.removeEventListener("copy", handleCopy);
         };
     }, []);
 
@@ -170,6 +169,16 @@ const PageQuizDetail = () => {
         }
     };
 
+    const handleBackNavigation = () => {
+        if (isTestsetQuiz && returnUrl) {
+            navigate(returnUrl);
+        } else if (isTestsetQuiz) {
+            navigate(-1);
+        } else {
+            navigate("/quiz/technical");
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="flex flex-col w-full pt-20">
@@ -207,6 +216,18 @@ const PageQuizDetail = () => {
                     {/* Sidebar with question navigation */}
                     <div className="md:col-span-1">
                         <div className="sticky top-8">
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={handleBackNavigation}
+                                    className="text-slate-400 hover:text-slate-900 text-sm font-semibold"
+                                >
+                                    <ArrowLeft className="w-4 h-4 mr-2" />
+                                    Back to {isTestsetQuiz ? "Test Set" : "Quizzes"}
+                                </Button>
+                                <span className="text-lg font-semibold text-white">{quiz.title}</span>
+                            </div>
                             <QuizNavigation
                                 questionsCount={quiz.questions.length}
                                 answeredQuestions={answeredQuestions}

@@ -15,7 +15,7 @@ import type { CodeLanguage, CodeSubmitResult } from "@/services/code.service";
 import { difficultyColors } from "@/components/molecules/dashboard/columns";
 import { useTestSetQueries } from "../TestSet/hooks/useTestSetQueries";
 import type { TestSetSubmission } from "@/services/testset.service";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { ShowToast } from "@/components/utils/general.utils";
 import { TestResultsDrawer } from "@/components/molecules/code/TestResultDrawer";
 
@@ -36,7 +36,6 @@ const PageProblemCodingDetail = () => {
     const { useCodeProblemDetail, languages, submitCodeMutation, testCodeMutation } = useCodeQueries();
     const { data: problem, isLoading } = useCodeProblemDetail(problemId);
     const { submitCodeTestSet } = useTestSetQueries();
-    const { toast } = useToast();
 
     const [selectedLanguage, setSelectedLanguage] = useState<CodeLanguage>(languages[0]);
     const [code, setCode] = useState("");
@@ -55,9 +54,9 @@ const PageProblemCodingDetail = () => {
             ShowToast(toast, "error", "Copy feature is not allowed!");
         };
 
-        document.addEventListener('copy', handleCopy);
+        document.addEventListener("copy", handleCopy);
         return () => {
-            document.removeEventListener('copy', handleCopy);
+            document.removeEventListener("copy", handleCopy);
         };
     }, []);
 

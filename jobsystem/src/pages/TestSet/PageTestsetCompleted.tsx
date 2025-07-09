@@ -9,6 +9,11 @@ import { CheckCircle2, HelpCircle, Code, Clock, Trophy, Home, Star, Award, Targe
 import type { TestSetSubmission } from "@/services/testset.service";
 import CustomHeroSection from "@/components/molecules/CustomHeroSection";
 
+interface StoredSubmission extends TestSetSubmission {
+    startTime: number;
+    duration: number;
+}
+
 const PageTestSetCompleted = () => {
     const { testSetId } = useParams<{ testSetId: string }>();
     const navigate = useNavigate();
@@ -16,31 +21,37 @@ const PageTestSetCompleted = () => {
     const urlParams = new URLSearchParams(location.search);
     const submissionId = urlParams.get("submissionId");
 
-    const [submission, setSubmission] = useState<TestSetSubmission | null>(null);
+    const [submission, setSubmission] = useState<StoredSubmission | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // In a real app, you would fetch the submission data here
-        // For now, we'll simulate the data
-        setSubmission({
-            _id: submissionId || "",
-            testSetId: testSetId || "",
-            candidateId: "candidate-123",
-            completedQuizIds: ["quiz-1", "quiz-2"],
-            completedProblemIds: ["problem-1", "problem-2"],
-            totalQuizScore: 85,
-            totalPassedCodingProblems: 2,
-            totalCodingProblems: 2,
-            finalScore: "87.5",
-            submitted: true,
-            actualDuration: 45,
-            startedAt: new Date(),
-            endAt: new Date(),
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        });
-        setIsLoading(false);
-    }, [submissionId, testSetId]);
+        const loadSubmissionFromStorage = () => {
+            if (submissionId) {
+                const stored = localStorage.getItem(`testset_submission_${submissionId}`);
+                if (stored) {
+                    try {
+                        const submission: StoredSubmission = JSON.parse(stored);
+                        setSubmission(submission);
+                        console.log("Loaded submission from localStorage:", submission);
+                    } catch (error) {
+                        console.error("Error parsing localStorage:", error);
+                        // Redirect to home if no valid submission found
+                        navigate("/");
+                    }
+                } else {
+                    console.error("No submission found in localStorage");
+                    // Redirect to home if no submission found
+                    navigate("/");
+                }
+            } else {
+                console.error("No submissionId provided");
+                navigate("/");
+            }
+            setIsLoading(false);
+        };
+
+        loadSubmissionFromStorage();
+    }, [submissionId, navigate]);
 
     const formatDuration = (minutes: number) => {
         const hours = Math.floor(minutes / 60);
@@ -83,6 +94,16 @@ const PageTestSetCompleted = () => {
         return <TrendingUp className="h-6 w-6 text-red-400" />;
     };
 
+    const calculateActualDuration = (submission: StoredSubmission) => {
+        if (submission.actualDuration) {
+            return submission.actualDuration;
+        }
+        // Calculate from startTime if actualDuration is not available
+        const endTime = submission.endAt ? new Date(submission.endAt).getTime() : Date.now();
+        const startTime = submission.startTime || new Date(submission.startedAt).getTime();
+        return Math.floor((endTime - startTime) / (1000 * 60)); // Convert to minutes
+    };
+
     if (isLoading) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-slate-900 to-gray-900 flex items-center justify-center">
@@ -102,6 +123,10 @@ const PageTestSetCompleted = () => {
                         <span className="text-red-400 text-2xl">⚠</span>
                     </div>
                     <p className="text-red-400 font-medium">No submission found</p>
+                    <Button onClick={() => navigate("/")} variant="outline">
+                        <Home className="h-4 w-4 mr-2" />
+                        Return to Home
+                    </Button>
                 </div>
             </div>
         );
@@ -111,6 +136,7 @@ const PageTestSetCompleted = () => {
     const completedProblems = submission.completedProblemIds.length;
     const totalCompleted = completedQuizzes + completedProblems;
     const finalScore = Number.parseFloat(submission.finalScore);
+    const actualDuration = calculateActualDuration(submission);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-slate-900 to-gray-900">
@@ -233,7 +259,7 @@ const PageTestSetCompleted = () => {
                             <CardContent>
                                 <div className="text-center">
                                     <div className="text-3xl font-bold text-orange-400 mb-2">
-                                        {formatDuration(submission.actualDuration)}
+                                        {formatDuration(actualDuration)}
                                     </div>
                                     <p className="text-slate-400 text-sm">Time Taken</p>
                                 </div>
@@ -269,15 +295,21 @@ const PageTestSetCompleted = () => {
                                     </span>
                                 </div>
                                 <div className="space-y-2">
-                                    {submission.completedQuizIds.map((quizId, index) => (
-                                        <div
-                                            key={quizId}
-                                            className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg"
-                                        >
-                                            <CheckCircle2 className="h-4 w-4 text-green-400" />
-                                            <span className="text-slate-300 text-sm">Quiz {index + 1} - Completed</span>
-                                        </div>
-                                    ))}
+                                    {submission.completedQuizIds.length > 0 ? (
+                                        submission.completedQuizIds.map((quizId, index) => (
+                                            <div
+                                                key={quizId}
+                                                className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg"
+                                            >
+                                                <CheckCircle2 className="h-4 w-4 text-green-400" />
+                                                <span className="text-slate-300 text-sm">
+                                                    Quiz {index + 1} - Completed
+                                                </span>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="text-center py-4 text-slate-400">No quizzes completed</div>
+                                    )}
                                 </div>
                             </CardContent>
                         </Card>
@@ -306,19 +338,96 @@ const PageTestSetCompleted = () => {
                                     </span>
                                 </div>
                                 <div className="space-y-2">
-                                    {submission.completedProblemIds.map((problemId, index) => (
-                                        <div
-                                            key={problemId}
-                                            className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg"
-                                        >
-                                            <CheckCircle2 className="h-4 w-4 text-green-400" />
-                                            <span className="text-slate-300 text-sm">Problem {index + 1} - Solved</span>
+                                    {submission.completedProblemIds.length > 0 ? (
+                                        submission.completedProblemIds.map((problemId, index) => (
+                                            <div
+                                                key={problemId}
+                                                className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg"
+                                            >
+                                                <CheckCircle2 className="h-4 w-4 text-green-400" />
+                                                <span className="text-slate-300 text-sm">
+                                                    Problem {index + 1} - Solved
+                                                </span>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="text-center py-4 text-slate-400">
+                                            No coding problems completed
                                         </div>
-                                    ))}
+                                    )}
                                 </div>
                             </CardContent>
                         </Card>
                     </div>
+
+                    {/* Assessment Details */}
+                    <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm">
+                        <CardHeader>
+                            <CardTitle className="text-white text-xl">Assessment Summary</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-3">
+                                    <h4 className="font-semibold text-white">Test Set Information</h4>
+                                    <div className="space-y-2 text-sm">
+                                        <div className="flex justify-between">
+                                            <span className="text-slate-400">Test Set ID:</span>
+                                            <span className="text-slate-300">{submission.testSetId}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-slate-400">Submission ID:</span>
+                                            <span className="text-slate-300">{submission._id}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-slate-400">Started At:</span>
+                                            <span className="text-slate-300">
+                                                {new Date(submission.startedAt).toLocaleString()}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-slate-400">Completed At:</span>
+                                            <span className="text-slate-300">
+                                                {submission.endAt
+                                                    ? new Date(submission.endAt).toLocaleString()
+                                                    : "In Progress"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="space-y-3">
+                                    <h4 className="font-semibold text-white">Performance Metrics</h4>
+                                    <div className="space-y-2 text-sm">
+                                        <div className="flex justify-between">
+                                            <span className="text-slate-400">Final Score:</span>
+                                            <span className={`font-semibold ${getScoreColor(finalScore)}`}>
+                                                {finalScore}%
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-slate-400">Quiz Score:</span>
+                                            <span
+                                                className={`font-semibold ${getScoreColor(submission.totalQuizScore)}`}
+                                            >
+                                                {submission.totalQuizScore}%
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-slate-400">Coding Success:</span>
+                                            <span className="text-green-400 font-semibold">
+                                                {submission.totalPassedCodingProblems}/{submission.totalCodingProblems}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-slate-400">Status:</span>
+                                            <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
+                                                {submission.submitted ? "Submitted" : "In Progress"}
+                                            </Badge>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
 
                     {/* Next Steps */}
                     <Card className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-sm">
@@ -329,7 +438,6 @@ const PageTestSetCompleted = () => {
                             <p className="text-slate-300 text-lg">
                                 Thank you for completing your technical assessment! Here's what you can expect:
                             </p>
-
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div className="text-center space-y-3">
                                     <div className="bg-blue-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto">
@@ -343,7 +451,6 @@ const PageTestSetCompleted = () => {
                                         </p>
                                     </div>
                                 </div>
-
                                 <div className="text-center space-y-3">
                                     <div className="bg-yellow-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto">
                                         <span className="text-yellow-400 text-2xl font-bold">2</span>
@@ -355,7 +462,6 @@ const PageTestSetCompleted = () => {
                                         </p>
                                     </div>
                                 </div>
-
                                 <div className="text-center space-y-3">
                                     <div className="bg-green-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto">
                                         <span className="text-green-400 text-2xl font-bold">3</span>
@@ -368,7 +474,6 @@ const PageTestSetCompleted = () => {
                                     </div>
                                 </div>
                             </div>
-
                             <div className="text-center pt-6">
                                 <Button
                                     onClick={() => navigate("/")}

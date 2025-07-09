@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useCallback, useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { cn, ShowToast } from "@/components/utils/general.utils";
 import { DocumentFormat, ImageFormat } from "@aws-sdk/client-bedrock-runtime";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -56,7 +56,6 @@ const CustomImportFile = ({
     dropDescription = `Up to ${maxFiles} files (max ${maxFileSizeMB}MB each)`,
 }: ImportFileProps) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const { toast } = useToast();
     const [showDropDialog, setShowDropDialog] = useState(false);
     const dragCounter = useRef(0);
 

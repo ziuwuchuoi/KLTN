@@ -238,7 +238,7 @@ const PageCodeProblems = () => {
                 )}
 
                 {/* Suggested Problems Section */}
-                {!hasActiveFilters && mockSuggestedProblems.length > 0 && (
+                {!hasActiveFilters && suggestedCodeProblems.length > 0 && (
                     <div className="mb-12">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="p-2 rounded-lg bg-yellow-600/20 border border-yellow-500/30">
@@ -252,7 +252,7 @@ const PageCodeProblems = () => {
 
                         <div className="relative">
                             <CustomTable
-                                data={mockSuggestedProblems}
+                                data={suggestedCodeProblems}
                                 columns={getCodeProblemColumns(handleProblemClick)}
                                 isLoading={false}
                                 loadingMessage="Loading suggested problems..."

@@ -234,7 +234,7 @@ const PageTestSetTaking = () => {
         try {
             await submitFinalTestSet.mutateAsync(submissionId);
             // Clear localStorage after successful submission
-            localStorage.removeItem(`testset_submission_${submissionId}`);
+            // localStorage.removeItem(`testset_submission_${submissionId}`);
             navigate(`/testset/${testSetId}/${jdId}/completed?submissionId=${submissionId}`);
         } catch (error) {
             console.error("Failed to submit test set:", error);

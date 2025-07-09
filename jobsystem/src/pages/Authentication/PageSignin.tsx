@@ -74,6 +74,7 @@ const PageSignin = () => {
         try {
             await loginAdmin(name, password);
             toast.success("Admin login successful");
+            handleSuccessfulLogin();
         } catch (err) {
             toast.error("Failed to login as admin.");
         } finally {
@@ -159,8 +160,14 @@ const PageSignin = () => {
                             />
                         </div>
 
-                        <CustomPasswordInput />
-
+                        <CustomPasswordInput
+                            value={password}
+                            onChange={setPassword}
+                            placeholder="Enter your password"
+                            label="Password"
+                            disabled={isLoading}
+                            required
+                        />
                         <LoadingButton className="w-full mt-2" isLoading={isLoading} onClick={handleAdminLogin}>
                             Sign In
                         </LoadingButton>
