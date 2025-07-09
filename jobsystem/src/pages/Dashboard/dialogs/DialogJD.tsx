@@ -29,8 +29,11 @@ export function DialogJD({ isOpen, onClose, jd }: DialogJDProps) {
     const { useJDDetail, updateJD } = useJDQueries();
     const { useTestSetByJD, updateTestSet } = useTestSetQueries();
 
-    const { data: jdDetail, isLoading } = useJDDetail(jd?._id || "");
-    const { data: testSetDetail, isLoading: isTestSetLoading } = useTestSetByJD(jd?._id || "");
+    const { data: jdDetail, isLoading } = useJDDetail(jd?._id);
+    const { data: testSetDetail, isLoading: isTestSetLoading } = useTestSetByJD(jd?._id);
+
+    console.log("JD Detail:", jdDetail);
+    console.log("Test Set Detail:", testSetDetail);
 
     // Reset edit mode when dialog opens/closes
     useEffect(() => {
@@ -38,8 +41,9 @@ export function DialogJD({ isOpen, onClose, jd }: DialogJDProps) {
             setEditData(jdDetail);
             setIsEditMode(false);
             setActiveTab("information");
+            console.log("testSetDetail loaded:", testSetDetail);
         }
-    }, [isOpen, jdDetail]);
+    }, [isOpen, jdDetail, testSetDetail]);
 
     const handleEdit = () => {
         setIsEditMode(true);

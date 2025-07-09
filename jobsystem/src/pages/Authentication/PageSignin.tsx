@@ -9,6 +9,7 @@ import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { Info } from "lucide-react";
+import { CustomPasswordInput } from "@/components/molecules/CustomPasswordInput";
 
 const PageSignin = () => {
     const { role } = useParams();
@@ -73,7 +74,6 @@ const PageSignin = () => {
         try {
             await loginAdmin(name, password);
             toast.success("Admin login successful");
-            handleSuccessfulLogin();
         } catch (err) {
             toast.error("Failed to login as admin.");
         } finally {
@@ -159,15 +159,7 @@ const PageSignin = () => {
                             />
                         </div>
 
-                        <div>
-                            <Label>Password</Label>
-                            <Input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Enter your password"
-                            />
-                        </div>
+                        <CustomPasswordInput />
 
                         <LoadingButton className="w-full mt-2" isLoading={isLoading} onClick={handleAdminLogin}>
                             Sign In

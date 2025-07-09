@@ -181,7 +181,7 @@ const PageEvaluateCV = () => {
     const [showResults, setShowResults] = useState(false);
 
     // const [demoResult, setDemoResult] = useState<EvaluatedCVDetail | null>(null);
-    const { data: demoResult } = useEvaluatedCVDetail("6862d50fe6bf7a134f7c1888");
+    const { data: demoResult } = useEvaluatedCVDetail("64b0f1a5c1b2fa00123a0005");
 
     const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -388,7 +388,7 @@ const PageEvaluateCV = () => {
                                 </Button>
                             ) : (
                                 <Button
-                                    onClick={() => handleEvaluate()}
+                                    onClick={() => handleDemo()}
                                     disabled={!canEvaluate || isEvaluating}
                                     size="lg"
                                     className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold"

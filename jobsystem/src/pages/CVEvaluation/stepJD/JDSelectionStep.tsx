@@ -137,22 +137,25 @@ export function JDSelectionStep({ selectedJDId, onJDSelect, jdData, onJDDataChan
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                                    {jds.slice(0, 4).map((jd) => (
-                                        <FileItem
-                                            key={jd._id}
-                                            id={jd._id}
-                                            title={jd.title}
-                                            subtitle={jd.companyName}
-                                            description={`We are looking for a ${jd.title.toLowerCase()}...`}
-                                            selected={selectedJDId === jd._id}
-                                            onSelect={onJDSelect}
-                                            colorScheme="purple"
-                                            icon={<Building2 className="w-5 h-5 text-purple-400 flex-shrink-0" />}
-                                            maxTitleLength={50}
-                                            maxSubtitleLength={40}
-                                            maxDescriptionLength={60}
-                                        />
-                                    ))}
+                                    {[...jds]
+                                        .sort(() => 0.5 - Math.random()) // Shuffle array
+                                        .slice(0, 6) // Take 6 random items
+                                        .map((jd) => (
+                                            <FileItem
+                                                key={jd._id}
+                                                id={jd._id}
+                                                title={jd.title}
+                                                subtitle={jd.companyName}
+                                                description={`We are looking for a ${jd.title.toLowerCase()}...`}
+                                                selected={selectedJDId === jd._id}
+                                                onSelect={onJDSelect}
+                                                colorScheme="purple"
+                                                icon={<Building2 className="w-5 h-5 text-purple-400 flex-shrink-0" />}
+                                                maxTitleLength={50}
+                                                maxSubtitleLength={40}
+                                                maxDescriptionLength={60}
+                                            />
+                                        ))}
                                 </div>
                             )}
                         </div>

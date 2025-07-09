@@ -34,7 +34,7 @@ export function DialogAddTestSet({ isOpen, onClose, jdId }: DialogAddTestSetProp
     const { technicalQuizzes, isLoadingQuizzes } = useQuizQueries(user?._id);
     const { codeProblems, isCodeProblemsLoading } = useCodeQueries(user?._id);
 
-    const { linkTestSet, useTestSetByJD } = useTestSetQueries();
+    const { linkTestSet } = useTestSetQueries();
 
     const handleQuizSelect = (quizId: string, checked: boolean) => {
         if (checked) {
@@ -54,7 +54,6 @@ export function DialogAddTestSet({ isOpen, onClose, jdId }: DialogAddTestSetProp
 
     const handleAddToJD = async () => {
         try {
-            console.log("jdId in handle", jdId);
             await linkTestSet.mutateAsync({
                 jdId: jdId,
                 quizIds: selectedQuizzes,

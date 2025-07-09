@@ -140,7 +140,7 @@ export function DialogApplication({ isOpen, onClose, application, onUpdate }: Di
 
                 {/* Fixed Footer with Cancel/Save buttons */}
                 {hasStatusChanged && (
-                    <div className="flex-shrink-0 border-t border-slate-700 bg-slate-800/30 p-4">
+                    <div className="pt-4">
                         <div className="flex items-center justify-end gap-3">
                             <Button
                                 variant="outline"

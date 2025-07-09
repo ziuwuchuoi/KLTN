@@ -68,7 +68,7 @@ export function ApplicationHeader({ applicationDetail, currentStatus, onStatusCh
                         <SelectTrigger className="w-36 bg-slate-700 border-slate-600 text-white">
                             <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-slate-800 border-slate-700">
+                        <SelectContent className="bg-slate-800 border-slate-700 text-white">
                             <SelectItem value="pending">Pending</SelectItem>
                             <SelectItem value="shortlisted">Shortlisted</SelectItem>
                             <SelectItem value="rejected">Rejected</SelectItem>

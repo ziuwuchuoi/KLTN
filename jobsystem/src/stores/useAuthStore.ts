@@ -200,8 +200,11 @@ export const useAuthStore = create<AuthState>()(
 
                     const response = await loginAdminService(name, password);
 
+                    console.log("Admin login response:", response);
+
                     if (response) {
-                        set({ token: response, error: null, isAuthenticated: true });
+                        get().setToken(response);
+                        set({ error: null, isAuthenticated: true });
                         get().setRole("admin");
                         await get().fetchAdminProfile();
                     }

@@ -22,6 +22,9 @@ export function SubTabTestSet({
     onRemoveQuiz,
     onRemoveCode,
 }: SubTabTestSetProps) {
+
+    
+
     return (
         <div className="h-full flex flex-col">
             {/* Fixed Header for Test Sets */}
@@ -167,33 +170,6 @@ export function SubTabTestSet({
                                         </div>
                                     )}
                                 </div>
-
-                                {/* Empty State */}
-                                {(!testSetDetail?.quizzes || testSetDetail.quizzes.length === 0) &&
-                                    (!testSetDetail?.problems || testSetDetail.problems.length === 0) && (
-                                        <div className="text-center py-12">
-                                            <div className="bg-slate-800/30 rounded-lg p-8">
-                                                <div className="flex items-center justify-center mb-4">
-                                                    <div className="bg-blue-600/20 p-3 rounded-full">
-                                                        <Plus className="h-8 w-8 text-blue-400" />
-                                                    </div>
-                                                </div>
-                                                <h4 className="text-lg font-medium text-white mb-2">
-                                                    No test sets linked yet
-                                                </h4>
-                                                <p className="text-gray-400 mb-4">
-                                                    Add quizzes and coding problems to create assessments for this job
-                                                </p>
-                                                <Button
-                                                    onClick={onAddTestset}
-                                                    className="bg-blue-600 hover:bg-blue-700"
-                                                >
-                                                    <Plus className="h-4 w-4 mr-2" />
-                                                    Add Your First Test Set
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    )}
                             </div>
                         )}
                     </div>
