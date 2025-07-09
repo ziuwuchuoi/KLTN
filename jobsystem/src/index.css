@@ -1,0 +1,227 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    /* font-family: "Geist Variable"; */
+    font-family: Inter, sans-serif;
+}
+
+@layer base {
+    :root {
+        /* Base light background color */
+        --background: 0 0% 100%;
+        --background-alt: 240 5% 96%;
+
+        /* Text color on light background */
+        --foreground: 240 10% 3.9%;
+        /* Background color for cards in light mode */
+        --card: 0 0% 100%;
+        --card-alt: 0 0% 100%;
+
+        /* Text color on card background in light mode */
+        --card-foreground: 240 10% 3.9%;
+        /* Background color for popovers in light mode */
+        --popover: 0 0% 100%;
+        /* Text color on popover background in light mode */
+        --popover-foreground: 240 10% 3.9%;
+        /* Primary action color in light mode */
+        --primary: 240 5.9% 10%;
+        --heading: 240 5.9% 10%;
+        /* Text color on primary action elements in light mode */
+        --primary-foreground: 0 0% 98%;
+        /* Secondary action color in light mode */
+        --secondary: 240 4.8% 95.9%;
+        /* Text color on secondary action elements in light mode */
+        --secondary-foreground: 240 5.9% 10%;
+        /* Muted color for less emphasis in light mode */
+        --muted: 240 4.8% 95.9%;
+        /* Text color on muted background in light mode */
+        --muted-foreground: 240 3.8% 46.1%;
+        /* Accent color for special elements in light mode */
+        --accent: 240 4.8% 95.9%;
+        /* Text color on accent elements in light mode */
+        --accent-foreground: 240 5.9% 10%;
+        /* Color for destructive actions in light mode */
+        --destructive: 0 84.2% 60.2%;
+        /* Text color on destructive elements in light mode */
+        --destructive-foreground: 0 0% 98%;
+        /* Border color in light mode */
+        --border: 240 5.9% 90%;
+        /* Input field background color in light mode */
+        --input: 240 5.9% 90%;
+        /* Color for focus rings around elements in light mode */
+        --ring: 240 5.9% 10%;
+        /* Border radius for elements */
+        --radius: 0.5rem;
+    }
+
+    .dark {
+        /* Base dark background color */
+        --background: 240 10% 3.9%;
+        --background-alt: 240 7% 8.5%;
+
+        /* Text color on dark background */
+        --foreground: 0 0% 98%;
+        /* Background color for cards in dark mode */
+        --card: 240 10% 3.9%;
+        --card-alt: 240 6% 10%;
+
+        /* Text color on card background in dark mode */
+        --card-foreground: 0 0% 98%;
+        /* Background color for popovers in dark mode */
+        --popover: 240 10% 3.9%;
+        /* Text color on popover background in dark mode */
+        --popover-foreground: 0 0% 98%;
+        /* Primary action color in dark mode */
+        --primary: 240 5% 82%;
+        --heading: 240 5% 92%;
+        /* Text color on primary action elements in dark mode */
+        --primary-foreground: 240 5.9% 10%;
+        /* Secondary action color in dark mode */
+        --secondary: 240 3.7% 15.9%;
+        /* Text color on secondary action elements in dark mode */
+        --secondary-foreground: 0 0% 98%;
+        /* Muted color for less emphasis in dark mode */
+        --muted: 240 3.7% 15.9%;
+        /* Text color on muted background in dark mode */
+        --muted-foreground: 240 5% 64.9%;
+        /* Accent color for special elements in dark mode */
+        --accent: 240 3.7% 15.9%;
+        /* Text color on accent elements in dark mode */
+        --accent-foreground: 0 0% 98%;
+        /* Color for destructive actions in dark mode */
+        --destructive: 0 62.8% 30.6%;
+        /* Text color on destructive elements in dark mode */
+        --destructive-foreground: 0 0% 98%;
+        /* Border color in dark mode */
+        --border: 240 3.7% 15.9%;
+        /* Input field background color in dark mode */
+        --input: 240 3.7% 15.9%;
+        /* Color for focus rings around elements in dark mode */
+        --ring: 240 4.9% 83.9%;
+    }
+}
+
+@layer base {
+    :root {
+        /*main patterns*/
+        --chart-1: 238.7 83.5% 66.7%;
+        --chart-2: 270.7 91% 65.1%;
+        --chart-3: 330.4 81.2% 60.4%;
+
+        /*sub patterns*/
+        --view: 160.1 84.1% 39.4%;
+        --create: 217.2 91.2% 59.8%;
+        --update: 45.4 93.4% 47.5%;
+        --delete: 349.7 89.2% 60.2%;
+        --chat: 238.7 83.5% 66.7%;
+    }
+
+    .dark {
+        /*main patterns*/
+        --chart-1: 238.7 83.5% 66.7%;
+        --chart-2: 270.7 91% 65.1%;
+        --chart-3: 330.4 81.2% 60.4%;
+
+        /*6 colors*/
+        --view: 160.1 84.1% 39.4%;
+        --create: 217.2 91.2% 59.8%;
+        --update: 45.4 93.4% 47.5%;
+        --delete: 349.7 89.2% 60.2%;
+        --chat: 238.7 83.5% 66.7%;
+
+    }
+}
+
+.scroll::webkit-resizer,
+.scroll-dark::webkit-resizer {
+    background-color: transparent;
+}
+
+.scroll::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.scroll-dark::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+/* Styles the scrollbar track (background area) */
+.scroll::-webkit-scrollbar-track,
+.scroll-dark::-webkit-scrollbar-track {
+    background: transparent;
+    /* Keeps the track transparent */
+}
+
+/* Hides the up and down arrow indicators */
+.scroll::-webkit-scrollbar-button,
+.scroll-dark::-webkit-scrollbar-button {
+    display: none;
+}
+
+/* Styles the scrollbar thumb (the draggable part) */
+.scroll::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--foreground) / 0.1);
+    border-radius: 10px;
+    border: 2px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+}
+
+.scroll-dark::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 10px;
+    border: 2px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+}
+
+@keyframes gradientText {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.animate-gradientText {
+    animation: gradientText 5s ease infinite;
+    background-size: 300%;
+}
+
+.bg-grid-zinc-100 {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='%23f4f4f5'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+}
+
+.bg-grid-zinc-700\/25 {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(39, 39, 42 / 0.25)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+}
+
+.bg-grid-zinc-800\/25 {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(24, 24, 27 / 0.25)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+}
+
+.bg-grid-zinc-900\/25 {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(12, 12, 14 / 0.25)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+.icon-sm {
+    @apply size-4 text-muted-foreground;
+}
