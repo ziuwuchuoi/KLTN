@@ -19,7 +19,8 @@ const TabJobDescription = () => {
     const [isCreateJDOpen, setIsCreateJDOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const { jds, isJDDataLoading, pagination } = useJDQueries(user._id, currentPage);
+    const { jds, isJDDataLoading, pagination } = useJDQueries(user._id, currentPage, 20);
+    console.log("jds", jds);
 
     const handleJDClick = (jdId: string) => {
         const jd = jds?.find((jd) => jd._id === jdId);

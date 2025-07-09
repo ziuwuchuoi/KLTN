@@ -237,6 +237,7 @@ export const getListJDService = async (
         : `/cvs/list-jds?visibility=public&verified=${verified}&limit=${limit}&page=${page}`;
 
     const response = await axiosInstance.get(url);
+    console.log("getListJDService", response.data.data);
 
     return response.data.data;
 };

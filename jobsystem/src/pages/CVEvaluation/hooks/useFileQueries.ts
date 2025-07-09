@@ -364,7 +364,7 @@ export const useCVQueries = (userId?: string, page = 1, limit = 20) => {
     };
 };
 
-export const useJDQueries = (userId?: string, page = 1, limit = 20, verified?: boolean) => {
+export const useJDQueries = (userId?: string, page = 1, limit = 20, verified = true) => {
     const queryClient = useQueryClient();
 
     const {
