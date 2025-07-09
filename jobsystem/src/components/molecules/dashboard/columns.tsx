@@ -18,7 +18,7 @@ export const statusColors = {
     accepted: "bg-green-900/20 text-green-400 border-green-500/30",
 };
 
-export const getCodeProblemColumns = (handleProblemClick: (id: string) => void) => [
+export const getCodeProblemColumns = (handleProblemClick: (code) => void) => [
     {
         header: "#",
         cell: (problem) => <div className="font-medium text-slate-300">{problem.problemId}</div>,
@@ -66,7 +66,7 @@ export const getCodeProblemColumns = (handleProblemClick: (id: string) => void) 
                 size="sm"
                 onClick={(e) => {
                     e.stopPropagation();
-                    handleProblemClick(problem._id);
+                    handleProblemClick(problem);
                 }}
                 className="text-blue-400 hover:text-blue-300"
             >

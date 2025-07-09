@@ -132,7 +132,7 @@ export const CustomTopicFilter = ({ availableTags, selectedTags, onTagsChange, i
             </Popover>
 
             {/* Selected Tags Display */}
-            {selectedTags.length > 0 && (
+            {/* {selectedTags.length > 0 && (
                 <div className="flex flex-wrap gap-1 max-w-md">
                     {selectedTags.slice(0, 3).map((tag) => (
                         <Badge
@@ -151,7 +151,7 @@ export const CustomTopicFilter = ({ availableTags, selectedTags, onTagsChange, i
                         </Badge>
                     )}
                 </div>
-            )}
+            )} */}
         </div>
     );
 };
