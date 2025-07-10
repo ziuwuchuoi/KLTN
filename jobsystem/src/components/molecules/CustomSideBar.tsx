@@ -20,12 +20,12 @@ const menuItems: {
     icon: React.ReactNode;
     permissionAllowed: UserRole;
 }[] = [
-    {
-        title: "Analysis",
-        path: "/dashboard/analysis",
-        icon: <TbChartArea className="h-5 w-5" />,
-        permissionAllowed: "admin",
-    },
+    // {
+    //     title: "Analysis",
+    //     path: "/dashboard/analysis",
+    //     icon: <TbChartArea className="h-5 w-5" />,
+    //     permissionAllowed: "admin",
+    // },
     {
         title: "Candidates",
         path: "/dashboard/candidates",

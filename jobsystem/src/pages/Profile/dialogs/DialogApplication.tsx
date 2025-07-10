@@ -115,7 +115,7 @@ export function DialogApplication({ isOpen, onClose, application }: DialogApplic
                         />
 
                         {/* JD Section */}
-                        <Card className="bg-slate-800/50 border-slate-700 h-[80%] flex flex-col">
+                        <Card className="bg-slate-800/50 border-slate-700 h-[60%] flex flex-col pb-4">
                             <CardHeader className="pb-3">
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="flex items-center gap-2 text-white">

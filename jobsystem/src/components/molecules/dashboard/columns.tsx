@@ -119,22 +119,8 @@ export const getCandidateColumns = (handleCandidateClick: (userId: string) => vo
         className: "w-28",
     },
     {
-        header: "CV",
-        cell: (item) => (
-            <Badge
-                variant="secondary"
-                className={`text-xs ${item.cvId ? "bg-green-700 text-green-300" : "bg-gray-700 text-gray-300"}`}
-            >
-                {item.cvId ? item.cvId : "None"}
-            </Badge>
-        ),
-        className: "w-24",
-    },
-    {
-        header: "Applied Jobs",
-        cell: (item) => (
-            <div className="text-slate-300">{item.appliedJobIds?.length > 0 ? item.appliedJobIds.join(", ") : "-"}</div>
-        ),
+        header: "Created At",
+        cell: (item) => <div className="text-slate-300">{new Date(item.createdAt).toLocaleDateString()}</div>,
     },
     {
         header: "Actions",
@@ -183,16 +169,8 @@ export const getRecruiterColumns = (handleRecruiterClick: (userId: string) => vo
         className: "w-28",
     },
     {
-        header: "JD",
-        cell: (item) => (
-            <Badge
-                variant="secondary"
-                className={`text-xs ${item.cvId ? "bg-green-700 text-green-300" : "bg-gray-700 text-gray-300"}`}
-            >
-                {item.cvId ? "Available" : "None"}
-            </Badge>
-        ),
-        className: "w-24",
+        header: "Created At",
+        cell: (item) => <div className="text-slate-300">{new Date(item.createdAt).toLocaleDateString()}</div>,
     },
     {
         header: "Actions",
@@ -242,10 +220,8 @@ export const getRequestRecruiterColumns = (handleRequestRecruiterClick: (userId:
         className: "w-28",
     },
     {
-        header: "Applied Jobs",
-        cell: (item) => (
-            <div className="text-slate-300">{item.appliedJobIds?.length > 0 ? item.appliedJobIds.join(", ") : "-"}</div>
-        ),
+        header: "Created At",
+        cell: (item) => <div className="text-slate-300">{new Date(item.createdAt).toLocaleDateString()}</div>,
     },
     {
         header: "Actions",

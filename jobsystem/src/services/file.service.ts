@@ -368,16 +368,15 @@ export const evaluateCVService = async (cvId: string, jdId: string): Promise<Eva
 // recommended JD
 
 export const getRecommendedJobsService = async (
-    candidateId: string, // list by candidate or recruiter
-    limit = 20,
+    candidateId: string,
+    limit = 7,
     page = 1
-): Promise<
-    RecommendedJDItem[]
-    // meta: { limit: number; page: number; total: number; totalPages: number };
-> => {
-    const url = `/recombee/recommend/jd?candidateId=${candidateId}&limit=${limit}&page=${page}`;
+): Promise<RecommendedJDItem[]> => {
+    const url = `/recombee/recommend/jds?candidateId=${candidateId}&limit=${limit}&page=${page}`;
 
+    console.log("getRecommendedJobsService URL:", url);
     const response = await axiosInstance.get(url);
+    console.log("getRecommendedJobsService", response.data.data);
 
     return response.data.data;
 };

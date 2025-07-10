@@ -54,25 +54,7 @@ export function DialogJD({ isOpen, onClose, jd }: DialogJDProps) {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-4xl w-[80vw] h-[90vh] bg-slate-900 border-slate-700 p-0">
-                <DialogHeader className="px-6 py-4 border-b border-slate-700">
-                    <DialogTitle className="text-xl text-white flex items-center gap-3">
-                        <Building2 className="w-6 h-6 text-purple-400" />
-                        Job Description Details
-                        <div className="ml-auto flex items-center gap-2">
-                            {jdDetail.verified && (
-                                <Badge className="bg-green-600/20 text-green-400 border-green-500/30">
-                                    <CheckCircle className="w-3 h-3 mr-1" />
-                                    Verified
-                                </Badge>
-                            )}
-                            <Badge variant="outline" className="border-purple-500/30 text-purple-400">
-                                {jdDetail.visibility}
-                            </Badge>
-                        </div>
-                    </DialogTitle>
-                </DialogHeader>
-
+            <DialogContent className="max-w-4xl w-[50%] h-fit bg-slate-900 border-slate-700 p-0">
                 <div className="p-6">
                     {/* Job Header */}
                     <div className="mb-4">
