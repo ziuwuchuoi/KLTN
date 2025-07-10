@@ -28,7 +28,7 @@ const TabTestset = () => {
     const [codePage, setCodePage] = useState(1);
     const [quizPage, setQuizPage] = useState(1);
 
-    const { technicalQuizzes, isLoadingQuizzes, paginationMeta } = useQuizQueries(user?._id, null, quizPage);
+    const { technicalQuizzes, isLoadingQuizzes, paginationMeta } = useQuizQueries(user?._id, null, null, quizPage);
 
     const [selectedCodeProblem, setSelectedCodeProblem] = useState<CodeProblemDetail | null>(null);
     const [isCreateCodeOpen, setIsCreateCodeOpen] = useState(false);

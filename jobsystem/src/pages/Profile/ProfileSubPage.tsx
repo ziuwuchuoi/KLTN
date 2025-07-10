@@ -26,6 +26,7 @@ const ProfileSubPage = ({ userType, user, onUpdateAvatar, onUpdateInfo }: Profil
         { id: "cvs" as TabType, label: "My CVs", icon: FileText },
         { id: "jds" as TabType, label: "Job Descriptions", icon: Briefcase },
         { id: "applications" as TabType, label: "Applications", icon: Send },
+        { id: "evaluations" as TabType, label: "Evaluations", icon: FileText },
     ];
 
     return (

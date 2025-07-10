@@ -26,7 +26,7 @@ const PageTechnicalQuiz = () => {
         suggestedTechnicalQuizzes,
         isLoadingSuggestedQuizzes,
         technicalCategories,
-    } = useQuizQueries(null, selectedCategory, page, limit);
+    } = useQuizQueries(null, selectedCategory, null, page, limit);
 
     const filteredQuizzes = useMemo(() => {
         const categoryFiltered = selectedCategory

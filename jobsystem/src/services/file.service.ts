@@ -31,8 +31,8 @@ export interface ApplicationItem {
     jdId: string;
     evaluationId: string;
     status: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
     overallScore: number;
     cv: Partial<CVItem>; // no createdAt updatedAt
     jd: JDItem;
@@ -43,8 +43,8 @@ export interface EvaluatedCVItem {
     candidateId: string;
     cvId: string;
     jdId: string;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface CVDetail {
@@ -268,13 +268,17 @@ export const getListApplicationService = async (
     items: ApplicationItem[];
     meta: { limit: number; page: number; total: number; totalPages: number };
 }> => {
-    const url = candidateId
-        ? `/cvs/list-applications?candidateId=${candidateId}&limit=${limit}&page=${page}`
-        : jdId
-          ? `/cvs/list-applications?jdId=${jdId}&limit=${limit}&page=${page}`
-          : `/cvs/list-applications?limit=${limit}&page=${page}`;
+    const url =
+        candidateId && jdId
+            ? `/cvs/list-applications?candidateId=${candidateId}&jdId=${jdId}&limit=${limit}&page=${page}`
+            : candidateId
+              ? `/cvs/list-applications?candidateId=${candidateId}&limit=${limit}&page=${page}`
+              : jdId
+                ? `/cvs/list-applications?jdId=${jdId}&limit=${limit}&page=${page}`
+                : `/cvs/list-applications?limit=${limit}&page=${page}`;
 
     const response = await axiosInstance.get(url);
+
     return response.data.data;
 };
 
@@ -287,11 +291,14 @@ export const getListApplicationForRecruiterService = async (
     items: ApplicationItem[];
     meta: { limit: number; page: number; total: number; totalPages: number };
 }> => {
-    const url = candidateId
-        ? `/cvs/list-applications-for-recruiter?candidateId=${candidateId}&limit=${limit}&page=${page}`
-        : jdId
-          ? `/cvs/list-applications-for-recruiter?jdId=${jdId}&limit=${limit}&page=${page}`
-          : `/cvs/list-applications-for-recruiter?limit=${limit}&page=${page}`;
+    const url =
+        candidateId && jdId
+            ? `/cvs/list-applications-for-recruiter?candidateId=${candidateId}&jdId=${jdId}&limit=${limit}&page=${page}`
+            : candidateId
+              ? `/cvs/list-applications-for-recruiter?candidateId=${candidateId}&limit=${limit}&page=${page}`
+              : jdId
+                ? `/cvs/list-applications-for-recruiter?jdId=${jdId}&limit=${limit}&page=${page}`
+                : `/cvs/list-applications-for-recruiter?limit=${limit}&page=${page}`;
 
     const response = await axiosInstance.get(url);
 
@@ -332,13 +339,19 @@ export const getListEvaluatedCVService = async (
     items: EvaluatedCVItem[];
     meta: { limit: number; page: number; total: number; totalPages: number };
 }> => {
-    const url = candidateId
-        ? `/cvs/list-evaluations?candidateId=${candidateId}&limit=${limit}&page=${page}`
-        : jdId
-          ? `/cvs/list-evaluations?jdId=${jdId}&limit=${limit}&page=${page}`
-          : `/cvs/list-evaluations?limit=${limit}&page=${page}`;
+    const url =
+        candidateId && jdId
+            ? `/cvs/list-evaluations?candidateId=${candidateId}&jdId=${jdId}&limit=${limit}&page=${page}`
+            : candidateId
+              ? `/cvs/list-evaluations?candidateId=${candidateId}&limit=${limit}&page=${page}`
+              : jdId
+                ? `/cvs/list-evaluations?jdId=${jdId}&limit=${limit}&page=${page}`
+                : `/cvs/list-evaluations?limit=${limit}&page=${page}`;
 
     const response = await axiosInstance.get(url);
+    console.log("getListEvaluatedCVService URL:", url);
+
+    console.log("getListEvaluatedCVService", response.data.data);
     return response.data.data;
 };
 
