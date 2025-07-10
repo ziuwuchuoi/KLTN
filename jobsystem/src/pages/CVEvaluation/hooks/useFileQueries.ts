@@ -483,14 +483,14 @@ export const useEvaluationQueries = (userId?: string, fileId?: string, page = 1,
     };
 };
 
-export const useRecommendationQueries = (userId: string) => {
+export const useRecommendationQueries = (userId: string, limit: number, page: number) => {
     const {
         data: recommendedJobsData,
         isLoading: isRecJobDataLoading,
         error: recJobError,
     } = useQuery<RecommendedJDItem[]>({
-        queryKey: ["recommended-jobs", userId],
-        queryFn: () => getRecommendedJobsService(userId),
+        queryKey: ["recommended-jobs", userId, page, limit],
+        queryFn: () => getRecommendedJobsService(userId, page, limit),
         placeholderData: (prev) => prev,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
