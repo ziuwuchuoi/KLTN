@@ -18,6 +18,20 @@ export const statusColors = {
     accepted: "bg-green-900/20 text-green-400 border-green-500/30",
 };
 
+export const getScoreColor = (score?: number) => {
+    if (score === undefined || score === null) {
+        return "bg-gray-800/20 text-gray-400 border-gray-500/30"; // fallback for N/A
+    } else if (score >= 90) {
+        return "bg-green-900/20 text-green-400 border-green-500/30"; // excellent
+    } else if (score >= 70) {
+        return "bg-blue-900/20 text-blue-400 border-blue-500/30"; // good
+    } else if (score >= 50) {
+        return "bg-yellow-900/20 text-yellow-400 border-yellow-500/30"; // average
+    } else {
+        return "bg-red-900/20 text-red-400 border-red-500/30"; // poor
+    }
+};
+
 export const getCodeProblemColumns = (handleProblemClick: (code) => void) => [
     {
         header: "#",
@@ -346,7 +360,7 @@ export const getApplicantionColumns = (handleApplicantionClick: (id: string) => 
     {
         header: "#",
         cell: (app) => <div className="font-medium text-slate-300 truncate">{app._id}</div>,
-        className: "w-12",
+        className: "w-8",
     },
     {
         header: "Job Title",
@@ -366,6 +380,15 @@ export const getApplicantionColumns = (handleApplicantionClick: (id: string) => 
         cell: (app) => (
             <Badge variant="outline" className={statusColors[app.status as ApplicationStatus] || statusColors.pending}>
                 {app.status?.charAt(0).toUpperCase() + app.status?.slice(1)}
+            </Badge>
+        ),
+        className: "w-28",
+    },
+    {
+        header: "CV Score",
+        cell: (app) => (
+            <Badge variant="outline" className={getScoreColor(app.overallScore)}>
+                {app.overallScore !== undefined && app.overallScore !== null ? app.overallScore : "N/A"}
             </Badge>
         ),
         className: "w-28",

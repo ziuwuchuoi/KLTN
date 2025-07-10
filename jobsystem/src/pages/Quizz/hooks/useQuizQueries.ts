@@ -2,10 +2,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
     createQuizService,
     getListCategoriesService,
+    getListQuizSubmissionService,
     getListQuizzesService,
     getQuizDetailService,
     getSuggestedQuizzesService,
     QuizItem,
+    QuizSubmission,
     submitQuizService,
     TechnicalCategoryItem,
     updateQuizService,
@@ -18,6 +20,7 @@ export interface SubmitQuizPayload {
 export const useQuizQueries = (
     userId?: string,
     selectedCategory: string = "",
+    quizId?: string,
     page: number = 1,
     limit: number = 20
 ) => {
@@ -57,6 +60,21 @@ export const useQuizQueries = (
     }>({
         queryKey: ["suggested-technical-quizzes", limit, page],
         queryFn: () => getSuggestedQuizzesService(limit, page),
+        placeholderData: (previousData) => previousData,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+    });
+
+    const {
+        data: quizSubmissionsData,
+        isLoading: isLoadingQuizSubmissions,
+        isError: isErrorQuizSubmissions,
+    } = useQuery<{
+        items: Partial<QuizSubmission>[];
+        meta: { limit: number; page: number; total: number; totalPages: number };
+    }>({
+        queryKey: ["submission-quizzes", userId, quizId, limit, page],
+        queryFn: () => getListQuizSubmissionService(userId, quizId, limit, page),
         placeholderData: (previousData) => previousData,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
@@ -123,6 +141,14 @@ export const useQuizQueries = (
         totalPages: 1,
     };
 
+    const quizSubmissions = quizSubmissionsData?.items ?? [];
+    const paginationQuizSubmissionsMeta = quizSubmissionsData?.meta ?? {
+        page: 1,
+        limit: 20,
+        total: 0,
+        totalPages: 1,
+    };
+
     return {
         technicalCategories,
         isLoadingCategories,
@@ -137,6 +163,11 @@ export const useQuizQueries = (
         paginationSuggestedMeta,
         isLoadingSuggestedQuizzes,
         isErrorSuggestedQuizzes,
+
+        quizSubmissions,
+        paginationQuizSubmissionsMeta,
+        isLoadingQuizSubmissions,
+        isErrorQuizSubmissions,
 
         createQuiz,
         updateQuiz,

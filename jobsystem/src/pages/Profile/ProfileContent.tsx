@@ -11,8 +11,9 @@ import { ApplicationContent } from "./contents/ApplicationContent";
 import { RecruiterUpdateParams } from "@/services/recruiter.service";
 import { CandidateUpdateParams } from "@/services/candidate.service";
 import { AdminUser, CandidateUser, RecruiterUser } from "@/types/types";
+import { EvaluationContent } from "./contents/EvaluationContent";
 
-type TabType = "profile" | "cvs" | "jds" | "applications";
+type TabType = "profile" | "cvs" | "jds" | "applications" | "evaluations";
 
 interface ProfileContentProps {
     userType: "candidate" | "recruiter" | "admin";
@@ -204,6 +205,9 @@ export function ProfileContent({ userType, user, activeTab, onUpdateInfo }: Prof
         }
         if (activeTab === "applications") {
             return <ApplicationContent />;
+        }
+        if (activeTab === "evaluations") {
+            return <EvaluationContent />;
         }
     }
 

@@ -17,6 +17,16 @@ export interface Quiz {
     explanation?: string;
 }
 
+export interface QuizSubmission {
+    _id: string;
+    quizId: string;
+    candidateId: string;
+    answers: { qIndex: number; chosenOption: number; isCorrect: boolean; _id: string }[];
+    score: number;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 export interface TechnicalCategoryItem {
     id: number;
     name: string;
@@ -46,6 +56,30 @@ export const getListQuizzesService = async (
               ? `${base}&creatorUserId=${creatorUserId}`
               : category
                 ? `${base}&category=${category}`
+                : base;
+
+    const response = await axiosInstance.get(url);
+    return response.data.data;
+};
+
+export const getListQuizSubmissionService = async (
+    candidateId?: string,
+    quizId?: string,
+    limit = 20,
+    page = 1
+): Promise<{
+    items: Partial<QuizSubmission>[];
+    meta: { limit: number; page: number; total: number; totalPages: number };
+}> => {
+    const base = `/quiz/getListSubmissions?limit=${limit}&page=${page}`;
+
+    const url =
+        candidateId && quizId
+            ? `${base}&candidateId=${candidateId}&quizId=${quizId}`
+            : candidateId
+              ? `${base}&candidateId=${candidateId}`
+              : quizId
+                ? `${base}&quizId=${quizId}`
                 : base;
 
     const response = await axiosInstance.get(url);

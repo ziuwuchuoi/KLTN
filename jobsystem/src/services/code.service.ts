@@ -100,6 +100,18 @@ export const getListCodeProblemService = async (
     return response.data.data;
 };
 
+export const getListCodeSubmissionService = async (
+    problemId: string
+): Promise<{
+    problems: CodeProblem[];
+    pagination: { limit: number; page: number; total: number; totalPages: number };
+}> => {
+    const base = `/judge/submissions?problemId=${problemId}`;
+
+    const response = await axiosInstance.get(base);
+    return response.data.data;
+};
+
 export const getCodeProblemDetailService = async (codingId: string): Promise<CodeProblemDetail> => {
     const response = await axiosInstance.get(`/leetcode/problems/${codingId}`);
     return response.data.data;

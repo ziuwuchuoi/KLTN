@@ -131,7 +131,7 @@ export const useApplicationQueries = (userId?: string, fileId?: string, limit = 
         error: isApplicationError,
     } = useQuery<ApplicationListResponse>({
         queryKey: QUERY_KEYS.applications(userId, fileId, page, limit),
-        queryFn: () => getListApplicationService(userId, fileId, limit, page),
+        queryFn: () => getListApplicationService(userId || "", fileId || "", limit, page),
         placeholderData: (previousData) => previousData,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
@@ -143,7 +143,7 @@ export const useApplicationQueries = (userId?: string, fileId?: string, limit = 
         error: isApplicationForRecruiterError,
     } = useQuery<ApplicationListResponse>({
         queryKey: QUERY_KEYS.recruiterApplications(userId, fileId, page, limit),
-        queryFn: () => getListApplicationForRecruiterService(userId, fileId, limit, page),
+        queryFn: () => getListApplicationForRecruiterService(userId || "", fileId || "", limit, page),
         placeholderData: (previousData) => previousData,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
@@ -168,7 +168,6 @@ export const useApplicationQueries = (userId?: string, fileId?: string, limit = 
     >({
         mutationFn: ({ apId, status }: UpdateApplicationStatusVariables) =>
             updateApplicationStatusService(apId, status),
-
         onMutate: async ({ apId, status }: UpdateApplicationStatusVariables) => {
             // Cancel any outgoing refetches
             await queryClient.cancelQueries({ queryKey: QUERY_KEYS.recruiterApplications() });
@@ -210,7 +209,6 @@ export const useApplicationQueries = (userId?: string, fileId?: string, limit = 
 
             return { previousRecruiterApps, previousAppDetail };
         },
-
         onError: (err: Error, { apId }: UpdateApplicationStatusVariables, context) => {
             // Rollback on error
             if (context?.previousRecruiterApps) {
@@ -227,7 +225,6 @@ export const useApplicationQueries = (userId?: string, fileId?: string, limit = 
             }
             console.error("Failed to update application status:", err);
         },
-
         onSuccess: (updatedApp: Partial<ApplicationItem>, { apId }: UpdateApplicationStatusVariables) => {
             // Update with the actual server response
             queryClient.setQueryData<ApplicationDetail>(QUERY_KEYS.applicationDetail(apId), (old) => {
@@ -259,7 +256,6 @@ export const useApplicationQueries = (userId?: string, fileId?: string, limit = 
                 exact: false,
             });
         },
-
         onSettled: () => {
             // Always refetch after mutation settles
             queryClient.invalidateQueries({
@@ -319,7 +315,7 @@ export const useCVQueries = (userId?: string, page = 1, limit = 20) => {
         error: cvError,
     } = useQuery<CVListResponse>({
         queryKey: QUERY_KEYS.cvs(userId, page, limit),
-        queryFn: () => getListCVService(userId, limit, page),
+        queryFn: () => getListCVService(userId || "", limit, page),
         placeholderData: (previousData) => previousData,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
@@ -373,7 +369,7 @@ export const useJDQueries = (userId?: string, page = 1, limit = 20, verified = t
         error: jdError,
     } = useQuery<JDListResponse>({
         queryKey: QUERY_KEYS.jds(userId, page, limit, verified),
-        queryFn: () => getListJDService(userId, limit, page, verified),
+        queryFn: () => getListJDService(userId || "", limit, page, verified),
         placeholderData: (previousData) => previousData,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
@@ -441,7 +437,8 @@ export const useEvaluationQueries = (userId?: string, fileId?: string, page = 1,
         error: evaluatedCVError,
     } = useQuery<EvaluationListResponse>({
         queryKey: QUERY_KEYS.evaluations(userId, fileId, page, limit),
-        queryFn: () => getListEvaluatedCVService(userId, fileId, page, limit),
+        // Fixed parameter order: candidateId, jdId, limit, page
+        queryFn: () => getListEvaluatedCVService(userId || "", fileId || "", limit, page),
         placeholderData: (previousData) => previousData,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
