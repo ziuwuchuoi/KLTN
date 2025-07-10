@@ -132,36 +132,34 @@ export function DialogApplication({ isOpen, onClose, application, onUpdate }: Di
                     onStatusChange={handleStatusChange}
                 />
             }
-            className="bg-slate-900 border-slate-700 w-[90%] h-[90%]"
-            childrenContainerClassName="p-0 flex flex-col"
+            className="bg-slate-900 border-slate-700 w-[90vw] h-[90vw] max-w-[1200px] max-h-[90vh] overflow-hidden"
+            childrenContainerClassName="flex flex-col"
         >
-            <div className="flex flex-col h-full">
-                <ApplicationContent applicationDetail={applicationDetail} />
+            <ApplicationContent applicationDetail={applicationDetail} />
 
-                {/* Fixed Footer with Cancel/Save buttons */}
-                {hasStatusChanged && (
-                    <div className="pt-4">
-                        <div className="flex items-center justify-end gap-3">
-                            <Button
-                                variant="outline"
-                                onClick={handleCancelStatusEdit}
-                                className="border-gray-600 hover:bg-gray-700 text-white"
-                            >
-                                <X className="h-4 w-4 mr-2" />
-                                Cancel
-                            </Button>
-                            <Button
-                                onClick={handleSaveStatus}
-                                disabled={updateApplicationStatus.isPending}
-                                className="bg-green-600 hover:bg-green-700"
-                            >
-                                <Save className="h-4 w-4 mr-2" />
-                                {updateApplicationStatus.isPending ? "Saving..." : "Save Changes"}
-                            </Button>
-                        </div>
+            {/* Fixed Footer with Cancel/Save buttons */}
+            {hasStatusChanged && (
+                <div className="pt-4">
+                    <div className="flex items-center justify-end gap-3">
+                        <Button
+                            variant="outline"
+                            onClick={handleCancelStatusEdit}
+                            className="border-gray-600 hover:bg-gray-700 text-white"
+                        >
+                            <X className="h-4 w-4 mr-2" />
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleSaveStatus}
+                            disabled={updateApplicationStatus.isPending}
+                            className="bg-green-600 hover:bg-green-700"
+                        >
+                            <Save className="h-4 w-4 mr-2" />
+                            {updateApplicationStatus.isPending ? "Saving..." : "Save Changes"}
+                        </Button>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </CustomDialog>
     );
 }

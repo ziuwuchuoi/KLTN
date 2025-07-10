@@ -16,18 +16,19 @@ import {
     AlertCircle,
     ChevronDown,
     ChevronUp,
+    Briefcase,
 } from "lucide-react";
 import { useState } from "react";
 import { FileItem } from "@/pages/CVEvaluation/items/FileItem";
-import type { ApplicationDetail } from "@/services/file.service";
+import type { ApplicationDetail, ApplicationStatus } from "@/services/file.service";
+import { statusColors } from "@/components/molecules/dashboard/columns";
+import { EvaluationResults } from "@/pages/CVEvaluation/resultStep/EvaluationResults";
 
 interface ApplicationContentProps {
     applicationDetail: ApplicationDetail | null;
 }
 
 export function ApplicationContent({ applicationDetail }: ApplicationContentProps) {
-    const [showJDDetails, setShowJDDetails] = useState(false);
-
     if (!applicationDetail) {
         return (
             <div className="flex items-center justify-center h-full">
@@ -54,130 +55,40 @@ export function ApplicationContent({ applicationDetail }: ApplicationContentProp
     };
 
     return (
-        <ScrollArea className="flex-1">
-            <div className="p-6 space-y-6">
-                {/* Key Metrics Overview */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <Card className="bg-slate-800/50 border-slate-700">
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-3">
-                                <TrendingUp className="h-6 w-6 text-blue-400" />
-                                <div>
-                                    <p className="text-xs text-gray-400">Overall Score</p>
-                                    <p className="text-lg font-bold text-white">
-                                        {applicationDetail.overallScore
-                                            ? `${Math.round(applicationDetail.overallScore)}%`
-                                            : "N/A"}
-                                    </p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="bg-slate-800/50 border-slate-700">
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-3">
-                                <BarChart3 className="h-6 w-6 text-purple-400" />
-                                <div>
-                                    <p className="text-xs text-gray-400">Similarity</p>
-                                    <p className="text-lg font-bold text-white">
-                                        {applicationDetail.evaluation?.reviewCVResponse?.summary?.similarity_score
-                                            ? `${Math.round(applicationDetail.evaluation.reviewCVResponse.summary.similarity_score)}%`
-                                            : "N/A"}
-                                    </p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="bg-slate-800/50 border-slate-700">
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-3">
-                                <Calendar className="h-6 w-6 text-green-400" />
-                                <div>
-                                    <p className="text-xs text-gray-400">Applied</p>
-                                    <p className="text-sm font-semibold text-white">
-                                        {new Date(applicationDetail.createdAt).toLocaleDateString()}
-                                    </p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="bg-slate-800/50 border-slate-700">
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-3">
-                                <Target className="h-6 w-6 text-orange-400" />
-                                <div>
-                                    <p className="text-xs text-gray-400">Skills Match</p>
-                                    <p className="text-lg font-bold text-white">
-                                        {applicationDetail.evaluation?.reviewCVResponse?.skills_analysis?.match_percent
-                                            ? `${applicationDetail.evaluation.reviewCVResponse.skills_analysis.match_percent}%`
-                                            : "N/A"}
-                                    </p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-
+        <div className="flex h-[90vh] overflow-hidden">
+            {/* Left Column - CV and JD (35% width) */}
+            <div className="w-[35%] border-r border-slate-700 flex flex-col py-4 pr-4 space-y-2">
                 {/* CV Section */}
-                <Card className="bg-slate-800/50 border-slate-700">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-white">
-                            <FileText className="w-5 h-5 text-blue-400" />
-                            Candidate CV
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        {/* CV FileItem Display */}
-                        {applicationDetail.cv && (
-                            <FileItem
-                                id={applicationDetail.cv._id}
-                                title={applicationDetail.cv.fileName || applicationDetail.cv.position}
-                                subtitle={applicationDetail.cv.position}
-                                selected={true}
-                                colorScheme="blue"
-                                date={new Date(applicationDetail.cv.createdAt)}
-                                datePrefix="Uploaded"
-                                onView={handleCVView}
-                                onDownload={handleCVDownload}
-                                showCheckmark={false}
-                                className="border-blue-500/50 bg-blue-600/10"
-                            />
-                        )}
-                    </CardContent>
-                </Card>
+                <FileItem
+                    id={applicationDetail.cv._id}
+                    title={applicationDetail.cv.fileName || applicationDetail.cv.position}
+                    subtitle={applicationDetail.cv.position}
+                    selected={true}
+                    colorScheme="blue"
+                    date={new Date(applicationDetail.cv.createdAt)}
+                    datePrefix="Uploaded"
+                    onView={handleCVView}
+                    onDownload={handleCVDownload}
+                    showCheckmark={false}
+                    className="border-blue-500/50 bg-blue-600/10"
+                />
 
-                {/* Job Description Section */}
-                <Card className="bg-slate-800/50 border-slate-700">
-                    <CardHeader>
+                {/* JD Section */}
+                <Card className="bg-slate-800/50 border-slate-700 h-[80%] flex flex-col pb-4">
+                    <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
                             <CardTitle className="flex items-center gap-2 text-white">
-                                <Building2 className="w-5 h-5 text-purple-400" />
+                                <Briefcase className="w-5 h-5 text-purple-400" />
                                 Job Description
                             </CardTitle>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setShowJDDetails(!showJDDetails)}
-                                className="text-slate-400 hover:text-white"
-                            >
-                                {showJDDetails ? (
-                                    <ChevronUp className="w-4 h-4" />
-                                ) : (
-                                    <ChevronDown className="w-4 h-4" />
-                                )}
-                                <span className="ml-2 text-sm">{showJDDetails ? "Less" : "More"}</span>
-                            </Button>
                         </div>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="flex-1 overflow-hidden">
                         {/* Job Header - Always Visible */}
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <h3 className="text-xl font-semibold text-white">{applicationDetail.jd.title}</h3>
-                                <div className="flex items-center gap-4 text-slate-400">
+                                <h3 className="text-lg font-semibold text-white">{applicationDetail.jd.title}</h3>
+                                <div className="flex flex-col gap-2 text-slate-400 text-sm">
                                     <div className="flex items-center gap-2">
                                         <Building2 className="w-4 h-4" />
                                         {applicationDetail.jd.companyName}
@@ -188,255 +99,37 @@ export function ApplicationContent({ applicationDetail }: ApplicationContentProp
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            {/* Brief Description */}
-                            {!showJDDetails && (
-                                <div>
-                                    <p className="text-slate-300 text-sm leading-relaxed line-clamp-3">
+                        {/* Detailed JD Content*/}
+                        <ScrollArea className="h-[80%] mt-4">
+                            <div className="space-y-4 pr-2">
+                                {/* Job Description */}
+                                <div className="space-y-2">
+                                    <h4 className="text-sm font-semibold text-white">Job Description</h4>
+                                    <p className="text-xs text-slate-400 leading-relaxed whitespace-pre-wrap">
                                         {applicationDetail.jd.description}
                                     </p>
                                 </div>
-                            )}
-                        </div>
 
-                        {/* Detailed JD Content (Expandable) - JobDetailContent Style */}
-                        {showJDDetails && (
-                            <ScrollArea className="h-[350px]">
-                                <div className="space-y-6 pr-4">
-                                    {/* Job Description */}
+                                {/* Requirements */}
+                                {applicationDetail.jd.requirements && (
                                     <div className="space-y-3">
-                                        <h4 className="text-lg font-semibold text-white">Job Description</h4>
-                                        <div className="prose prose-invert max-w-none">
-                                            <p className="text-sm text-slate-400 leading-relaxed whitespace-pre-wrap">
-                                                {applicationDetail.jd.description}
-                                            </p>
-                                        </div>
-                                    </div>
+                                        <h4 className="text-sm font-semibold text-white">Requirements</h4>
 
-                                    {/* Requirements */}
-                                    {applicationDetail.jd.requirements && (
-                                        <div className="space-y-4">
-                                            <h4 className="text-lg font-semibold text-white">Requirements</h4>
-
-                                            {/* Skills */}
-                                            {applicationDetail.jd.requirements.skills &&
-                                                applicationDetail.jd.requirements.skills.length > 0 && (
-                                                    <div>
-                                                        <h5 className="font-medium text-slate-300 mb-3">Skills</h5>
-                                                        <div className="flex flex-wrap gap-2">
-                                                            {applicationDetail.jd.requirements.skills.map(
-                                                                (skill, index) => (
-                                                                    <Badge
-                                                                        key={index}
-                                                                        variant="secondary"
-                                                                        className="text-xs bg-slate-700 text-slate-300 hover:text-slate-900"
-                                                                    >
-                                                                        {skill}
-                                                                    </Badge>
-                                                                )
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                            {/* Experience */}
-                                            {applicationDetail.jd.requirements.experience &&
-                                                applicationDetail.jd.requirements.experience.length > 0 && (
-                                                    <div>
-                                                        <h5 className="font-medium text-slate-300 mb-3">Experience</h5>
-                                                        <ul className="text-sm text-slate-400 space-y-2">
-                                                            {applicationDetail.jd.requirements.experience.map(
-                                                                (exp, index) => (
-                                                                    <li key={index} className="flex items-start gap-2">
-                                                                        <span className="text-blue-400 mt-1">•</span>
-                                                                        <span>{exp}</span>
-                                                                    </li>
-                                                                )
-                                                            )}
-                                                        </ul>
-                                                    </div>
-                                                )}
-
-                                            {/* Education */}
-                                            {applicationDetail.jd.requirements.education &&
-                                                applicationDetail.jd.requirements.education.length > 0 && (
-                                                    <div>
-                                                        <h5 className="font-medium text-slate-300 mb-3">Education</h5>
-                                                        <ul className="text-sm text-slate-400 space-y-2">
-                                                            {applicationDetail.jd.requirements.education.map(
-                                                                (edu, index) => (
-                                                                    <li key={index} className="flex items-start gap-2">
-                                                                        <span className="text-blue-400 mt-1">•</span>
-                                                                        <span>{edu}</span>
-                                                                    </li>
-                                                                )
-                                                            )}
-                                                        </ul>
-                                                    </div>
-                                                )}
-
-                                            {/* Languages */}
-                                            {applicationDetail.jd.requirements.languages &&
-                                                applicationDetail.jd.requirements.languages.length > 0 && (
-                                                    <div>
-                                                        <h5 className="font-medium text-slate-300 mb-3">Languages</h5>
-                                                        <div className="flex flex-wrap gap-2">
-                                                            {applicationDetail.jd.requirements.languages.map(
-                                                                (lang, index) => (
-                                                                    <Badge
-                                                                        key={index}
-                                                                        variant="secondary"
-                                                                        className="text-xs bg-slate-700 text-slate-300 hover:text-slate-900"
-                                                                    >
-                                                                        {lang}
-                                                                    </Badge>
-                                                                )
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                            {/* Certifications */}
-                                            {applicationDetail.jd.requirements.certifications &&
-                                                applicationDetail.jd.requirements.certifications.length > 0 && (
-                                                    <div>
-                                                        <h5 className="font-medium text-slate-300 mb-3">
-                                                            Certifications
-                                                        </h5>
-                                                        <div className="flex flex-wrap gap-2">
-                                                            {applicationDetail.jd.requirements.certifications.map(
-                                                                (cert, index) => (
-                                                                    <Badge
-                                                                        key={index}
-                                                                        variant="secondary"
-                                                                        className="text-xs bg-green-700/20 text-green-300 border-green-500/30"
-                                                                    >
-                                                                        {cert}
-                                                                    </Badge>
-                                                                )
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                            {/* Projects */}
-                                            {applicationDetail.jd.requirements.projects &&
-                                                applicationDetail.jd.requirements.projects.length > 0 && (
-                                                    <div>
-                                                        <h5 className="font-medium text-slate-300 mb-3">
-                                                            Project Experience
-                                                        </h5>
-                                                        <ul className="text-sm text-slate-400 space-y-2">
-                                                            {applicationDetail.jd.requirements.projects.map(
-                                                                (project, index) => (
-                                                                    <li key={index} className="flex items-start gap-2">
-                                                                        <span className="text-blue-400 mt-1">•</span>
-                                                                        <span>{project}</span>
-                                                                    </li>
-                                                                )
-                                                            )}
-                                                        </ul>
-                                                    </div>
-                                                )}
-
-                                            {/* Summary */}
-                                            {applicationDetail.jd.requirements.summary && (
+                                        {/* Skills */}
+                                        {applicationDetail.jd.requirements.skills &&
+                                            applicationDetail.jd.requirements.skills.length > 0 && (
                                                 <div>
-                                                    <h5 className="font-medium text-slate-300 mb-3">Summary</h5>
-                                                    <p className="text-sm text-slate-400 leading-relaxed">
-                                                        {applicationDetail.jd.requirements.summary}
-                                                    </p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
-
-                                    {/* Benefits */}
-                                    {applicationDetail.jd.benefits && applicationDetail.jd.benefits.length > 0 && (
-                                        <div className="space-y-3">
-                                            <h4 className="text-lg font-semibold text-white">Benefits & Perks</h4>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                {applicationDetail.jd.benefits.map((benefit, index) => (
-                                                    <div key={index} className="flex items-center gap-3 text-slate-300">
-                                                        <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
-                                                        <span className="text-sm">{benefit}</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </ScrollArea>
-                        )}
-                    </CardContent>
-                </Card>
-
-                {/* AI Evaluation Results */}
-                {applicationDetail.evaluation?.reviewCVResponse && (
-                    <Card className="bg-slate-800/50 border-slate-700">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2 text-white">
-                                <Target className="h-5 w-5 text-purple-400" />
-                                AI Evaluation Results
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            {/* Skills Analysis */}
-                            {applicationDetail.evaluation.reviewCVResponse.skills_analysis && (
-                                <div>
-                                    <h5 className="font-medium text-gray-300 mb-4 flex items-center gap-2">
-                                        <CheckCircle2 className="h-4 w-4 text-green-400" />
-                                        Skills Analysis
-                                    </h5>
-
-                                    <div className="bg-slate-700/30 p-4 rounded-lg space-y-4">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-gray-400">Skills Match</span>
-                                            <span className="text-2xl font-bold text-green-400">
-                                                {
-                                                    applicationDetail.evaluation.reviewCVResponse.skills_analysis
-                                                        .match_percent
-                                                }
-                                                %
-                                            </span>
-                                        </div>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <h6 className="text-sm font-medium text-gray-400 mb-2">
-                                                    Matched Skills
-                                                </h6>
-                                                <div className="flex flex-wrap gap-1">
-                                                    {applicationDetail.evaluation.reviewCVResponse.skills_analysis.matched_skills?.map(
-                                                        (skill, index) => (
-                                                            <Badge
-                                                                key={index}
-                                                                variant="outline"
-                                                                className="text-xs bg-green-900/20 text-green-400 border-green-500/30"
-                                                            >
-                                                                <CheckCircle2 className="h-3 w-3 mr-1" />
-                                                                {skill}
-                                                            </Badge>
-                                                        )
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            {applicationDetail.evaluation.reviewCVResponse.skills_analysis
-                                                .missing_skills?.length > 0 && (
-                                                <div>
-                                                    <h6 className="text-sm font-medium text-gray-400 mb-2">
-                                                        Missing Skills
-                                                    </h6>
+                                                    <h5 className="font-medium text-slate-300 mb-2 text-xs">Skills</h5>
                                                     <div className="flex flex-wrap gap-1">
-                                                        {applicationDetail.evaluation.reviewCVResponse.skills_analysis.missing_skills.map(
+                                                        {applicationDetail.jd.requirements.skills.map(
                                                             (skill, index) => (
                                                                 <Badge
                                                                     key={index}
-                                                                    variant="outline"
-                                                                    className="text-xs bg-red-900/20 text-red-400 border-red-500/30"
+                                                                    variant="secondary"
+                                                                    className="text-xs bg-slate-700 text-slate-300"
                                                                 >
-                                                                    <AlertCircle className="h-3 w-3 mr-1" />
                                                                     {skill}
                                                                 </Badge>
                                                             )
@@ -444,44 +137,149 @@ export function ApplicationContent({ applicationDetail }: ApplicationContentProp
                                                     </div>
                                                 </div>
                                             )}
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
 
-                            {/* ATS Check */}
-                            {applicationDetail.evaluation.reviewCVResponse.ats_check && (
-                                <div>
-                                    <h5 className="font-medium text-gray-300 mb-3">ATS Analysis</h5>
-                                    <div className="bg-slate-700/30 p-4 rounded-lg space-y-3">
-                                        {applicationDetail.evaluation.reviewCVResponse.ats_check.recommendations
-                                            ?.length > 0 && (
+                                        {/* Experience */}
+                                        {applicationDetail.jd.requirements.experience &&
+                                            applicationDetail.jd.requirements.experience.length > 0 && (
+                                                <div>
+                                                    <h5 className="font-medium text-slate-300 mb-2 text-xs">
+                                                        Experience
+                                                    </h5>
+                                                    <ul className="text-xs text-slate-400 space-y-1">
+                                                        {applicationDetail.jd.requirements.experience.map(
+                                                            (exp, index) => (
+                                                                <li key={index} className="flex items-start gap-2">
+                                                                    <span className="text-purple-400 mt-1">•</span>
+                                                                    <span>{exp}</span>
+                                                                </li>
+                                                            )
+                                                        )}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                        {/* Education */}
+                                        {applicationDetail.jd.requirements.education &&
+                                            applicationDetail.jd.requirements.education.length > 0 && (
+                                                <div>
+                                                    <h5 className="font-medium text-slate-300 mb-2 text-xs">
+                                                        Education
+                                                    </h5>
+                                                    <ul className="text-xs text-slate-400 space-y-1">
+                                                        {applicationDetail.jd.requirements.education.map(
+                                                            (edu, index) => (
+                                                                <li key={index} className="flex items-start gap-2">
+                                                                    <span className="text-purple-400 mt-1">•</span>
+                                                                    <span>{edu}</span>
+                                                                </li>
+                                                            )
+                                                        )}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                        {/* Languages */}
+                                        {applicationDetail.jd.requirements.languages &&
+                                            applicationDetail.jd.requirements.languages.length > 0 && (
+                                                <div>
+                                                    <h5 className="font-medium text-slate-300 mb-2 text-xs">
+                                                        Languages
+                                                    </h5>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {applicationDetail.jd.requirements.languages.map(
+                                                            (lang, index) => (
+                                                                <Badge
+                                                                    key={index}
+                                                                    variant="secondary"
+                                                                    className="text-xs bg-slate-700 text-slate-300"
+                                                                >
+                                                                    {lang}
+                                                                </Badge>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                        {/* Certifications */}
+                                        {applicationDetail.jd.requirements.certifications &&
+                                            applicationDetail.jd.requirements.certifications.length > 0 && (
+                                                <div>
+                                                    <h5 className="font-medium text-slate-300 mb-2 text-xs">
+                                                        Certifications
+                                                    </h5>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {applicationDetail.jd.requirements.certifications.map(
+                                                            (cert, index) => (
+                                                                <Badge
+                                                                    key={index}
+                                                                    variant="secondary"
+                                                                    className="text-xs bg-green-700/20 text-green-300 border-green-500/30"
+                                                                >
+                                                                    {cert}
+                                                                </Badge>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                        {/* Projects */}
+                                        {applicationDetail.jd.requirements.projects &&
+                                            applicationDetail.jd.requirements.projects.length > 0 && (
+                                                <div>
+                                                    <h5 className="font-medium text-slate-300 mb-2 text-xs">
+                                                        Project Experience
+                                                    </h5>
+                                                    <ul className="text-xs text-slate-400 space-y-1">
+                                                        {applicationDetail.jd.requirements.projects.map(
+                                                            (project, index) => (
+                                                                <li key={index} className="flex items-start gap-2">
+                                                                    <span className="text-purple-400 mt-1">•</span>
+                                                                    <span>{project}</span>
+                                                                </li>
+                                                            )
+                                                        )}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                        {/* Summary */}
+                                        {applicationDetail.jd.requirements.summary && (
                                             <div>
-                                                <h6 className="text-sm font-medium text-gray-400 mb-2">
-                                                    Recommendations
-                                                </h6>
-                                                <ul className="space-y-1">
-                                                    {applicationDetail.evaluation.reviewCVResponse.ats_check.recommendations.map(
-                                                        (rec, index) => (
-                                                            <li
-                                                                key={index}
-                                                                className="text-sm text-gray-300 flex items-start gap-2"
-                                                            >
-                                                                <span className="text-blue-400 mt-1">•</span>
-                                                                {rec}
-                                                            </li>
-                                                        )
-                                                    )}
-                                                </ul>
+                                                <h5 className="font-medium text-slate-300 mb-2 text-xs">Summary</h5>
+                                                <p className="text-xs text-slate-400 leading-relaxed">
+                                                    {applicationDetail.jd.requirements.summary}
+                                                </p>
                                             </div>
                                         )}
                                     </div>
-                                </div>
-                            )}
-                        </CardContent>
-                    </Card>
-                )}
+                                )}
+
+                                {/* Benefits */}
+                                {applicationDetail.jd.benefits && applicationDetail.jd.benefits.length > 0 && (
+                                    <div className="space-y-2">
+                                        <h4 className="text-sm font-semibold text-white">Benefits & Perks</h4>
+                                        <div className="space-y-2">
+                                            {applicationDetail.jd.benefits.map((benefit, index) => (
+                                                <div key={index} className="flex items-center gap-2 text-slate-300">
+                                                    <div className="w-1.5 h-1.5 bg-purple-500 rounded-full flex-shrink-0"></div>
+                                                    <span className="text-xs">{benefit}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </ScrollArea>
+                    </CardContent>
+                </Card>
             </div>
-        </ScrollArea>
+
+            {/* Right Column - Evaluation Results (65% width) */}
+            <div className="w-[65%] overflow-y-auto p-6 py-10">
+                <EvaluationResults result={applicationDetail.evaluation} />
+            </div>
+        </div>
     );
 }
