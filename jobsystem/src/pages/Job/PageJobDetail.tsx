@@ -23,7 +23,7 @@ const PageJobDetail = () => {
     const pageSize = 20;
 
     const { jds, isJDDataLoading, useJDDetail, pagination } = useJDQueries(undefined, currentPage, pageSize);
-    const { recommendedJobs } = useRecommendationQueries(user._id);
+    const { recommendedJobs } = useRecommendationQueries(user._id, 1, 7);
 
     const refinedRecommendedJDs = recommendedJobs?.map((item) => ({
         ...item.values,
@@ -32,7 +32,7 @@ const PageJobDetail = () => {
 
     const { data: selectedJob, isLoading: isJobDetailLoading } = useJDDetail(selectedJobId);
 
-    const dataToDisplay = refinedRecommendedJDs?.length > 0 ? refinedRecommendedJDs : jds;
+    // const dataToDisplay = refinedRecommendedJDs?.length > 0 ? refinedRecommendedJDs : jds;
 
     useEffect(() => {
         if (jobId && jobId !== selectedJobId) {
@@ -44,7 +44,6 @@ const PageJobDetail = () => {
         setSelectedJobId(job._id);
         navigate(`/jobs/${job._id}`, { replace: true });
     };
-
 
     if (!jobId) {
         navigate("/jobs");
@@ -59,7 +58,7 @@ const PageJobDetail = () => {
                     {/* Left Panel - Job List */}
                     <div className="lg:col-span-2 flex flex-col h-full min-h-0">
                         <JobListPanel
-                            jobs={dataToDisplay}
+                            jobs={jds}
                             isLoading={isJDDataLoading}
                             selectedJobId={selectedJobId}
                             onJobSelect={handleJobSelect}
@@ -71,11 +70,11 @@ const PageJobDetail = () => {
 
                     {/* Right Panel - Job Detail */}
                     <div className="lg:col-span-3 flex flex-col h-full min-h-0">
-                         <JobDetailPanel
+                        <JobDetailPanel
                             job={selectedJob}
                             isLoading={isJobDetailLoading}
                             onApplyClick={() => setShowApplyDialog(true)}
-                            onReviewClick={() => setShowReviewDialog(true)} 
+                            onReviewClick={() => setShowReviewDialog(true)}
                             userId={user?._id || ""}
                         />
                     </div>

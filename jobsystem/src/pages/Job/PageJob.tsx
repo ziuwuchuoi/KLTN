@@ -26,7 +26,7 @@ const PageJDs = () => {
 
     // Get public jd listings (no userId means public JDs)
     const { jds, pagination, isJDDataLoading } = useJDQueries(undefined, currentPage, 10);
-    const { recommendedJobs } = useRecommendationQueries(user._id, currentPage, 7);
+    const { recommendedJobs } = useRecommendationQueries(user._id, 1, 7);
 
     const refinedRecommendedJDs = recommendedJobs?.map((item) => ({
         ...item.values,
